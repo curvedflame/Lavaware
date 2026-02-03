@@ -1,4491 +1,7017 @@
+--[[
+
+
+
+██╗     ██╗   ██╗███╗   ██╗ █████╗     ██╗███╗   ██╗████████╗███████╗██████╗ ███████╗ █████╗  ██████╗███████╗    ███████╗██╗   ██╗██╗████████╗███████╗
+██║     ██║   ██║████╗  ██║██╔══██╗    ██║████╗  ██║╚══██╔══╝██╔════╝██╔══██╗██╔════╝██╔══██╗██╔════╝██╔════╝    ██╔════╝██║   ██║██║╚══██╔══╝██╔════╝
+██║     ██║   ██║██╔██╗ ██║███████║    ██║██╔██╗ ██║   ██║   █████╗  ██████╔╝█████╗  ███████║██║     █████╗      ███████╗██║   ██║██║   ██║   █████╗  
+██║     ██║   ██║██║╚██╗██║██╔══██║    ██║██║╚██╗██║   ██║   ██╔══╝  ██╔══██╗██╔══╝  ██╔══██║██║     ██╔══╝      ╚════██║██║   ██║██║   ██║   ██╔══╝  
+███████╗╚██████╔╝██║ ╚████║██║  ██║    ██║██║ ╚████║   ██║   ███████╗██║  ██║██║     ██║  ██║╚██████╗███████╗    ███████║╚██████╔╝██║   ██║   ███████╗
+╚══════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝    ╚═╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝ ╚═════╝╚══════╝    ╚══════╝ ╚═════╝ ╚═╝   ╚═╝   ╚══════╝
+by    d8b   db d88888b d8888b. db    db db       .d8b.       .d8888.  .d88b.  d88888b d888888b db   d8b   db  .d88b.  d8888b. db   dD .d8888. 
+      888o  88 88'     88  `8D 88    88 88      d8' `8b      88'  YP .8P  Y8. 88'     `~~88~~' 88   I8I   88 .8P  Y8. 88  `8D 88 ,8P' 88'  YP 
+      88V8o 88 88ooooo 88oooY' 88    88 88      88ooo88      `8bo.   88    88 88ooo      88    88   I8I   88 88    88 88oobY' 88,8P   `8bo.   
+      88 V8o88 88~~~~~ 88~~~b. 88    88 88      88~~~88        `Y8b. 88    88 88~~~      88    Y8   I8I   88 88    88 88`8b   88`8b     `Y8b. 
+      88  V888 88.     88   8D 88b  d88 88booo. 88   88      db   8D `8b  d8' 88         88    `8b d8'8b d8' `8b  d8' 88 `88. 88 `88. db   8D 
+      VP   V8P Y88888P Y8888P' ~Y8888P' Y88888P YP   YP      `8888Y'  `Y88P'  YP         YP     `8b8' `8d8'   `Y88P'  88   YD YP   YD `8888Y' 
+
+
+Main Credits
+
+Hunter (Nebula Softworks) | Designing And Programming | Main Developer
+JustHey (Nebula Softworks) | Configurations, Bug Fixing And More! | Co Developer
+Throit | Color Picker
+Wally | Dragging And Certain Functions
+Sirius | PCall Parsing, Notifications, Slider And Home Tab
+Luna Executor | Original UI
+
+
+Extra Credits / Provided Certain Elements
+
+Pookie Pepelss | Bug Tester
+Inori | Configuration Concept
+Latte Softworks and qweery | Lucide Icons And Material Icons
+kirill9655 | Loading Circle
+Deity/dp4pv/x64x70 | Certain Scripting and Testing ig
+
+Contributors
+iPigTw | Typo Fixer, Fixed Key System!!
+pushByAccident | Fixing Executor Lists
+ImFloriz | Method Fixing
+
+Luna Interface Suite
+by Nebula Softworks
+
+]]
+
+local Release = "Prerelease Beta 6.1"
+
+local Luna = { 
+	Folder = "Luna", 
+	Options = {}, 
+	ThemeGradient = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(117, 164, 206)), ColorSequenceKeypoint.new(0.50, Color3.fromRGB(123, 201, 201)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(224, 138, 175))} 
+}
+
 local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
 local HttpService = game:GetService("HttpService")
-local TextService = game:GetService("TextService")
-local GuiService = game:GetService("GuiService")
 local RunService = game:GetService("RunService")
-local PlayerService = game:GetService("Players")
+local Localization = game:GetService("LocalizationService")
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
 local CoreGui = game:GetService("CoreGui")
 
-local GuiInset = GuiService:GetGuiInset()
-local LocalPlayer = PlayerService.LocalPlayer
+local isStudio
+local website = "github.com/Nebula-Softworks"
 
-local LavaHub = {
-	Screen = nil,
-	IsLocal = not identifyexecutor,
+if RunService:IsStudio() then
+	isStudio = true
+end
 
-	SectionInclude = {
-		"Divider",
-		"Label",
-		"Button",
-		"Toggle",
-		"Slider",
-		"Textbox",
-		"Keybind",
-		"Dropdown",
-		"Colorpicker"
+-- Credits To Latte Softworks And qweery for Lucide And Material Icons Respectively.
+local IconModule = {
+	Lucide = nil,
+	Material = {
+		["perm_media"] = "http://www.roblox.com/asset/?id=6031215982";
+		["sticky_note_2"] = "http://www.roblox.com/asset/?id=6031265972";
+		["gavel"] = "http://www.roblox.com/asset/?id=6023565902";
+		["table_view"] = "http://www.roblox.com/asset/?id=6031233835";
+		["home"] = "http://www.roblox.com/asset/?id=6026568195";
+		["list"] = "http://www.roblox.com/asset/?id=6026568229";
+		["alarm_add"] = "http://www.roblox.com/asset/?id=6023426898";
+		["speaker_notes"] = "http://www.roblox.com/asset/?id=6031266001";
+		["check_circle_outline"] = "http://www.roblox.com/asset/?id=6023426909";
+		["extension"] = "http://www.roblox.com/asset/?id=6023565892";
+		["pending"] = "http://www.roblox.com/asset/?id=6031084745";
+		["pageview"] = "http://www.roblox.com/asset/?id=6031216007";
+		["group_work"] = "http://www.roblox.com/asset/?id=6023565910";
+		["zoom_in"] = "http://www.roblox.com/asset/?id=6031075573";
+		["aspect_ratio"] = "http://www.roblox.com/asset/?id=6022668895";
+		["code"] = "http://www.roblox.com/asset/?id=6022668955";
+		["3d_rotation"] = "http://www.roblox.com/asset/?id=6022668893";
+		["translate"] = "http://www.roblox.com/asset/?id=6031225812";
+		["star_rate"] = "http://www.roblox.com/asset/?id=6031265978";
+		["system_update_alt"] = "http://www.roblox.com/asset/?id=6031251515";
+		["open_with"] = "http://www.roblox.com/asset/?id=6026568265";
+		["build_circle"] = "http://www.roblox.com/asset/?id=6023426952";
+		["toc"] = "http://www.roblox.com/asset/?id=6031229341";
+		["settings_phone"] = "http://www.roblox.com/asset/?id=6031289445";
+		["open_in_full"] = "http://www.roblox.com/asset/?id=6026568245";
+		["history"] = "http://www.roblox.com/asset/?id=6026568197";
+		["accessibility_new"] = "http://www.roblox.com/asset/?id=6022668945";
+		["hourglass_disabled"] = "http://www.roblox.com/asset/?id=6026568193";
+		["line_style"] = "http://www.roblox.com/asset/?id=6026568276";
+		["account_circle"] = "http://www.roblox.com/asset/?id=6022668898";
+		["settings_cell"] = "http://www.roblox.com/asset/?id=6031280890";
+		["search_off"] = "http://www.roblox.com/asset/?id=6031260783";
+		["shop"] = "http://www.roblox.com/asset/?id=6031265983";
+		["anchor"] = "http://www.roblox.com/asset/?id=6023426906";
+		["language"] = "http://www.roblox.com/asset/?id=6026568213";
+		["settings_brightness"] = "http://www.roblox.com/asset/?id=6031280902";
+		["restore_page"] = "http://www.roblox.com/asset/?id=6031154877";
+		["chrome_reader_mode"] = "http://www.roblox.com/asset/?id=6023426912";
+		["sync_alt"] = "http://www.roblox.com/asset/?id=6031233840";
+		["book"] = "http://www.roblox.com/asset/?id=6022860343";
+		["smart_button"] = "http://www.roblox.com/asset/?id=6031265962";
+		["request_page"] = "http://www.roblox.com/asset/?id=6031154873";
+		["lock_clock"] = "http://www.roblox.com/asset/?id=6026568260";
+		["android"] = "http://www.roblox.com/asset/?id=6022668966";
+		["outgoing_mail"] = "http://www.roblox.com/asset/?id=6026568242";
+		["dynamic_form"] = "http://www.roblox.com/asset/?id=6023426970";
+		["track_changes"] = "http://www.roblox.com/asset/?id=6031225814";
+		["source"] = "http://www.roblox.com/asset/?id=6031289451";
+		["thumb_down"] = "http://www.roblox.com/asset/?id=6031229336";
+		["integration_instructions"] = "http://www.roblox.com/asset/?id=6026568214";
+		["opacity"] = "http://www.roblox.com/asset/?id=6026568295";
+		["perm_identity"] = "http://www.roblox.com/asset/?id=6031215978";
+		["view_module"] = "http://www.roblox.com/asset/?id=6031079152";
+		["perm_data_setting"] = "http://www.roblox.com/asset/?id=6031215991";
+		["assignment_turned_in"] = "http://www.roblox.com/asset/?id=6023426904";
+		["change_history"] = "http://www.roblox.com/asset/?id=6023426914";
+		["thumb_down_off_alt"] = "http://www.roblox.com/asset/?id=6031229354";
+		["text_rotation_angledown"] = "http://www.roblox.com/asset/?id=6031251513";
+		["bookmark"] = "http://www.roblox.com/asset/?id=6022852108";
+		["view_stream"] = "http://www.roblox.com/asset/?id=6031079164";
+		["remove_done"] = "http://www.roblox.com/asset/?id=6031086169";
+		["markunread_mailbox"] = "http://www.roblox.com/asset/?id=6031082531";
+		["store"] = "http://www.roblox.com/asset/?id=6031265968";
+		["text_rotation_angleup"] = "http://www.roblox.com/asset/?id=6031229337";
+		["eco"] = "http://www.roblox.com/asset/?id=6023426988";
+		["find_in_page"] = "http://www.roblox.com/asset/?id=6023426986";
+		["api"] = "http://www.roblox.com/asset/?id=6022668911";
+		["launch"] = "http://www.roblox.com/asset/?id=6026568211";
+		["text_rotation_down"] = "http://www.roblox.com/asset/?id=6031229334";
+		["flip_to_back"] = "http://www.roblox.com/asset/?id=6023565896";
+		["contact_page"] = "http://www.roblox.com/asset/?id=6022668881";
+		["preview"] = "http://www.roblox.com/asset/?id=6031260793";
+		["restore"] = "http://www.roblox.com/asset/?id=6031260800";
+		["favorite_border"] = "http://www.roblox.com/asset/?id=6023565882";
+		["assignment_late"] = "http://www.roblox.com/asset/?id=6022668880";
+		["youtube_searched_for"] = "http://www.roblox.com/asset/?id=6031075934";
+		["hourglass_full"] = "http://www.roblox.com/asset/?id=6026568190";
+		["timeline"] = "http://www.roblox.com/asset/?id=6031229350";
+		["turned_in"] = "http://www.roblox.com/asset/?id=6031225808";
+		["info"] = "http://www.roblox.com/asset/?id=6026568227";
+		["restore_from_trash"] = "http://www.roblox.com/asset/?id=6031154869";
+		["arrow_circle_down"] = "http://www.roblox.com/asset/?id=6022668877";
+		["flaky"] = "http://www.roblox.com/asset/?id=6031082523";
+		["alarm_on"] = "http://www.roblox.com/asset/?id=6023426920";
+		["swap_vertical_circle"] = "http://www.roblox.com/asset/?id=6031233839";
+		["open_in_new"] = "http://www.roblox.com/asset/?id=6026568256";
+		["watch_later"] = "http://www.roblox.com/asset/?id=6031075924";
+		["alarm_off"] = "http://www.roblox.com/asset/?id=6023426901";
+		["maximize"] = "http://www.roblox.com/asset/?id=6026568267";
+		["lock_outline"] = "http://www.roblox.com/asset/?id=6031082533";
+		["outbond"] = "http://www.roblox.com/asset/?id=6026568244";
+		["view_carousel"] = "http://www.roblox.com/asset/?id=6031251507";
+		["published_with_changes"] = "http://www.roblox.com/asset/?id=6031243328";
+		["verified_user"] = "http://www.roblox.com/asset/?id=6031225819";
+		["drag_indicator"] = "http://www.roblox.com/asset/?id=6023426962";
+		["lightbulb_outline"] = "http://www.roblox.com/asset/?id=6026568254";
+		["segment"] = "http://www.roblox.com/asset/?id=6031260773";
+		["assignment"] = "http://www.roblox.com/asset/?id=6022668882";
+		["work_outline"] = "http://www.roblox.com/asset/?id=6031075930";
+		["line_weight"] = "http://www.roblox.com/asset/?id=6026568226";
+		["dangerous"] = "http://www.roblox.com/asset/?id=6022668916";
+		["assessment"] = "http://www.roblox.com/asset/?id=6022668897";
+		["view_day"] = "http://www.roblox.com/asset/?id=6031079153";
+		["help_center"] = "http://www.roblox.com/asset/?id=6026568192";
+		["logout"] = "http://www.roblox.com/asset/?id=6031082522";
+		["event"] = "http://www.roblox.com/asset/?id=6023426959";
+		["get_app"] = "http://www.roblox.com/asset/?id=6023565889";
+		["tab"] = "http://www.roblox.com/asset/?id=6031233851";
+		["label"] = "http://www.roblox.com/asset/?id=6031082525";
+		["g_translate"] = "http://www.roblox.com/asset/?id=6031082526";
+		["view_week"] = "http://www.roblox.com/asset/?id=6031079154";
+		["view_in_ar"] = "http://www.roblox.com/asset/?id=6031079158";
+		["card_travel"] = "http://www.roblox.com/asset/?id=6023426925";
+		["lock_open"] = "http://www.roblox.com/asset/?id=6026568220";
+		["voice_over_off"] = "http://www.roblox.com/asset/?id=6031075927";
+		["app_blocking"] = "http://www.roblox.com/asset/?id=6022668952";
+		["settings_ethernet"] = "http://www.roblox.com/asset/?id=6031280883";
+		["supervised_user_circle"] = "http://www.roblox.com/asset/?id=6031289449";
+		["done_all"] = "http://www.roblox.com/asset/?id=6023426929";
+		["lightbulb"] = "http://www.roblox.com/asset/?id=6026568247";
+		["find_replace"] = "http://www.roblox.com/asset/?id=6023426979";
+		["bookmarks"] = "http://www.roblox.com/asset/?id=6023426924";
+		["today"] = "http://www.roblox.com/asset/?id=6031229352";
+		["class"] = "http://www.roblox.com/asset/?id=6022668949";
+		["supervisor_account"] = "http://www.roblox.com/asset/?id=6031251516";
+		["support"] = "http://www.roblox.com/asset/?id=6031251532";
+		["done_outline"] = "http://www.roblox.com/asset/?id=6023426936";
+		["reorder"] = "http://www.roblox.com/asset/?id=6031154868";
+		["fact_check"] = "http://www.roblox.com/asset/?id=6023426951";
+		["thumb_up"] = "http://www.roblox.com/asset/?id=6031229347";
+		["assignment_returned"] = "http://www.roblox.com/asset/?id=6023426899";
+		["card_giftcard"] = "http://www.roblox.com/asset/?id=6023426978";
+		["trending_down"] = "http://www.roblox.com/asset/?id=6031225811";
+		["settings_backup_restore"] = "http://www.roblox.com/asset/?id=6031280886";
+		["settings_voice"] = "http://www.roblox.com/asset/?id=6031265966";
+		["dns"] = "http://www.roblox.com/asset/?id=6023426958";
+		["perm_scan_wifi"] = "http://www.roblox.com/asset/?id=6031215985";
+		["plagiarism"] = "http://www.roblox.com/asset/?id=6031243320";
+		["commute"] = "http://www.roblox.com/asset/?id=6022668901";
+		["gif"] = "http://www.roblox.com/asset/?id=6031082540";
+		["work"] = "http://www.roblox.com/asset/?id=6031075939";
+		["picture_in_picture_alt"] = "http://www.roblox.com/asset/?id=6031215979";
+		["query_builder"] = "http://www.roblox.com/asset/?id=6031086183";
+		["label_off"] = "http://www.roblox.com/asset/?id=6026568209";
+		["all_out"] = "http://www.roblox.com/asset/?id=6022668876";
+		["article"] = "http://www.roblox.com/asset/?id=6022668907";
+		["shopping_basket"] = "http://www.roblox.com/asset/?id=6031265997";
+		["mark_as_unread"] = "http://www.roblox.com/asset/?id=6026568223";
+		["work_off"] = "http://www.roblox.com/asset/?id=6031075937";
+		["delete_outline"] = "http://www.roblox.com/asset/?id=6022668962";
+		["account_box"] = "http://www.roblox.com/asset/?id=6023426915";
+		["home_filled"] = "rbxassetid://9080449299";
+		["lock"] = "http://www.roblox.com/asset/?id=6026568224";
+		["perm_device_information"] = "http://www.roblox.com/asset/?id=6031215996";
+		["add_task"] = "http://www.roblox.com/asset/?id=6022668912";
+		["text_rotate_up"] = "http://www.roblox.com/asset/?id=6031251526";
+		["swipe"] = "http://www.roblox.com/asset/?id=6031233863";
+		["eject"] = "http://www.roblox.com/asset/?id=6023426930";
+		["mediation"] = "http://www.roblox.com/asset/?id=6026568249";
+		["label_important_outline"] = "http://www.roblox.com/asset/?id=6026568199";
+		["settings_remote"] = "http://www.roblox.com/asset/?id=6031289442";
+		["history_toggle_off"] = "http://www.roblox.com/asset/?id=6026568196";
+		["invert_colors"] = "http://www.roblox.com/asset/?id=6026568253";
+		["visibility_off"] = "http://www.roblox.com/asset/?id=6031075929";
+		["addchart"] = "http://www.roblox.com/asset/?id=6023426905";
+		["cancel_schedule_send"] = "http://www.roblox.com/asset/?id=6022668963";
+		["loyalty"] = "http://www.roblox.com/asset/?id=6026568237";
+		["speaker_notes_off"] = "http://www.roblox.com/asset/?id=6031265965";
+		["online_prediction"] = "http://www.roblox.com/asset/?id=6026568239";
+		["remove_shopping_cart"] = "http://www.roblox.com/asset/?id=6031260778";
+		["text_rotate_vertical"] = "http://www.roblox.com/asset/?id=6031251518";
+		["visibility"] = "http://www.roblox.com/asset/?id=6031075931";
+		["add_to_drive"] = "http://www.roblox.com/asset/?id=6022860335";
+		["accessible"] = "http://www.roblox.com/asset/?id=6022668902";
+		["bookmark_border"] = "http://www.roblox.com/asset/?id=6022860339";
+		["tour"] = "http://www.roblox.com/asset/?id=6031229362";
+		["compare_arrows"] = "http://www.roblox.com/asset/?id=6022668951";
+		["view_sidebar"] = "http://www.roblox.com/asset/?id=6031079160";
+		["face"] = "http://www.roblox.com/asset/?id=6023426944";
+		["wysiwyg"] = "http://www.roblox.com/asset/?id=6031075938";
+		["camera_enhance"] = "http://www.roblox.com/asset/?id=6023426935";
+		["perm_camera_mic"] = "http://www.roblox.com/asset/?id=6031215983";
+		["model_training"] = "http://www.roblox.com/asset/?id=6026568222";
+		["arrow_circle_up"] = "http://www.roblox.com/asset/?id=6022668934";
+		["euro_symbol"] = "http://www.roblox.com/asset/?id=6023426954";
+		["pending_actions"] = "http://www.roblox.com/asset/?id=6031260777";
+		["not_accessible"] = "http://www.roblox.com/asset/?id=6026568269";
+		["explore_off"] = "http://www.roblox.com/asset/?id=6023426953";
+		["build"] = "http://www.roblox.com/asset/?id=6023426938";
+		["backup"] = "http://www.roblox.com/asset/?id=6023426911";
+		["settings_input_antenna"] = "http://www.roblox.com/asset/?id=6031280891";
+		["disabled_by_default"] = "http://www.roblox.com/asset/?id=6023426939";
+		["upgrade"] = "http://www.roblox.com/asset/?id=6031225815";
+		["contactless"] = "http://www.roblox.com/asset/?id=6022668886";
+		["trending_flat"] = "http://www.roblox.com/asset/?id=6031225818";
+		["schedule"] = "http://www.roblox.com/asset/?id=6031260808";
+		["offline_pin"] = "http://www.roblox.com/asset/?id=6031084770";
+		["date_range"] = "http://www.roblox.com/asset/?id=6022668894";
+		["flight_land"] = "http://www.roblox.com/asset/?id=6023565897";
+		["view_headline"] = "http://www.roblox.com/asset/?id=6031079151";
+		["cached"] = "http://www.roblox.com/asset/?id=6023426921";
+		["unpublished"] = "http://www.roblox.com/asset/?id=6031225817";
+		["outlet"] = "http://www.roblox.com/asset/?id=6031084748";
+		["favorite"] = "http://www.roblox.com/asset/?id=6023426974";
+		["vertical_split"] = "http://www.roblox.com/asset/?id=6031225820";
+		["report_problem"] = "http://www.roblox.com/asset/?id=6031086176";
+		["fingerprint"] = "http://www.roblox.com/asset/?id=6023565895";
+		["important_devices"] = "http://www.roblox.com/asset/?id=6026568202";
+		["outbox"] = "http://www.roblox.com/asset/?id=6026568263";
+		["all_inbox"] = "http://www.roblox.com/asset/?id=6022668909";
+		["label_important"] = "http://www.roblox.com/asset/?id=6026568215";
+		["print"] = "http://www.roblox.com/asset/?id=6031243324";
+		["settings_bluetooth"] = "http://www.roblox.com/asset/?id=6031280905";
+		["power_settings_new"] = "http://www.roblox.com/asset/?id=6031260781";
+		["zoom_out"] = "http://www.roblox.com/asset/?id=6031075577";
+		["stars"] = "http://www.roblox.com/asset/?id=6031265971";
+		["offline_bolt"] = "http://www.roblox.com/asset/?id=6031084742";
+		["feedback"] = "http://www.roblox.com/asset/?id=6023426957";
+		["accessibility"] = "http://www.roblox.com/asset/?id=6022668887";
+		["announcement"] = "http://www.roblox.com/asset/?id=6022668946";
+		["settings_input_hdmi"] = "http://www.roblox.com/asset/?id=6031280970";
+		["leaderboard"] = "http://www.roblox.com/asset/?id=6026568216";
+		["view_quilt"] = "http://www.roblox.com/asset/?id=6031079155";
+		["note_add"] = "http://www.roblox.com/asset/?id=6031084749";
+		["theaters"] = "http://www.roblox.com/asset/?id=6031229335";
+		["alarm"] = "http://www.roblox.com/asset/?id=6023426910";
+		["settings_input_composite"] = "http://www.roblox.com/asset/?id=6031280896";
+		["grade"] = "http://www.roblox.com/asset/?id=6026568189";
+		["tab_unselected"] = "http://www.roblox.com/asset/?id=6031251505";
+		["swap_vert"] = "http://www.roblox.com/asset/?id=6031233847";
+		["assignment_return"] = "http://www.roblox.com/asset/?id=6023426931";
+		["highlight_alt"] = "http://www.roblox.com/asset/?id=6023565913";
+		["shopping_bag"] = "http://www.roblox.com/asset/?id=6031265970";
+		["contact_support"] = "http://www.roblox.com/asset/?id=6022668879";
+		["flip_to_front"] = "http://www.roblox.com/asset/?id=6023565894";
+		["touch_app"] = "http://www.roblox.com/asset/?id=6031229361";
+		["room"] = "http://www.roblox.com/asset/?id=6031154875";
+		["send_and_archive"] = "http://www.roblox.com/asset/?id=6031280889";
+		["view_array"] = "http://www.roblox.com/asset/?id=6031225842";
+		["settings_power"] = "http://www.roblox.com/asset/?id=6031289446";
+		["admin_panel_settings"] = "http://www.roblox.com/asset/?id=6022668961";
+		["open_in_browser"] = "http://www.roblox.com/asset/?id=6026568266";
+		["card_membership"] = "http://www.roblox.com/asset/?id=6023426942";
+		["rule"] = "http://www.roblox.com/asset/?id=6031154859";
+		["schedule_send"] = "http://www.roblox.com/asset/?id=6031154866";
+		["calendar_today"] = "http://www.roblox.com/asset/?id=6022668917";
+		["info_outline"] = "http://www.roblox.com/asset/?id=6026568210";
+		["description"] = "http://www.roblox.com/asset/?id=6022668888";
+		["dashboard_customize"] = "http://www.roblox.com/asset/?id=6022668899";
+		["rowing"] = "http://www.roblox.com/asset/?id=6031154857";
+		["swap_horizontal_circle"] = "http://www.roblox.com/asset/?id=6031233833";
+		["account_balance_wallet"] = "http://www.roblox.com/asset/?id=6022668892";
+		["view_agenda"] = "http://www.roblox.com/asset/?id=6031225831";
+		["shop_two"] = "http://www.roblox.com/asset/?id=6031289461";
+		["done"] = "http://www.roblox.com/asset/?id=6023426926";
+		["circle_notifications"] = "http://www.roblox.com/asset/?id=6023426923";
+		["compress"] = "http://www.roblox.com/asset/?id=6022668878";
+		["calendar_view_day"] = "http://www.roblox.com/asset/?id=6023426946";
+		["thumbs_up_down"] = "http://www.roblox.com/asset/?id=6031229373";
+		["account_balance"] = "http://www.roblox.com/asset/?id=6022668900";
+		["play_for_work"] = "http://www.roblox.com/asset/?id=6031260776";
+		["pets"] = "http://www.roblox.com/asset/?id=6031260782";
+		["view_column"] = "http://www.roblox.com/asset/?id=6031079172";
+		["search"] = "http://www.roblox.com/asset/?id=6031154871";
+		["autorenew"] = "http://www.roblox.com/asset/?id=6023565901";
+		["copyright"] = "http://www.roblox.com/asset/?id=6023565898";
+		["privacy_tip"] = "http://www.roblox.com/asset/?id=6031260784";
+		["arrow_right_alt"] = "http://www.roblox.com/asset/?id=6022668890";
+		["delete"] = "http://www.roblox.com/asset/?id=6022668885";
+		["nightlight_round"] = "http://www.roblox.com/asset/?id=6031084743";
+		["batch_prediction"] = "http://www.roblox.com/asset/?id=6022860334";
+		["shopping_cart"] = "http://www.roblox.com/asset/?id=6031265976";
+		["login"] = "http://www.roblox.com/asset/?id=6031082527";
+		["settings_input_svideo"] = "http://www.roblox.com/asset/?id=6031289444";
+		["payment"] = "http://www.roblox.com/asset/?id=6031084751";
+		["update"] = "http://www.roblox.com/asset/?id=6031225810";
+		["text_rotation_none"] = "http://www.roblox.com/asset/?id=6031229344";
+		["perm_contact_calendar"] = "http://www.roblox.com/asset/?id=6031215990";
+		["explore"] = "http://www.roblox.com/asset/?id=6023426941";
+		["delete_forever"] = "http://www.roblox.com/asset/?id=6022668939";
+		["rounded_corner"] = "http://www.roblox.com/asset/?id=6031154861";
+		["book_online"] = "http://www.roblox.com/asset/?id=6022860332";
+		["quickreply"] = "http://www.roblox.com/asset/?id=6031243319";
+		["bug_report"] = "http://www.roblox.com/asset/?id=6022852107";
+		["subtitles_off"] = "http://www.roblox.com/asset/?id=6031289466";
+		["close_fullscreen"] = "http://www.roblox.com/asset/?id=6023426928";
+		["horizontal_split"] = "http://www.roblox.com/asset/?id=6026568194";
+		["minimize"] = "http://www.roblox.com/asset/?id=6026568240";
+		["filter_list_alt"] = "http://www.roblox.com/asset/?id=6023426955";
+		["add_shopping_cart"] = "http://www.roblox.com/asset/?id=6022668875";
+		["next_plan"] = "http://www.roblox.com/asset/?id=6026568231";
+		["view_list"] = "http://www.roblox.com/asset/?id=6031079156";
+		["receipt"] = "http://www.roblox.com/asset/?id=6031086173";
+		["polymer"] = "http://www.roblox.com/asset/?id=6031260785";
+		["spellcheck"] = "http://www.roblox.com/asset/?id=6031289450";
+		["wifi_protected_setup"] = "http://www.roblox.com/asset/?id=6031075926";
+		["label_outline"] = "http://www.roblox.com/asset/?id=6026568207";
+		["highlight_off"] = "http://www.roblox.com/asset/?id=6023565916";
+		["turned_in_not"] = "http://www.roblox.com/asset/?id=6031225806";
+		["edit_off"] = "http://www.roblox.com/asset/?id=6023426983";
+		["question_answer"] = "http://www.roblox.com/asset/?id=6031086172";
+		["settings_overscan"] = "http://www.roblox.com/asset/?id=6031289459";
+		["trending_up"] = "http://www.roblox.com/asset/?id=6031225816";
+		["verified"] = "http://www.roblox.com/asset/?id=6031225809";
+		["flight_takeoff"] = "http://www.roblox.com/asset/?id=6023565891";
+		["grading"] = "http://www.roblox.com/asset/?id=6026568191";
+		["dashboard"] = "http://www.roblox.com/asset/?id=6022668883";
+		["expand"] = "http://www.roblox.com/asset/?id=6022668891";
+		["backup_table"] = "http://www.roblox.com/asset/?id=6022860338";
+		["analytics"] = "http://www.roblox.com/asset/?id=6022668884";
+		["picture_in_picture"] = "http://www.roblox.com/asset/?id=6031215994";
+		["settings"] = "http://www.roblox.com/asset/?id=6031280882";
+		["accessible_forward"] = "http://www.roblox.com/asset/?id=6022668906";
+		["pan_tool"] = "http://www.roblox.com/asset/?id=6031084771";
+		["https"] = "http://www.roblox.com/asset/?id=6026568200";
+		["filter_alt"] = "http://www.roblox.com/asset/?id=6023426984";
+		["thumb_up_off_alt"] = "http://www.roblox.com/asset/?id=6031229342";
+		["record_voice_over"] = "http://www.roblox.com/asset/?id=6031243318";
+		["help_outline"] = "http://www.roblox.com/asset/?id=6026568201";
+		["check_circle"] = "http://www.roblox.com/asset/?id=6023426945";
+		["comment_bank"] = "http://www.roblox.com/asset/?id=6023426937";
+		["perm_phone_msg"] = "http://www.roblox.com/asset/?id=6031215986";
+		["settings_applications"] = "http://www.roblox.com/asset/?id=6031280894";
+		["exit_to_app"] = "http://www.roblox.com/asset/?id=6023426922";
+		["saved_search"] = "http://www.roblox.com/asset/?id=6031154867";
+		["toll"] = "http://www.roblox.com/asset/?id=6031229343";
+		["not_started"] = "http://www.roblox.com/asset/?id=6026568232";
+		["subject"] = "http://www.roblox.com/asset/?id=6031289452";
+		["redeem"] = "http://www.roblox.com/asset/?id=6031086170";
+		["input"] = "http://www.roblox.com/asset/?id=6026568225";
+		["settings_input_component"] = "http://www.roblox.com/asset/?id=6031280884";
+		["assignment_ind"] = "http://www.roblox.com/asset/?id=6022668935";
+		["swap_horiz"] = "http://www.roblox.com/asset/?id=6031233841";
+		["fullscreen"] = "http://www.roblox.com/asset/?id=6031094681";
+		["cancel"] = "http://www.roblox.com/asset/?id=6031094677";
+		["subdirectory_arrow_left"] = "http://www.roblox.com/asset/?id=6031104654";
+		["close"] = "http://www.roblox.com/asset/?id=6031094678";
+		["arrow_back_ios"] = "http://www.roblox.com/asset/?id=6031091003";
+		["east"] = "http://www.roblox.com/asset/?id=6031094675";
+		["unfold_more"] = "http://www.roblox.com/asset/?id=6031104644";
+		["south"] = "http://www.roblox.com/asset/?id=6031104646";
+		["arrow_drop_up"] = "http://www.roblox.com/asset/?id=6031090990";
+		["arrow_back"] = "http://www.roblox.com/asset/?id=6031091000";
+		["arrow_downward"] = "http://www.roblox.com/asset/?id=6031090991";
+		["west"] = "http://www.roblox.com/asset/?id=6031104677";
+		["legend_toggle"] = "http://www.roblox.com/asset/?id=6031097233";
+		["fullscreen_exit"] = "http://www.roblox.com/asset/?id=6031094691";
+		["last_page"] = "http://www.roblox.com/asset/?id=6031094686";
+		["switch_right"] = "http://www.roblox.com/asset/?id=6031104649";
+		["check"] = "http://www.roblox.com/asset/?id=6031094667";
+		["home_work"] = "http://www.roblox.com/asset/?id=6031094683";
+		["north_east"] = "http://www.roblox.com/asset/?id=6031097228";
+		["double_arrow"] = "http://www.roblox.com/asset/?id=6031094674";
+		["more_vert"] = "http://www.roblox.com/asset/?id=6031104648";
+		["chevron_left"] = "http://www.roblox.com/asset/?id=6031094670";
+		["more_horiz"] = "http://www.roblox.com/asset/?id=6031104650";
+		["unfold_less"] = "http://www.roblox.com/asset/?id=6031104681";
+		["first_page"] = "http://www.roblox.com/asset/?id=6031094682";
+		["payments"] = "http://www.roblox.com/asset/?id=6031097227";
+		["arrow_right"] = "http://www.roblox.com/asset/?id=6031090994";
+		["offline_share"] = "http://www.roblox.com/asset/?id=6031097267";
+		["south_west"] = "http://www.roblox.com/asset/?id=6031104652";
+		["expand_less"] = "http://www.roblox.com/asset/?id=6031094679";
+		["south_east"] = "http://www.roblox.com/asset/?id=6031104642";
+		["assistant_navigation"] = "http://www.roblox.com/asset/?id=6031091006";
+		["apps"] = "http://www.roblox.com/asset/?id=6031090999";
+		["arrow_upward"] = "http://www.roblox.com/asset/?id=6031090997";
+		["app_settings_alt"] = "http://www.roblox.com/asset/?id=6031090998";
+		["subdirectory_arrow_right"] = "http://www.roblox.com/asset/?id=6031104647";
+		["north_west"] = "http://www.roblox.com/asset/?id=6031104630";
+		["switch_left"] = "http://www.roblox.com/asset/?id=6031104651";
+		["chevron_right"] = "http://www.roblox.com/asset/?id=6031094680";
+		["arrow_forward"] = "http://www.roblox.com/asset/?id=6031090995";
+		["arrow_forward_ios"] = "http://www.roblox.com/asset/?id=6031091008";
+		["arrow_drop_down"] = "http://www.roblox.com/asset/?id=6031091004";
+		["refresh"] = "http://www.roblox.com/asset/?id=6031097226";
+		["pivot_table_chart"] = "http://www.roblox.com/asset/?id=6031097234";
+		["expand_more"] = "http://www.roblox.com/asset/?id=6031094687";
+		["campaign"] = "http://www.roblox.com/asset/?id=6031094666";
+		["arrow_left"] = "http://www.roblox.com/asset/?id=6031091002";
+		["arrow_drop_down_circle"] = "http://www.roblox.com/asset/?id=6031091001";
+		["menu_open"] = "http://www.roblox.com/asset/?id=6031097229";
+		["waterfall_chart"] = "http://www.roblox.com/asset/?id=6031104632";
+		["assistant_direction"] = "http://www.roblox.com/asset/?id=6031091005";
+		["menu"] = "http://www.roblox.com/asset/?id=6031097225";
+		["personal_video"] = "http://www.roblox.com/asset/?id=6034457070";
+		["power_off"] = "http://www.roblox.com/asset/?id=6034457087";
+		["wifi_off"] = "http://www.roblox.com/asset/?id=6034461625";
+		["adb"] = "http://www.roblox.com/asset/?id=6034418515";
+		["airline_seat_recline_normal"] = "http://www.roblox.com/asset/?id=6034418512";
+		["sync_problem"] = "http://www.roblox.com/asset/?id=6034452653";
+		["network_check"] = "http://www.roblox.com/asset/?id=6034461631";
+		["event_busy"] = "http://www.roblox.com/asset/?id=6034439634";
+		["airline_seat_flat"] = "http://www.roblox.com/asset/?id=6034418511";
+		["disc_full"] = "http://www.roblox.com/asset/?id=6034418518";
+		["sd_card"] = "http://www.roblox.com/asset/?id=6034457089";
+		["time_to_leave"] = "http://www.roblox.com/asset/?id=6034452660";
+		["phone_bluetooth_speaker"] = "http://www.roblox.com/asset/?id=6034457057";
+		["phone_paused"] = "http://www.roblox.com/asset/?id=6034457066";
+		["phone_locked"] = "http://www.roblox.com/asset/?id=6034457058";
+		["more"] = "http://www.roblox.com/asset/?id=6034461627";
+		["add_call"] = "http://www.roblox.com/asset/?id=6034418524";
+		["account_tree"] = "http://www.roblox.com/asset/?id=6034418507";
+		["do_not_disturb_on"] = "http://www.roblox.com/asset/?id=6034439649";
+		["event_note"] = "http://www.roblox.com/asset/?id=6034439637";
+		["sync_disabled"] = "http://www.roblox.com/asset/?id=6034452649";
+		["mms"] = "http://www.roblox.com/asset/?id=6034461621";
+		["airline_seat_flat_angled"] = "http://www.roblox.com/asset/?id=6034418513";
+		["bluetooth_audio"] = "http://www.roblox.com/asset/?id=6034418522";
+		["vibration"] = "http://www.roblox.com/asset/?id=6034452651";
+		["system_update"] = "http://www.roblox.com/asset/?id=6034452663";
+		["enhanced_encryption"] = "http://www.roblox.com/asset/?id=6034439652";
+		["wc"] = "http://www.roblox.com/asset/?id=6034452643";
+		["live_tv"] = "http://www.roblox.com/asset/?id=6034439648";
+		["folder_special"] = "http://www.roblox.com/asset/?id=6034439639";
+		["phone_missed"] = "http://www.roblox.com/asset/?id=6034457056";
+		["airline_seat_recline_extra"] = "http://www.roblox.com/asset/?id=6034418528";
+		["sms"] = "http://www.roblox.com/asset/?id=6034452645";
+		["tap_and_play"] = "http://www.roblox.com/asset/?id=6034452650";
+		["confirmation_number"] = "http://www.roblox.com/asset/?id=6034418519";
+		["event_available"] = "http://www.roblox.com/asset/?id=6034439643";
+		["sms_failed"] = "http://www.roblox.com/asset/?id=6034452676";
+		["do_not_disturb_alt"] = "http://www.roblox.com/asset/?id=6034461619";
+		["do_not_disturb"] = "http://www.roblox.com/asset/?id=6034439645";
+		["ondemand_video"] = "http://www.roblox.com/asset/?id=6034457065";
+		["no_encryption"] = "http://www.roblox.com/asset/?id=6034457059";
+		["airline_seat_legroom_extra"] = "http://www.roblox.com/asset/?id=6034418508";
+		["tv_off"] = "http://www.roblox.com/asset/?id=6034452646";
+		["sim_card_alert"] = "http://www.roblox.com/asset/?id=6034452641";
+		["airline_seat_legroom_normal"] = "http://www.roblox.com/asset/?id=6034418532";
+		["wifi"] = "http://www.roblox.com/asset/?id=6034461626";
+		["do_not_disturb_off"] = "http://www.roblox.com/asset/?id=6034439642";
+		["imagesearch_roller"] = "http://www.roblox.com/asset/?id=6034439635";
+		["power"] = "http://www.roblox.com/asset/?id=6034457105";
+		["airline_seat_legroom_reduced"] = "http://www.roblox.com/asset/?id=6034418520";
+		["phone_in_talk"] = "http://www.roblox.com/asset/?id=6034457067";
+		["airline_seat_individual_suite"] = "http://www.roblox.com/asset/?id=6034418514";
+		["priority_high"] = "http://www.roblox.com/asset/?id=6034457092";
+		["phone_callback"] = "http://www.roblox.com/asset/?id=6034457104";
+		["phone_forwarded"] = "http://www.roblox.com/asset/?id=6034457106";
+		["sync"] = "http://www.roblox.com/asset/?id=6034452662";
+		["vpn_lock"] = "http://www.roblox.com/asset/?id=6034452648";
+		["support_agent"] = "http://www.roblox.com/asset/?id=6034452656";
+		["network_locked"] = "http://www.roblox.com/asset/?id=6034457064";
+		["directions_off"] = "http://www.roblox.com/asset/?id=6034418517";
+		["drive_eta"] = "http://www.roblox.com/asset/?id=6034464371";
+		["sensor_window"] = "http://www.roblox.com/asset/?id=6031067242";
+		["sensor_door"] = "http://www.roblox.com/asset/?id=6031067241";
+		["keyboard_return"] = "http://www.roblox.com/asset/?id=6034818370";
+		["monitor"] = "http://www.roblox.com/asset/?id=6034837803";
+		["device_hub"] = "http://www.roblox.com/asset/?id=6034789877";
+		["keyboard"] = "http://www.roblox.com/asset/?id=6034818398";
+		["keyboard_voice"] = "http://www.roblox.com/asset/?id=6034818360";
+		["cast"] = "http://www.roblox.com/asset/?id=6034789876";
+		["developer_board"] = "http://www.roblox.com/asset/?id=6034789883";
+		["tablet"] = "http://www.roblox.com/asset/?id=6034848733";
+		["keyboard_hide"] = "http://www.roblox.com/asset/?id=6034818386";
+		["dock"] = "http://www.roblox.com/asset/?id=6034789888";
+		["phonelink"] = "http://www.roblox.com/asset/?id=6034837801";
+		["device_unknown"] = "http://www.roblox.com/asset/?id=6034789884";
+		["speaker_group"] = "http://www.roblox.com/asset/?id=6034848732";
+		["desktop_mac"] = "http://www.roblox.com/asset/?id=6034789898";
+		["point_of_sale"] = "http://www.roblox.com/asset/?id=6034837798";
+		["memory"] = "http://www.roblox.com/asset/?id=6034837807";
+		["keyboard_tab"] = "http://www.roblox.com/asset/?id=6034818363";
+		["router"] = "http://www.roblox.com/asset/?id=6034837806";
+		["sim_card"] = "http://www.roblox.com/asset/?id=6034837800";
+		["headset"] = "http://www.roblox.com/asset/?id=6034789880";
+		["gamepad"] = "http://www.roblox.com/asset/?id=6034789879";
+		["speaker"] = "http://www.roblox.com/asset/?id=6034848746";
+		["devices_other"] = "http://www.roblox.com/asset/?id=6034789873";
+		["laptop"] = "http://www.roblox.com/asset/?id=6034818367";
+		["scanner"] = "http://www.roblox.com/asset/?id=6034837799";
+		["tv"] = "http://www.roblox.com/asset/?id=6034848740";
+		["headset_mic"] = "http://www.roblox.com/asset/?id=6034818383";
+		["browser_not_supported"] = "http://www.roblox.com/asset/?id=6034789875";
+		["computer"] = "http://www.roblox.com/asset/?id=6034789874";
+		["connected_tv"] = "http://www.roblox.com/asset/?id=6034789870";
+		["phonelink_off"] = "http://www.roblox.com/asset/?id=6034837804";
+		["headset_off"] = "http://www.roblox.com/asset/?id=6034818402";
+		["cast_connected"] = "http://www.roblox.com/asset/?id=6034789895";
+		["watch"] = "http://www.roblox.com/asset/?id=6034848747";
+		["keyboard_arrow_up"] = "http://www.roblox.com/asset/?id=6034818379";
+		["keyboard_backspace"] = "http://www.roblox.com/asset/?id=6034818381";
+		["laptop_chromebook"] = "http://www.roblox.com/asset/?id=6034818364";
+		["phone_iphone"] = "http://www.roblox.com/asset/?id=6034837811";
+		["smartphone"] = "http://www.roblox.com/asset/?id=6034848731";
+		["power_input"] = "http://www.roblox.com/asset/?id=6034837794";
+		["videogame_asset"] = "http://www.roblox.com/asset/?id=6034848748";
+		["desktop_windows"] = "http://www.roblox.com/asset/?id=6034789893";
+		["keyboard_arrow_down"] = "http://www.roblox.com/asset/?id=6034818372";
+		["laptop_mac"] = "http://www.roblox.com/asset/?id=6034837808";
+		["laptop_windows"] = "http://www.roblox.com/asset/?id=6034837796";
+		["keyboard_arrow_right"] = "http://www.roblox.com/asset/?id=6034818365";
+		["cast_for_education"] = "http://www.roblox.com/asset/?id=6034789872";
+		["keyboard_capslock"] = "http://www.roblox.com/asset/?id=6034818403";
+		["toys"] = "http://www.roblox.com/asset/?id=6034848752";
+		["tablet_android"] = "http://www.roblox.com/asset/?id=6034848734";
+		["mouse"] = "http://www.roblox.com/asset/?id=6034837797";
+		["phone_android"] = "http://www.roblox.com/asset/?id=6034837793";
+		["keyboard_arrow_left"] = "http://www.roblox.com/asset/?id=6034818375";
+		["security"] = "http://www.roblox.com/asset/?id=6034837802";
+		["dry_cleaning"] = "http://www.roblox.com/asset/?id=6034754456";
+		["bakery_dining"] = "http://www.roblox.com/asset/?id=6034767610";
+		["place"] = "http://www.roblox.com/asset/?id=6034503372";
+		["run_circle"] = "http://www.roblox.com/asset/?id=6034503367";
+		["local_post_office"] = "http://www.roblox.com/asset/?id=6034513883";
+		["takeout_dining"] = "http://www.roblox.com/asset/?id=6034467808";
+		["nightlife"] = "http://www.roblox.com/asset/?id=6034510003";
+		["design_services"] = "http://www.roblox.com/asset/?id=6034754453";
+		["celebration"] = "http://www.roblox.com/asset/?id=6034767613";
+		["near_me_disabled"] = "http://www.roblox.com/asset/?id=6034509988";
+		["add_location_alt"] = "http://www.roblox.com/asset/?id=6034483678";
+		["directions_run"] = "http://www.roblox.com/asset/?id=6034754445";
+		["local_fire_department"] = "http://www.roblox.com/asset/?id=6034684949";
+		["add_road"] = "http://www.roblox.com/asset/?id=6034483677";
+		["my_location"] = "http://www.roblox.com/asset/?id=6034509987";
+		["dinner_dining"] = "http://www.roblox.com/asset/?id=6034754457";
+		["local_airport"] = "http://www.roblox.com/asset/?id=6034687951";
+		["zoom_out_map"] = "http://www.roblox.com/asset/?id=6035229856";
+		["pin_drop"] = "http://www.roblox.com/asset/?id=6034470807";
+		["subway"] = "http://www.roblox.com/asset/?id=6034467790";
+		["electric_moped"] = "http://www.roblox.com/asset/?id=6034744027";
+		["restaurant_menu"] = "http://www.roblox.com/asset/?id=6034503378";
+		["local_gas_station"] = "http://www.roblox.com/asset/?id=6034684935";
+		["local_cafe"] = "http://www.roblox.com/asset/?id=6034687954";
+		["theater_comedy"] = "http://www.roblox.com/asset/?id=6034467796";
+		["directions_bus"] = "http://www.roblox.com/asset/?id=6034754434";
+		["hail"] = "http://www.roblox.com/asset/?id=6034744033";
+		["satellite"] = "http://www.roblox.com/asset/?id=6034503370";
+		["local_phone"] = "http://www.roblox.com/asset/?id=6034513884";
+		["electric_bike"] = "http://www.roblox.com/asset/?id=6034744032";
+		["local_see"] = "http://www.roblox.com/asset/?id=6034513887";
+		["transit_enterexit"] = "http://www.roblox.com/asset/?id=6034467805";
+		["local_convenience_store"] = "http://www.roblox.com/asset/?id=6034687956";
+		["local_offer"] = "http://www.roblox.com/asset/?id=6034513891";
+		["electric_car"] = "http://www.roblox.com/asset/?id=6034744029";
+		["beenhere"] = "http://www.roblox.com/asset/?id=6034483675";
+		["miscellaneous_services"] = "http://www.roblox.com/asset/?id=6034509993";
+		["maps_ugc"] = "http://www.roblox.com/asset/?id=6034509992";
+		["moped"] = "http://www.roblox.com/asset/?id=6034509999";
+		["medical_services"] = "http://www.roblox.com/asset/?id=6034510001";
+		["money"] = "http://www.roblox.com/asset/?id=6034509997";
+		["transfer_within_a_station"] = "http://www.roblox.com/asset/?id=6034467809";
+		["electrical_services"] = "http://www.roblox.com/asset/?id=6034744038";
+		["museum"] = "http://www.roblox.com/asset/?id=6034510005";
+		["add_location"] = "http://www.roblox.com/asset/?id=6034483672";
+		["layers"] = "http://www.roblox.com/asset/?id=6034687957";
+		["handyman"] = "http://www.roblox.com/asset/?id=6034744057";
+		["local_pharmacy"] = "http://www.roblox.com/asset/?id=6034513903";
+		["electric_rickshaw"] = "http://www.roblox.com/asset/?id=6034744043";
+		["alt_route"] = "http://www.roblox.com/asset/?id=6034483670";
+		["no_transfer"] = "http://www.roblox.com/asset/?id=6034503363";
+		["pedal_bike"] = "http://www.roblox.com/asset/?id=6034503374";
+		["directions_transit"] = "http://www.roblox.com/asset/?id=6034754436";
+		["railway_alert"] = "http://www.roblox.com/asset/?id=6034470823";
+		["local_police"] = "http://www.roblox.com/asset/?id=6034513895";
+		["directions_car"] = "http://www.roblox.com/asset/?id=6034754441";
+		["category"] = "http://www.roblox.com/asset/?id=6034767621";
+		["attractions"] = "http://www.roblox.com/asset/?id=6034767620";
+		["person_pin_circle"] = "http://www.roblox.com/asset/?id=6034503375";
+		["cleaning_services"] = "http://www.roblox.com/asset/?id=6034767619";
+		["terrain"] = "http://www.roblox.com/asset/?id=6034467794";
+		["no_meals"] = "http://www.roblox.com/asset/?id=6034510024";
+		["train"] = "http://www.roblox.com/asset/?id=6034467803";
+		["delivery_dining"] = "http://www.roblox.com/asset/?id=6034767644";
+		["pest_control"] = "http://www.roblox.com/asset/?id=6034470809";
+		["directions"] = "http://www.roblox.com/asset/?id=6034754449";
+		["atm"] = "http://www.roblox.com/asset/?id=6034767614";
+		["rate_review"] = "http://www.roblox.com/asset/?id=6034503385";
+		["local_bar"] = "http://www.roblox.com/asset/?id=6034687950";
+		["local_drink"] = "http://www.roblox.com/asset/?id=6034687965";
+		["directions_railway"] = "http://www.roblox.com/asset/?id=6034754433";
+		["person_pin"] = "http://www.roblox.com/asset/?id=6034503364";
+		["ev_station"] = "http://www.roblox.com/asset/?id=6034744037";
+		["home_repair_service"] = "http://www.roblox.com/asset/?id=6034744064";
+		["bus_alert"] = "http://www.roblox.com/asset/?id=6034767618";
+		["agriculture"] = "http://www.roblox.com/asset/?id=6034483674";
+		["volunteer_activism"] = "http://www.roblox.com/asset/?id=6034467799";
+		["breakfast_dining"] = "http://www.roblox.com/asset/?id=6034483671";
+		["layers_clear"] = "http://www.roblox.com/asset/?id=6034687975";
+		["plumbing"] = "http://www.roblox.com/asset/?id=6034470800";
+		["taxi_alert"] = "http://www.roblox.com/asset/?id=6034467792";
+		["add_business"] = "http://www.roblox.com/asset/?id=6034483666";
+		["badge"] = "http://www.roblox.com/asset/?id=6034767607";
+		["edit_attributes"] = "http://www.roblox.com/asset/?id=6034754443";
+		["directions_walk"] = "http://www.roblox.com/asset/?id=6034754448";
+		["local_play"] = "http://www.roblox.com/asset/?id=6034513889";
+		["bike_scooter"] = "http://www.roblox.com/asset/?id=6034483669";
+		["two_wheeler"] = "http://www.roblox.com/asset/?id=6034467795";
+		["local_florist"] = "http://www.roblox.com/asset/?id=6034684940";
+		["local_hotel"] = "http://www.roblox.com/asset/?id=6034684939";
+		["no_meals_ouline"] = "http://www.roblox.com/asset/?id=6034510025";
+		["festival"] = "http://www.roblox.com/asset/?id=6034744031";
+		["local_shipping"] = "http://www.roblox.com/asset/?id=6034684926";
+		["directions_boat"] = "http://www.roblox.com/asset/?id=6034754442";
+		["wrong_location"] = "http://www.roblox.com/asset/?id=6034467801";
+		["restaurant"] = "http://www.roblox.com/asset/?id=6034503366";
+		["directions_subway"] = "http://www.roblox.com/asset/?id=6034754440";
+		["not_listed_location"] = "http://www.roblox.com/asset/?id=6034503380";
+		["electric_scooter"] = "http://www.roblox.com/asset/?id=6034744041";
+		["ramen_dining"] = "http://www.roblox.com/asset/?id=6034503377";
+		["edit_road"] = "http://www.roblox.com/asset/?id=6034744035";
+		["local_printshop"] = "http://www.roblox.com/asset/?id=6034513897";
+		["map"] = "http://www.roblox.com/asset/?id=6034684930";
+		["car_rental"] = "http://www.roblox.com/asset/?id=6034767641";
+		["multiple_stop"] = "http://www.roblox.com/asset/?id=6034510026";
+		["brunch_dining"] = "http://www.roblox.com/asset/?id=6034767611";
+		["local_laundry_service"] = "http://www.roblox.com/asset/?id=6034684943";
+		["set_meal"] = "http://www.roblox.com/asset/?id=6034503368";
+		["local_car_wash"] = "http://www.roblox.com/asset/?id=6034687976";
+		["pest_control_rodent"] = "http://www.roblox.com/asset/?id=6034470803";
+		["local_pizza"] = "http://www.roblox.com/asset/?id=6034513885";
+		["local_grocery_store"] = "http://www.roblox.com/asset/?id=6034684933";
+		["traffic"] = "http://www.roblox.com/asset/?id=6034467797";
+		["departure_board"] = "http://www.roblox.com/asset/?id=6034767615";
+		["icecream"] = "http://www.roblox.com/asset/?id=6034687967";
+		["navigation"] = "http://www.roblox.com/asset/?id=6034509984";
+		["near_me"] = "http://www.roblox.com/asset/?id=6034509996";
+		["fastfood"] = "http://www.roblox.com/asset/?id=6034744034";
+		["local_library"] = "http://www.roblox.com/asset/?id=6034684931";
+		["local_activity"] = "http://www.roblox.com/asset/?id=6034687955";
+		["local_hospital"] = "http://www.roblox.com/asset/?id=6034684956";
+		["menu_book"] = "http://www.roblox.com/asset/?id=6034509994";
+		["directions_bike"] = "http://www.roblox.com/asset/?id=6034754459";
+		["store_mall_directory"] = "http://www.roblox.com/asset/?id=6034470811";
+		["trip_origin"] = "http://www.roblox.com/asset/?id=6034467804";
+		["tram"] = "http://www.roblox.com/asset/?id=6034467806";
+		["edit_location"] = "http://www.roblox.com/asset/?id=6034754439";
+		["streetview"] = "http://www.roblox.com/asset/?id=6034470805";
+		["hvac"] = "http://www.roblox.com/asset/?id=6034687960";
+		["lunch_dining"] = "http://www.roblox.com/asset/?id=6034684928";
+		["car_repair"] = "http://www.roblox.com/asset/?id=6034767617";
+		["compass_calibration"] = "http://www.roblox.com/asset/?id=6034767623";
+		["360"] = "http://www.roblox.com/asset/?id=6034767608";
+		["flight"] = "http://www.roblox.com/asset/?id=6034744030";
+		["local_mall"] = "http://www.roblox.com/asset/?id=6034684934";
+		["hotel"] = "http://www.roblox.com/asset/?id=6034687977";
+		["local_parking"] = "http://www.roblox.com/asset/?id=6034513893";
+		["hardware"] = "http://www.roblox.com/asset/?id=6034744036";
+		["local_dining"] = "http://www.roblox.com/asset/?id=6034687963";
+		["park"] = "http://www.roblox.com/asset/?id=6034503369";
+		["location_pin"] = "http://www.roblox.com/asset/?id=6034684937";
+		["local_movies"] = "http://www.roblox.com/asset/?id=6034684936";
+		["local_atm"] = "http://www.roblox.com/asset/?id=6034687953";
+		["local_taxi"] = "http://www.roblox.com/asset/?id=6034684927";
+		["brightness_low"] = "http://www.roblox.com/asset/?id=6034989542";
+		["screen_lock_landscape"] = "http://www.roblox.com/asset/?id=6034996700";
+		["graphic_eq"] = "http://www.roblox.com/asset/?id=6034989551";
+		["screen_lock_rotation"] = "http://www.roblox.com/asset/?id=6034996710";
+		["signal_cellular_4_bar"] = "http://www.roblox.com/asset/?id=6035030076";
+		["airplanemode_inactive"] = "http://www.roblox.com/asset/?id=6034983848";
+		["signal_wifi_0_bar"] = "http://www.roblox.com/asset/?id=6035030067";
+		["battery_full"] = "http://www.roblox.com/asset/?id=6034983854";
+		["gps_fixed"] = "http://www.roblox.com/asset/?id=6034989550";
+		["brightness_high"] = "http://www.roblox.com/asset/?id=6034989541";
+		["ad_units"] = "http://www.roblox.com/asset/?id=6034983845";
+		["signal_cellular_alt"] = "http://www.roblox.com/asset/?id=6035030079";
+		["bluetooth_connected"] = "http://www.roblox.com/asset/?id=6034983855";
+		["wifi_tethering"] = "http://www.roblox.com/asset/?id=6035039430";
+		["dvr"] = "http://www.roblox.com/asset/?id=6034989561";
+		["screen_search_desktop"] = "http://www.roblox.com/asset/?id=6034996711";
+		["network_wifi"] = "http://www.roblox.com/asset/?id=6034996712";
+		["access_alarms"] = "http://www.roblox.com/asset/?id=6034983853";
+		["nfc"] = "http://www.roblox.com/asset/?id=6034996698";
+		["location_disabled"] = "http://www.roblox.com/asset/?id=6034996694";
+		["signal_wifi_4_bar"] = "http://www.roblox.com/asset/?id=6035030077";
+		["access_time"] = "http://www.roblox.com/asset/?id=6034983856";
+		["mobile_off"] = "http://www.roblox.com/asset/?id=6034996702";
+		["battery_unknown"] = "http://www.roblox.com/asset/?id=6034983842";
+		["signal_cellular_null"] = "http://www.roblox.com/asset/?id=6035030075";
+		["bluetooth_disabled"] = "http://www.roblox.com/asset/?id=6034989562";
+		["developer_mode"] = "http://www.roblox.com/asset/?id=6034989549";
+		["network_cell"] = "http://www.roblox.com/asset/?id=6034996709";
+		["sd_storage"] = "http://www.roblox.com/asset/?id=6034996719";
+		["signal_cellular_no_sim"] = "http://www.roblox.com/asset/?id=6035030078";
+		["devices"] = "http://www.roblox.com/asset/?id=6034989540";
+		["screen_rotation"] = "http://www.roblox.com/asset/?id=6034996701";
+		["device_thermostat"] = "http://www.roblox.com/asset/?id=6034989544";
+		["signal_wifi_off"] = "http://www.roblox.com/asset/?id=6035030074";
+		["widgets"] = "http://www.roblox.com/asset/?id=6035039429";
+		["bluetooth"] = "http://www.roblox.com/asset/?id=6034983880";
+		["battery_charging_full"] = "http://www.roblox.com/asset/?id=6034983849";
+		["mobile_friendly"] = "http://www.roblox.com/asset/?id=6034996699";
+		["signal_cellular_0_bar"] = "http://www.roblox.com/asset/?id=6035030072";
+		["storage"] = "http://www.roblox.com/asset/?id=6035030083";
+		["send_to_mobile"] = "http://www.roblox.com/asset/?id=6034996697";
+		["location_searching"] = "http://www.roblox.com/asset/?id=6034996695";
+		["brightness_auto"] = "http://www.roblox.com/asset/?id=6034989545";
+		["wifi_lock"] = "http://www.roblox.com/asset/?id=6035039428";
+		["gps_not_fixed"] = "http://www.roblox.com/asset/?id=6034989547";
+		["access_alarm"] = "http://www.roblox.com/asset/?id=6034983844";
+		["battery_alert"] = "http://www.roblox.com/asset/?id=6034983843";
+		["signal_cellular_off"] = "http://www.roblox.com/asset/?id=6035030084";
+		["signal_cellular_connected_no_internet_4"] = "http://www.roblox.com/asset/?id=6035229858";
+		["gps_off"] = "http://www.roblox.com/asset/?id=6034989548";
+		["add_alarm"] = "http://www.roblox.com/asset/?id=6034983850";
+		["brightness_medium"] = "http://www.roblox.com/asset/?id=6034989543";
+		["usb"] = "http://www.roblox.com/asset/?id=6035030080";
+		["airplanemode_active"] = "http://www.roblox.com/asset/?id=6034983864";
+		["reset_tv"] = "http://www.roblox.com/asset/?id=6034996696";
+		["wallpaper"] = "http://www.roblox.com/asset/?id=6035030102";
+		["settings_system_daydream"] = "http://www.roblox.com/asset/?id=6035030081";
+		["bluetooth_searching"] = "http://www.roblox.com/asset/?id=6034989553";
+		["add_to_home_screen"] = "http://www.roblox.com/asset/?id=6034983858";
+		["screen_lock_portrait"] = "http://www.roblox.com/asset/?id=6034996706";
+		["data_usage"] = "http://www.roblox.com/asset/?id=6034989568";
+		["_auto_delete"] = "http://www.roblox.com/asset/?id=6031071068";
+		["_error"] = "http://www.roblox.com/asset/?id=6031071057";
+		["_notification_important"] = "http://www.roblox.com/asset/?id=6031071056";
+		["_add_alert"] = "http://www.roblox.com/asset/?id=6031071067";
+		["_warning"] = "http://www.roblox.com/asset/?id=6031071053";
+		["_error_outline"] = "http://www.roblox.com/asset/?id=6031071050";
+		["check_box_outline_blank"] = "http://www.roblox.com/asset/?id=6031068420";
+		["toggle_off"] = "http://www.roblox.com/asset/?id=6031068429";
+		["indeterminate_check_box"] = "http://www.roblox.com/asset/?id=6031068445";
+		["radio_button_checked"] = "http://www.roblox.com/asset/?id=6031068426";
+		["toggle_on"] = "http://www.roblox.com/asset/?id=6031068430";
+		["check_box"] = "http://www.roblox.com/asset/?id=6031068421";
+		["radio_button_unchecked"] = "http://www.roblox.com/asset/?id=6031068433";
+		["star"] = "http://www.roblox.com/asset/?id=6031068423";
+		["star_border"] = "http://www.roblox.com/asset/?id=6031068425";
+		["star_half"] = "http://www.roblox.com/asset/?id=6031068427";
+		["star_outline"] = "http://www.roblox.com/asset/?id=6031068428";
+		["multiline_chart"] = "http://www.roblox.com/asset/?id=6034941721";
+		["pie_chart"] = "http://www.roblox.com/asset/?id=6034973076";
+		["format_line_spacing"] = "http://www.roblox.com/asset/?id=6034910905";
+		["format_align_left"] = "http://www.roblox.com/asset/?id=6034900727";
+		["linear_scale"] = "http://www.roblox.com/asset/?id=6034941707";
+		["insert_photo"] = "http://www.roblox.com/asset/?id=6034941703";
+		["scatter_plot"] = "http://www.roblox.com/asset/?id=6034973094";
+		["post_add"] = "http://www.roblox.com/asset/?id=6034973083";
+		["format_textdirection_r_to_l"] = "http://www.roblox.com/asset/?id=6034925623";
+		["format_size"] = "http://www.roblox.com/asset/?id=6034910908";
+		["format_color_fill"] = "http://www.roblox.com/asset/?id=6034910903";
+		["format_paint"] = "http://www.roblox.com/asset/?id=6034925618";
+		["format_underlined"] = "http://www.roblox.com/asset/?id=6034925627";
+		["format_shapes"] = "http://www.roblox.com/asset/?id=6034910909";
+		["title"] = "http://www.roblox.com/asset/?id=6034934042";
+		["highlight"] = "http://www.roblox.com/asset/?id=6034925617";
+		["bar_chart"] = "http://www.roblox.com/asset/?id=6034898096";
+		["format_indent_increase"] = "http://www.roblox.com/asset/?id=6034900724";
+		["merge_type"] = "http://www.roblox.com/asset/?id=6034941705";
+		["bubble_chart"] = "http://www.roblox.com/asset/?id=6034925612";
+		["publish"] = "http://www.roblox.com/asset/?id=6034973085";
+		["format_indent_decrease"] = "http://www.roblox.com/asset/?id=6034900733";
+		["margin"] = "http://www.roblox.com/asset/?id=6034941701";
+		["table_rows"] = "http://www.roblox.com/asset/?id=6034934025";
+		["stacked_line_chart"] = "http://www.roblox.com/asset/?id=6034934039";
+		["border_clear"] = "http://www.roblox.com/asset/?id=6034898135";
+		["border_color"] = "http://www.roblox.com/asset/?id=6034898100";
+		["border_inner"] = "http://www.roblox.com/asset/?id=6034898131";
+		["insert_chart"] = "http://www.roblox.com/asset/?id=6034925628";
+		["border_top"] = "http://www.roblox.com/asset/?id=6034900726";
+		["padding"] = "http://www.roblox.com/asset/?id=6034973078";
+		["border_vertical"] = "http://www.roblox.com/asset/?id=6034900725";
+		["score"] = "http://www.roblox.com/asset/?id=6034934041";
+		["border_right"] = "http://www.roblox.com/asset/?id=6034898120";
+		["add_chart"] = "http://www.roblox.com/asset/?id=6034898093";
+		["space_bar"] = "http://www.roblox.com/asset/?id=6034934037";
+		["border_outer"] = "http://www.roblox.com/asset/?id=6034898104";
+		["mode_comment"] = "http://www.roblox.com/asset/?id=6034941700";
+		["attach_money"] = "http://www.roblox.com/asset/?id=6034898098";
+		["drag_handle"] = "http://www.roblox.com/asset/?id=6034910907";
+		["format_align_right"] = "http://www.roblox.com/asset/?id=6034900723";
+		["pie_chart_outlined"] = "http://www.roblox.com/asset/?id=6034973077";
+		["horizontal_rule"] = "http://www.roblox.com/asset/?id=6034925610";
+		["border_all"] = "http://www.roblox.com/asset/?id=6034898101";
+		["border_style"] = "http://www.roblox.com/asset/?id=6034898097";
+		["insert_comment"] = "http://www.roblox.com/asset/?id=6034925609";
+		["vertical_align_top"] = "http://www.roblox.com/asset/?id=6034973080";
+		["vertical_align_center"] = "http://www.roblox.com/asset/?id=6034934051";
+		["format_color_text"] = "http://www.roblox.com/asset/?id=6034910910";
+		["format_quote"] = "http://www.roblox.com/asset/?id=6034925629";
+		["height"] = "http://www.roblox.com/asset/?id=6034925613";
+		["add_comment"] = "http://www.roblox.com/asset/?id=6034898128";
+		["format_strikethrough"] = "http://www.roblox.com/asset/?id=6034910904";
+		["strikethrough_s"] = "http://www.roblox.com/asset/?id=6034934030";
+		["border_left"] = "http://www.roblox.com/asset/?id=6034898099";
+		["format_list_bulleted"] = "http://www.roblox.com/asset/?id=6034925620";
+		["format_italic"] = "http://www.roblox.com/asset/?id=6034910912";
+		["format_list_numbered"] = "http://www.roblox.com/asset/?id=6034925622";
+		["attach_file"] = "http://www.roblox.com/asset/?id=6034898102";
+		["wrap_text"] = "http://www.roblox.com/asset/?id=6034973118";
+		["insert_invitation"] = "http://www.roblox.com/asset/?id=6034973091";
+		["format_list_numbered_rtl"] = "http://www.roblox.com/asset/?id=6034910906";
+		["border_horizontal"] = "http://www.roblox.com/asset/?id=6034898105";
+		["format_align_center"] = "http://www.roblox.com/asset/?id=6034900718";
+		["format_textdirection_l_to_r"] = "http://www.roblox.com/asset/?id=6034925619";
+		["show_chart"] = "http://www.roblox.com/asset/?id=6034934032";
+		["insert_chart_outlined"] = "http://www.roblox.com/asset/?id=6034925606";
+		["vertical_align_bottom"] = "http://www.roblox.com/asset/?id=6034934023";
+		["subscript"] = "http://www.roblox.com/asset/?id=6034934059";
+		["format_align_justify"] = "http://www.roblox.com/asset/?id=6034900721";
+		["format_clear"] = "http://www.roblox.com/asset/?id=6034910902";
+		["notes"] = "http://www.roblox.com/asset/?id=6034973084";
+		["insert_drive_file"] = "http://www.roblox.com/asset/?id=6034941697";
+		["functions"] = "http://www.roblox.com/asset/?id=6034925614";
+		["insert_emoticon"] = "http://www.roblox.com/asset/?id=6034973079";
+		["insert_link"] = "http://www.roblox.com/asset/?id=6034973074";
+		["format_color_reset"] = "http://www.roblox.com/asset/?id=6034900743";
+		["monetization_on"] = "http://www.roblox.com/asset/?id=6034973115";
+		["short_text"] = "http://www.roblox.com/asset/?id=6034934035";
+		["mode_edit"] = "http://www.roblox.com/asset/?id=6034941708";
+		["superscript"] = "http://www.roblox.com/asset/?id=6034934034";
+		["table_chart"] = "http://www.roblox.com/asset/?id=6034973081";
+		["format_bold"] = "http://www.roblox.com/asset/?id=6034900732";
+		["money_off"] = "http://www.roblox.com/asset/?id=6034973088";
+		["border_bottom"] = "http://www.roblox.com/asset/?id=6034898094";
+		["text_fields"] = "http://www.roblox.com/asset/?id=6034934040";
+		["note"] = "http://www.roblox.com/asset/?id=6026663734";
+		["shuffle"] = "http://www.roblox.com/asset/?id=6026667003";
+		["library_books"] = "http://www.roblox.com/asset/?id=6026660085";
+		["library_music"] = "http://www.roblox.com/asset/?id=6026660075";
+		["surround_sound"] = "http://www.roblox.com/asset/?id=6026671209";
+		["forward_30"] = "http://www.roblox.com/asset/?id=6026660088";
+		["music_video"] = "http://www.roblox.com/asset/?id=6026663704";
+		["videocam_off"] = "http://www.roblox.com/asset/?id=6026671212";
+		["control_camera"] = "http://www.roblox.com/asset/?id=6026647916";
+		["explicit"] = "http://www.roblox.com/asset/?id=6026647913";
+		["3k_plus"] = "http://www.roblox.com/asset/?id=6026681598";
+		["fiber_pin"] = "http://www.roblox.com/asset/?id=6026660064";
+		["skip_previous"] = "http://www.roblox.com/asset/?id=6026667011";
+		["pause_circle_filled"] = "http://www.roblox.com/asset/?id=6026663718";
+		["video_settings"] = "http://www.roblox.com/asset/?id=6026671211";
+		["movie"] = "http://www.roblox.com/asset/?id=6026660081";
+		["add_to_queue"] = "http://www.roblox.com/asset/?id=6026647903";
+		["6k"] = "http://www.roblox.com/asset/?id=6026681579";
+		["web_asset"] = "http://www.roblox.com/asset/?id=6026671239";
+		["play_circle_outline"] = "http://www.roblox.com/asset/?id=6026663726";
+		["volume_off"] = "http://www.roblox.com/asset/?id=6026671224";
+		["mic_off"] = "http://www.roblox.com/asset/?id=6026660076";
+		["featured_play_list"] = "http://www.roblox.com/asset/?id=6026647932";
+		["pause_circle_outline"] = "http://www.roblox.com/asset/?id=6026663701";
+		["slow_motion_video"] = "http://www.roblox.com/asset/?id=6026681583";
+		["7k"] = "http://www.roblox.com/asset/?id=6026681584";
+		["playlist_add"] = "http://www.roblox.com/asset/?id=6026663728";
+		["fiber_smart_record"] = "http://www.roblox.com/asset/?id=6026660080";
+		["8k"] = "http://www.roblox.com/asset/?id=6026643014";
+		["hd"] = "http://www.roblox.com/asset/?id=6026660065";
+		["repeat_one_on"] = "http://www.roblox.com/asset/?id=6026666992";
+		["recent_actors"] = "http://www.roblox.com/asset/?id=6026663773";
+		["fiber_new"] = "http://www.roblox.com/asset/?id=6026647930";
+		["fiber_dvr"] = "http://www.roblox.com/asset/?id=6026647912";
+		["hearing_disabled"] = "http://www.roblox.com/asset/?id=6026660068";
+		["forward_10"] = "http://www.roblox.com/asset/?id=6026660062";
+		["4k_plus"] = "http://www.roblox.com/asset/?id=6026643005";
+		["repeat_one"] = "http://www.roblox.com/asset/?id=6026681590";
+		["equalizer"] = "http://www.roblox.com/asset/?id=6026647906";
+		["stop"] = "http://www.roblox.com/asset/?id=6026681576";
+		["2k"] = "http://www.roblox.com/asset/?id=6026643032";
+		["playlist_add_check"] = "http://www.roblox.com/asset/?id=6026663727";
+		["not_interested"] = "http://www.roblox.com/asset/?id=6026663743";
+		["videocam"] = "http://www.roblox.com/asset/?id=6026671213";
+		["sort_by_alpha"] = "http://www.roblox.com/asset/?id=6026667009";
+		["library_add"] = "http://www.roblox.com/asset/?id=6026660063";
+		["stop_circle"] = "http://www.roblox.com/asset/?id=6026681577";
+		["pause"] = "http://www.roblox.com/asset/?id=6026663719";
+		["new_releases"] = "http://www.roblox.com/asset/?id=6026663730";
+		["album"] = "http://www.roblox.com/asset/?id=6026647905";
+		["sd"] = "http://www.roblox.com/asset/?id=6026681582";
+		["volume_up"] = "http://www.roblox.com/asset/?id=6026671215";
+		["replay_5"] = "http://www.roblox.com/asset/?id=6026666993";
+		["high_quality"] = "http://www.roblox.com/asset/?id=6026660059";
+		["shuffle_on"] = "http://www.roblox.com/asset/?id=6026666996";
+		["play_arrow"] = "http://www.roblox.com/asset/?id=6026663699";
+		["snooze"] = "http://www.roblox.com/asset/?id=6026667006";
+		["closed_caption_disabled"] = "http://www.roblox.com/asset/?id=6026647900";
+		["subscriptions"] = "http://www.roblox.com/asset/?id=6026671207";
+		["skip_next"] = "http://www.roblox.com/asset/?id=6026667005";
+		["branding_watermark"] = "http://www.roblox.com/asset/?id=6026647911";
+		["speed"] = "http://www.roblox.com/asset/?id=6026681578";
+		["art_track"] = "http://www.roblox.com/asset/?id=6026647908";
+		["3k"] = "http://www.roblox.com/asset/?id=6026681574";
+		["4k"] = "http://www.roblox.com/asset/?id=6026643017";
+		["volume_mute"] = "http://www.roblox.com/asset/?id=6026671214";
+		["playlist_play"] = "http://www.roblox.com/asset/?id=6026663723";
+		["remove_from_queue"] = "http://www.roblox.com/asset/?id=6026663771";
+		["fast_forward"] = "http://www.roblox.com/asset/?id=6026647902";
+		["play_disabled"] = "http://www.roblox.com/asset/?id=6026663702";
+		["fast_rewind"] = "http://www.roblox.com/asset/?id=6026647942";
+		["5k"] = "http://www.roblox.com/asset/?id=6026681575";
+		["replay_10"] = "http://www.roblox.com/asset/?id=6026667007";
+		["video_library"] = "http://www.roblox.com/asset/?id=6026671208";
+		["loop"] = "http://www.roblox.com/asset/?id=6026660087";
+		["replay_circle_filled"] = "http://www.roblox.com/asset/?id=6026667002";
+		["5g"] = "http://www.roblox.com/asset/?id=6026643007";
+		["library_add_check"] = "http://www.roblox.com/asset/?id=6026660083";
+		["repeat"] = "http://www.roblox.com/asset/?id=6026666998";
+		["queue_play_next"] = "http://www.roblox.com/asset/?id=6026663700";
+		["forward_5"] = "http://www.roblox.com/asset/?id=6026660067";
+		["web"] = "http://www.roblox.com/asset/?id=6026671234";
+		["mic_none"] = "http://www.roblox.com/asset/?id=6026660066";
+		["queue"] = "http://www.roblox.com/asset/?id=6026663724";
+		["closed_caption_off"] = "http://www.roblox.com/asset/?id=6026647943";
+		["hearing"] = "http://www.roblox.com/asset/?id=6026660060";
+		["queue_music"] = "http://www.roblox.com/asset/?id=6026663725";
+		["airplay"] = "http://www.roblox.com/asset/?id=6026647929";
+		["9k"] = "http://www.roblox.com/asset/?id=6026643013";
+		["video_label"] = "http://www.roblox.com/asset/?id=6026671204";
+		["8k_plus"] = "http://www.roblox.com/asset/?id=6026643003";
+		["play_circle_filled"] = "http://www.roblox.com/asset/?id=6026663705";
+		["1k"] = "http://www.roblox.com/asset/?id=6026643002";
+		["fiber_manual_record"] = "http://www.roblox.com/asset/?id=6026647909";
+		["closed_caption"] = "http://www.roblox.com/asset/?id=6026647896";
+		["subtitles"] = "http://www.roblox.com/asset/?id=6026671203";
+		["featured_video"] = "http://www.roblox.com/asset/?id=6026647910";
+		["replay_30"] = "http://www.roblox.com/asset/?id=6026667010";
+		["10k"] = "http://www.roblox.com/asset/?id=6026643035";
+		["5k_plus"] = "http://www.roblox.com/asset/?id=6026643028";
+		["6k_plus"] = "http://www.roblox.com/asset/?id=6026643019";
+		["replay"] = "http://www.roblox.com/asset/?id=6026666999";
+		["repeat_on"] = "http://www.roblox.com/asset/?id=6026666994";
+		["1k_plus"] = "http://www.roblox.com/asset/?id=6026681580";
+		["2k_plus"] = "http://www.roblox.com/asset/?id=6026681588";
+		["games"] = "http://www.roblox.com/asset/?id=6026660074";
+		["volume_down"] = "http://www.roblox.com/asset/?id=6026671206";
+		["mic"] = "http://www.roblox.com/asset/?id=6026660078";
+		["call_to_action"] = "http://www.roblox.com/asset/?id=6026647898";
+		["7k_plus"] = "http://www.roblox.com/asset/?id=6026643012";
+		["av_timer"] = "http://www.roblox.com/asset/?id=6026647934";
+		["9k_plus"] = "http://www.roblox.com/asset/?id=6026681585";
+		["radio"] = "http://www.roblox.com/asset/?id=6026663698";
+		["10mp"] = "http://www.roblox.com/asset/?id=6031328149";
+		["20mp"] = "http://www.roblox.com/asset/?id=6031488940";
+		["wb_twighlight"] = "http://www.roblox.com/asset/?id=6034412760";
+		["movie_creation"] = "http://www.roblox.com/asset/?id=6034323681";
+		["crop_portrait"] = "http://www.roblox.com/asset/?id=6031630198";
+		["filter_5"] = "http://www.roblox.com/asset/?id=6031597518";
+		["broken_image"] = "http://www.roblox.com/asset/?id=6031471480";
+		["flip_camera_android"] = "http://www.roblox.com/asset/?id=6034333280";
+		["flip_camera_ios"] = "http://www.roblox.com/asset/?id=6034333267";
+		["circle"] = "http://www.roblox.com/asset/?id=6031625146";
+		["photo_camera_front"] = "http://www.roblox.com/asset/?id=6031771000";
+		["assistant"] = "http://www.roblox.com/asset/?id=6031360356";
+		["face_retouching_natural"] = "http://www.roblox.com/asset/?id=6034333274";
+		["palette"] = "http://www.roblox.com/asset/?id=6034316009";
+		["nature_people"] = "http://www.roblox.com/asset/?id=6034323711";
+		["14mp"] = "http://www.roblox.com/asset/?id=6031328161";
+		["gradient"] = "http://www.roblox.com/asset/?id=6034333261";
+		["filter_4"] = "http://www.roblox.com/asset/?id=6031597512";
+		["panorama_wide_angle_select"] = "http://www.roblox.com/asset/?id=6031770990";
+		["photo"] = "http://www.roblox.com/asset/?id=6031770993";
+		["grid_off"] = "http://www.roblox.com/asset/?id=6034333286";
+		["leak_add"] = "http://www.roblox.com/asset/?id=6034407074";
+		["landscape"] = "http://www.roblox.com/asset/?id=6034407069";
+		["exposure_plus_1"] = "http://www.roblox.com/asset/?id=6034328970";
+		["slideshow"] = "http://www.roblox.com/asset/?id=6031754546";
+		["camera_alt"] = "http://www.roblox.com/asset/?id=6031572307";
+		["audiotrack"] = "http://www.roblox.com/asset/?id=6031471489";
+		["filter_none"] = "http://www.roblox.com/asset/?id=6031600815";
+		["blur_off"] = "http://www.roblox.com/asset/?id=6031371055";
+		["crop_16_9"] = "http://www.roblox.com/asset/?id=6031630205";
+		["blur_on"] = "http://www.roblox.com/asset/?id=6031371068";
+		["brightness_4"] = "http://www.roblox.com/asset/?id=6031471483";
+		["details"] = "http://www.roblox.com/asset/?id=6034328968";
+		["panorama_horizontal"] = "http://www.roblox.com/asset/?id=6034315966";
+		["camera_rear"] = "http://www.roblox.com/asset/?id=6031572316";
+		["hdr_weak"] = "http://www.roblox.com/asset/?id=6034407083";
+		["collections"] = "http://www.roblox.com/asset/?id=6031625145";
+		["hdr_enhanced_select"] = "http://www.roblox.com/asset/?id=6034333281";
+		["adjust"] = "http://www.roblox.com/asset/?id=6031339048";
+		["burst_mode"] = "http://www.roblox.com/asset/?id=6031572306";
+		["nature"] = "http://www.roblox.com/asset/?id=6034323695";
+		["brightness_6"] = "http://www.roblox.com/asset/?id=6031572309";
+		["19mp"] = "http://www.roblox.com/asset/?id=6031339054";
+		["grain"] = "http://www.roblox.com/asset/?id=6034333288";
+		["receipt_long"] = "http://www.roblox.com/asset/?id=6031763428";
+		["photo_filter"] = "http://www.roblox.com/asset/?id=6031770992";
+		["edit"] = "http://www.roblox.com/asset/?id=6034328955";
+		["healing"] = "http://www.roblox.com/asset/?id=6034407071";
+		["exposure_neg_1"] = "http://www.roblox.com/asset/?id=6034328957";
+		["exposure"] = "http://www.roblox.com/asset/?id=6034328962";
+		["wb_shade"] = "http://www.roblox.com/asset/?id=6034315974";
+		["compare"] = "http://www.roblox.com/asset/?id=6031625151";
+		["cases"] = "http://www.roblox.com/asset/?id=6031572324";
+		["timer_3"] = "http://www.roblox.com/asset/?id=6031754540";
+		["exposure_plus_2"] = "http://www.roblox.com/asset/?id=6034328961";
+		["12mp"] = "http://www.roblox.com/asset/?id=6031328140";
+		["22mp"] = "http://www.roblox.com/asset/?id=6031360353";
+		["timer_off"] = "http://www.roblox.com/asset/?id=6031734881";
+		["auto_stories"] = "http://www.roblox.com/asset/?id=6031360360";
+		["rotate_left"] = "http://www.roblox.com/asset/?id=6031763427";
+		["wb_iridescent"] = "http://www.roblox.com/asset/?id=6034315972";
+		["shutter_speed"] = "http://www.roblox.com/asset/?id=6031763443";
+		["switch_video"] = "http://www.roblox.com/asset/?id=6031754536";
+		["23mp"] = "http://www.roblox.com/asset/?id=6031339045";
+		["euro"] = "http://www.roblox.com/asset/?id=6034328963";
+		["15mp"] = "http://www.roblox.com/asset/?id=6031328158";
+		["filter_center_focus"] = "http://www.roblox.com/asset/?id=6031600817";
+		["photo_library"] = "http://www.roblox.com/asset/?id=6031770998";
+		["mp"] = "http://www.roblox.com/asset/?id=6034323674";
+		["looks_4"] = "http://www.roblox.com/asset/?id=6034407089";
+		["filter_2"] = "http://www.roblox.com/asset/?id=6031597521";
+		["crop_3_2"] = "http://www.roblox.com/asset/?id=6034328956";
+		["auto_fix_normal"] = "http://www.roblox.com/asset/?id=6031371074";
+		["auto_fix_off"] = "http://www.roblox.com/asset/?id=6031360381";
+		["wb_auto"] = "http://www.roblox.com/asset/?id=6031734875";
+		["switch_camera"] = "http://www.roblox.com/asset/?id=6031754550";
+		["filter_vintage"] = "http://www.roblox.com/asset/?id=6031600811";
+		["photo_size_select_small"] = "http://www.roblox.com/asset/?id=6031763457";
+		["blur_linear"] = "http://www.roblox.com/asset/?id=6031488930";
+		["hdr_on"] = "http://www.roblox.com/asset/?id=6034333279";
+		["tag_faces"] = "http://www.roblox.com/asset/?id=6031754560";
+		["21mp"] = "http://www.roblox.com/asset/?id=6031339065";
+		["camera"] = "http://www.roblox.com/asset/?id=6031572312";
+		["image_aspect_ratio"] = "http://www.roblox.com/asset/?id=6034407073";
+		["filter_b_and_w"] = "http://www.roblox.com/asset/?id=6031600824";
+		["crop_landscape"] = "http://www.roblox.com/asset/?id=6031630202";
+		["13mp"] = "http://www.roblox.com/asset/?id=6031328137";
+		["grid_on"] = "http://www.roblox.com/asset/?id=6034333276";
+		["motion_photos_pause"] = "http://www.roblox.com/asset/?id=6034323668";
+		["filter_6"] = "http://www.roblox.com/asset/?id=6031597524";
+		["linked_camera"] = "http://www.roblox.com/asset/?id=6034407082";
+		["panorama_fish_eye"] = "http://www.roblox.com/asset/?id=6034315969";
+		["panorama"] = "http://www.roblox.com/asset/?id=6034315955";
+		["color_lens"] = "http://www.roblox.com/asset/?id=6031625148";
+		["lens"] = "http://www.roblox.com/asset/?id=6034407081";
+		["crop_din"] = "http://www.roblox.com/asset/?id=6031630208";
+		["exposure_neg_2"] = "http://www.roblox.com/asset/?id=6034328973";
+		["mic_external_off"] = "http://www.roblox.com/asset/?id=6034323672";
+		["crop_free"] = "http://www.roblox.com/asset/?id=6031630212";
+		["crop_original"] = "http://www.roblox.com/asset/?id=6031630204";
+		["panorama_photosphere_select"] = "http://www.roblox.com/asset/?id=6034315975";
+		["photo_size_select_actual"] = "http://www.roblox.com/asset/?id=6031771012";
+		["leak_remove"] = "http://www.roblox.com/asset/?id=6034407080";
+		["collections_bookmark"] = "http://www.roblox.com/asset/?id=6034328965";
+		["straighten"] = "http://www.roblox.com/asset/?id=6031754545";
+		["timelapse"] = "http://www.roblox.com/asset/?id=6031754541";
+		["picture_as_pdf"] = "http://www.roblox.com/asset/?id=6031763425";
+		["crop_rotate"] = "http://www.roblox.com/asset/?id=6031630203";
+		["control_point_duplicate"] = "http://www.roblox.com/asset/?id=6034328959";
+		["photo_camera_back"] = "http://www.roblox.com/asset/?id=6031771007";
+		["looks_3"] = "http://www.roblox.com/asset/?id=6034407088";
+		["motion_photos_off"] = "http://www.roblox.com/asset/?id=6034323670";
+		["rotate_right"] = "http://www.roblox.com/asset/?id=6031763429";
+		["view_compact"] = "http://www.roblox.com/asset/?id=6031734878";
+		["crop_7_5"] = "http://www.roblox.com/asset/?id=6031630197";
+		["style"] = "http://www.roblox.com/asset/?id=6031754538";
+		["exposure_zero"] = "http://www.roblox.com/asset/?id=6034329000";
+		["camera_front"] = "http://www.roblox.com/asset/?id=6031572318";
+		["hdr_strong"] = "http://www.roblox.com/asset/?id=6034333272";
+		["view_comfy"] = "http://www.roblox.com/asset/?id=6031734876";
+		["panorama_vertical"] = "http://www.roblox.com/asset/?id=6034315963";
+		["panorama_vertical_select"] = "http://www.roblox.com/asset/?id=6034315961";
+		["looks_two"] = "http://www.roblox.com/asset/?id=6034412757";
+		["filter_drama"] = "http://www.roblox.com/asset/?id=6031600813";
+		["center_focus_strong"] = "http://www.roblox.com/asset/?id=6031625147";
+		["18mp"] = "http://www.roblox.com/asset/?id=6031339064";
+		["7mp"] = "http://www.roblox.com/asset/?id=6031328139";
+		["wb_sunny"] = "http://www.roblox.com/asset/?id=6034412758";
+		["filter_9_plus"] = "http://www.roblox.com/asset/?id=6031600812";
+		["crop"] = "http://www.roblox.com/asset/?id=6034328964";
+		["vignette"] = "http://www.roblox.com/asset/?id=6031734905";
+		["brightness_2"] = "http://www.roblox.com/asset/?id=6031488938";
+		["crop_square"] = "http://www.roblox.com/asset/?id=6031630222";
+		["looks_5"] = "http://www.roblox.com/asset/?id=6034412764";
+		["flip"] = "http://www.roblox.com/asset/?id=6034333275";
+		["looks_one"] = "http://www.roblox.com/asset/?id=6034412761";
+		["flash_off"] = "http://www.roblox.com/asset/?id=6034333270";
+		["hdr_off"] = "http://www.roblox.com/asset/?id=6034333266";
+		["photo_album"] = "http://www.roblox.com/asset/?id=6031770989";
+		["motion_photos_paused"] = "http://www.roblox.com/asset/?id=6034323675";
+		["photo_camera"] = "http://www.roblox.com/asset/?id=6031770997";
+		["2mp"] = "http://www.roblox.com/asset/?id=6031328138";
+		["3mp"] = "http://www.roblox.com/asset/?id=6031328136";
+		["24mp"] = "http://www.roblox.com/asset/?id=6031360352";
+		["filter_9"] = "http://www.roblox.com/asset/?id=6031597534";
+		["6mp"] = "http://www.roblox.com/asset/?id=6031328131";
+		["remove_red_eye"] = "http://www.roblox.com/asset/?id=6031763426";
+		["4mp"] = "http://www.roblox.com/asset/?id=6031328152";
+		["add_a_photo"] = "http://www.roblox.com/asset/?id=6031339049";
+		["filter_3"] = "http://www.roblox.com/asset/?id=6031597513";
+		["crop_5_4"] = "http://www.roblox.com/asset/?id=6034328960";
+		["8mp"] = "http://www.roblox.com/asset/?id=6031328133";
+		["camera_roll"] = "http://www.roblox.com/asset/?id=6031572314";
+		["panorama_wide_angle"] = "http://www.roblox.com/asset/?id=6031770995";
+		["transform"] = "http://www.roblox.com/asset/?id=6031734873";
+		["flare"] = "http://www.roblox.com/asset/?id=6031600816";
+		["image_search"] = "http://www.roblox.com/asset/?id=6034407084";
+		["auto_awesome"] = "http://www.roblox.com/asset/?id=6031360365";
+		["motion_photos_on"] = "http://www.roblox.com/asset/?id=6034323669";
+		["rotate_90_degrees_ccw"] = "http://www.roblox.com/asset/?id=6031763456";
+		["filter_1"] = "http://www.roblox.com/asset/?id=6031597511";
+		["filter_tilt_shift"] = "http://www.roblox.com/asset/?id=6031600814";
+		["image"] = "http://www.roblox.com/asset/?id=6034407078";
+		["center_focus_weak"] = "http://www.roblox.com/asset/?id=6031625144";
+		["blur_circular"] = "http://www.roblox.com/asset/?id=6031488945";
+		["bedtime"] = "http://www.roblox.com/asset/?id=6031371054";
+		["auto_fix_high"] = "http://www.roblox.com/asset/?id=6031360355";
+		["monochrome_photos"] = "http://www.roblox.com/asset/?id=6034323678";
+		["flash_auto"] = "http://www.roblox.com/asset/?id=6034333287";
+		["5mp"] = "http://www.roblox.com/asset/?id=6031328144";
+		["photo_size_select_large"] = "http://www.roblox.com/asset/?id=6031763423";
+		["assistant_photo"] = "http://www.roblox.com/asset/?id=6031339052";
+		["animation"] = "http://www.roblox.com/asset/?id=6031625150";
+		["looks"] = "http://www.roblox.com/asset/?id=6034407096";
+		["17mp"] = "http://www.roblox.com/asset/?id=6031339055";
+		["panorama_horizontal_select"] = "http://www.roblox.com/asset/?id=6034315965";
+		["flash_on"] = "http://www.roblox.com/asset/?id=6034333271";
+		["iso"] = "http://www.roblox.com/asset/?id=6034407106";
+		["music_note"] = "http://www.roblox.com/asset/?id=6034323673";
+		["music_off"] = "http://www.roblox.com/asset/?id=6034323679";
+		["navigate_next"] = "http://www.roblox.com/asset/?id=6034315956";
+		["timer"] = "http://www.roblox.com/asset/?id=6031754564";
+		["loupe"] = "http://www.roblox.com/asset/?id=6034412770";
+		["navigate_before"] = "http://www.roblox.com/asset/?id=6034323696";
+		["brightness_1"] = "http://www.roblox.com/asset/?id=6031471488";
+		["brightness_7"] = "http://www.roblox.com/asset/?id=6031471491";
+		["tonality"] = "http://www.roblox.com/asset/?id=6031734891";
+		["brush"] = "http://www.roblox.com/asset/?id=6031572320";
+		["colorize"] = "http://www.roblox.com/asset/?id=6031625161";
+		["filter_7"] = "http://www.roblox.com/asset/?id=6031597515";
+		["16mp"] = "http://www.roblox.com/asset/?id=6031328168";
+		["timer_10"] = "http://www.roblox.com/asset/?id=6031734880";
+		["portrait"] = "http://www.roblox.com/asset/?id=6031763434";
+		["tune"] = "http://www.roblox.com/asset/?id=6031734877";
+		["image_not_supported"] = "http://www.roblox.com/asset/?id=6034407076";
+		["wb_cloudy"] = "http://www.roblox.com/asset/?id=6031734907";
+		["auto_awesome_motion"] = "http://www.roblox.com/asset/?id=6031360370";
+		["filter_8"] = "http://www.roblox.com/asset/?id=6031597532";
+		["brightness_5"] = "http://www.roblox.com/asset/?id=6031471479";
+		["movie_filter"] = "http://www.roblox.com/asset/?id=6034323687";
+		["add_photo_alternate"] = "http://www.roblox.com/asset/?id=6031471484";
+		["add_to_photos"] = "http://www.roblox.com/asset/?id=6031371075";
+		["texture"] = "http://www.roblox.com/asset/?id=6031754553";
+		["11mp"] = "http://www.roblox.com/asset/?id=6031328141";
+		["mic_external_on"] = "http://www.roblox.com/asset/?id=6034323671";
+		["looks_6"] = "http://www.roblox.com/asset/?id=6034412759";
+		["dehaze"] = "http://www.roblox.com/asset/?id=6031630200";
+		["control_point"] = "http://www.roblox.com/asset/?id=6031625131";
+		["panorama_photosphere"] = "http://www.roblox.com/asset/?id=6034412763";
+		["filter_frames"] = "http://www.roblox.com/asset/?id=6031600833";
+		["auto_awesome_mosaic"] = "http://www.roblox.com/asset/?id=6031371053";
+		["9mp"] = "http://www.roblox.com/asset/?id=6031328146";
+		["filter"] = "http://www.roblox.com/asset/?id=6031597514";
+		["brightness_3"] = "http://www.roblox.com/asset/?id=6031572317";
+		["dirty_lens"] = "http://www.roblox.com/asset/?id=6034328967";
+		["wb_incandescent"] = "http://www.roblox.com/asset/?id=6034316010";
+		["filter_hdr"] = "http://www.roblox.com/asset/?id=6031600819";
+		["textsms"] = "http://www.roblox.com/asset/?id=6035202006";
+		["comment"] = "http://www.roblox.com/asset/?id=6035181871";
+		["call_end"] = "http://www.roblox.com/asset/?id=6035173845";
+		["qr_code_scanner"] = "http://www.roblox.com/asset/?id=6035202022";
+		["phonelink_setup"] = "http://www.roblox.com/asset/?id=6035202025";
+		["call_merge"] = "http://www.roblox.com/asset/?id=6035173843";
+		["phonelink_erase"] = "http://www.roblox.com/asset/?id=6035202085";
+		["contact_mail"] = "http://www.roblox.com/asset/?id=6035181868";
+		["contact_phone"] = "http://www.roblox.com/asset/?id=6035181861";
+		["screen_share"] = "http://www.roblox.com/asset/?id=6035202008";
+		["present_to_all"] = "http://www.roblox.com/asset/?id=6035202020";
+		["stay_primary_portrait"] = "http://www.roblox.com/asset/?id=6035202009";
+		["message"] = "http://www.roblox.com/asset/?id=6035202033";
+		["sentiment_satisfied_alt"] = "http://www.roblox.com/asset/?id=6035202069";
+		["stay_current_portrait"] = "http://www.roblox.com/asset/?id=6035202004";
+		["voicemail"] = "http://www.roblox.com/asset/?id=6035202019";
+		["business"] = "http://www.roblox.com/asset/?id=6035173853";
+		["mail_outline"] = "http://www.roblox.com/asset/?id=6035190844";
+		["vpn_key"] = "http://www.roblox.com/asset/?id=6035202034";
+		["forward_to_inbox"] = "http://www.roblox.com/asset/?id=6035190840";
+		["contacts"] = "http://www.roblox.com/asset/?id=6035181864";
+		["phonelink_ring"] = "http://www.roblox.com/asset/?id=6035202066";
+		["domain_disabled"] = "http://www.roblox.com/asset/?id=6035181862";
+		["person_add_disabled"] = "http://www.roblox.com/asset/?id=6035202007";
+		["stay_primary_landscape"] = "http://www.roblox.com/asset/?id=6035202026";
+		["alternate_email"] = "http://www.roblox.com/asset/?id=6035173865";
+		["phone_disabled"] = "http://www.roblox.com/asset/?id=6035202028";
+		["email"] = "http://www.roblox.com/asset/?id=6035181866";
+		["mobile_screen_share"] = "http://www.roblox.com/asset/?id=6035202021";
+		["live_help"] = "http://www.roblox.com/asset/?id=6035190836";
+		["chat_bubble"] = "http://www.roblox.com/asset/?id=6035181858";
+		["stop_screen_share"] = "http://www.roblox.com/asset/?id=6035202042";
+		["location_on"] = "http://www.roblox.com/asset/?id=6035190846";
+		["chat_bubble_outline"] = "http://www.roblox.com/asset/?id=6035181869";
+		["dialer_sip"] = "http://www.roblox.com/asset/?id=6035181865";
+		["no_sim"] = "http://www.roblox.com/asset/?id=6035202030";
+		["list_alt"] = "http://www.roblox.com/asset/?id=6035190838";
+		["call"] = "http://www.roblox.com/asset/?id=6035173859";
+		["pause_presentation"] = "http://www.roblox.com/asset/?id=6035202015";
+		["invert_colors_off"] = "http://www.roblox.com/asset/?id=6035190842";
+		["call_missed_outgoing"] = "http://www.roblox.com/asset/?id=6035173847";
+		["stay_current_landscape"] = "http://www.roblox.com/asset/?id=6035202011";
+		["import_export"] = "http://www.roblox.com/asset/?id=6035202040";
+		["add_ic_call"] = "http://www.roblox.com/asset/?id=6035173839";
+		["dialpad"] = "http://www.roblox.com/asset/?id=6035181892";
+		["nat"] = "http://www.roblox.com/asset/?id=6035202082";
+		["unsubscribe"] = "http://www.roblox.com/asset/?id=6035202044";
+		["mark_chat_unread"] = "http://www.roblox.com/asset/?id=6035190841";
+		["portable_wifi_off"] = "http://www.roblox.com/asset/?id=6035202091";
+		["location_off"] = "http://www.roblox.com/asset/?id=6035202049";
+		["person_search"] = "http://www.roblox.com/asset/?id=6035202013";
+		["phonelink_lock"] = "http://www.roblox.com/asset/?id=6035202064";
+		["desktop_access_disabled"] = "http://www.roblox.com/asset/?id=6035181863";
+		["import_contacts"] = "http://www.roblox.com/asset/?id=6035190854";
+		["rss_feed"] = "http://www.roblox.com/asset/?id=6035202016";
+		["chat"] = "http://www.roblox.com/asset/?id=6035173838";
+		["print_disabled"] = "http://www.roblox.com/asset/?id=6035202041";
+		["mark_email_read"] = "http://www.roblox.com/asset/?id=6035202038";
+		["hourglass_top"] = "http://www.roblox.com/asset/?id=6035190886";
+		["clear_all"] = "http://www.roblox.com/asset/?id=6035181870";
+		["forum"] = "http://www.roblox.com/asset/?id=6035202002";
+		["qr_code"] = "http://www.roblox.com/asset/?id=6035202012";
+		["speaker_phone"] = "http://www.roblox.com/asset/?id=6035202018";
+		["rtt"] = "http://www.roblox.com/asset/?id=6035202010";
+		["domain_verification"] = "http://www.roblox.com/asset/?id=6035181867";
+		["app_registration"] = "http://www.roblox.com/asset/?id=6035173870";
+		["call_split"] = "http://www.roblox.com/asset/?id=6035173861";
+		["cell_wifi"] = "http://www.roblox.com/asset/?id=6035173852";
+		["phone_enabled"] = "http://www.roblox.com/asset/?id=6035202089";
+		["call_made"] = "http://www.roblox.com/asset/?id=6035173858";
+		["call_received"] = "http://www.roblox.com/asset/?id=6035173844";
+		["phone"] = "http://www.roblox.com/asset/?id=6035202017";
+		["ring_volume"] = "http://www.roblox.com/asset/?id=6035202032";
+		["mark_email_unread"] = "http://www.roblox.com/asset/?id=6035202027";
+		["hourglass_bottom"] = "http://www.roblox.com/asset/?id=6035202043";
+		["read_more"] = "http://www.roblox.com/asset/?id=6035202014";
+		["duo"] = "http://www.roblox.com/asset/?id=6035181860";
+		["more_time"] = "http://www.roblox.com/asset/?id=6035202036";
+		["wifi_calling"] = "http://www.roblox.com/asset/?id=6035202065";
+		["swap_calls"] = "http://www.roblox.com/asset/?id=6035202037";
+		["cancel_presentation"] = "http://www.roblox.com/asset/?id=6035173837";
+		["call_missed"] = "http://www.roblox.com/asset/?id=6035173850";
+		["mark_chat_read"] = "http://www.roblox.com/asset/?id=6035202031";
+		["text_snippet"] = "http://www.roblox.com/asset/?id=6031302995";
+		["snippet_folder"] = "http://www.roblox.com/asset/?id=6031302947";
+		["workspaces_outline"] = "http://www.roblox.com/asset/?id=6031302952";
+		["file_download"] = "http://www.roblox.com/asset/?id=6031302931";
+		["request_quote"] = "http://www.roblox.com/asset/?id=6031302941";
+		["approval"] = "http://www.roblox.com/asset/?id=6031302928";
+		["drive_folder_upload"] = "http://www.roblox.com/asset/?id=6031302929";
+		["rule_folder"] = "http://www.roblox.com/asset/?id=6031302940";
+		["attach_email"] = "http://www.roblox.com/asset/?id=6031302935";
+		["topic"] = "http://www.roblox.com/asset/?id=6031302976";
+		["upload_file"] = "http://www.roblox.com/asset/?id=6031302959";
+		["attachment"] = "http://www.roblox.com/asset/?id=6031302921";
+		["file_download_done"] = "http://www.roblox.com/asset/?id=6031302926";
+		["drive_file_move_outline"] = "http://www.roblox.com/asset/?id=6031302924";
+		["cloud_upload"] = "http://www.roblox.com/asset/?id=6031302992";
+		["cloud_circle"] = "http://www.roblox.com/asset/?id=6031302919";
+		["folder_shared"] = "http://www.roblox.com/asset/?id=6031302945";
+		["cloud_download"] = "http://www.roblox.com/asset/?id=6031302917";
+		["file_upload"] = "http://www.roblox.com/asset/?id=6031302996";
+		["workspaces_filled"] = "http://www.roblox.com/asset/?id=6031302961";
+		["cloud_queue"] = "http://www.roblox.com/asset/?id=6031302916";
+		["cloud"] = "http://www.roblox.com/asset/?id=6031302918";
+		["folder_open"] = "http://www.roblox.com/asset/?id=6031302934";
+		["grid_view"] = "http://www.roblox.com/asset/?id=6031302950";
+		["cloud_off"] = "http://www.roblox.com/asset/?id=6031302993";
+		["create_new_folder"] = "http://www.roblox.com/asset/?id=6031302933";
+		["cloud_done"] = "http://www.roblox.com/asset/?id=6031302927";
+		["folder"] = "http://www.roblox.com/asset/?id=6031302932";
+		["drive_file_move"] = "http://www.roblox.com/asset/?id=6031302922";
+		["drive_file_rename_outline"] = "http://www.roblox.com/asset/?id=6031302994";
+		["notifications_active"] = "http://www.roblox.com/asset/?id=6034304908";
+		["sentiment_neutral"] = "http://www.roblox.com/asset/?id=6034230636";
+		["sick"] = "http://www.roblox.com/asset/?id=6034230642";
+		["poll"] = "http://www.roblox.com/asset/?id=6034267991";
+		["emoji_events"] = "http://www.roblox.com/asset/?id=6034275726";
+		["groups"] = "http://www.roblox.com/asset/?id=6034281935";
+		["sports_soccer"] = "http://www.roblox.com/asset/?id=6034227075";
+		["person_add"] = "http://www.roblox.com/asset/?id=6034287514";
+		["mood_bad"] = "http://www.roblox.com/asset/?id=6034295706";
+		["person_remove_alt_1"] = "http://www.roblox.com/asset/?id=6034287515";
+		["king_bed"] = "http://www.roblox.com/asset/?id=6034281948";
+		["architecture"] = "http://www.roblox.com/asset/?id=6034275730";
+		["deck"] = "http://www.roblox.com/asset/?id=6034295703";
+		["group_add"] = "http://www.roblox.com/asset/?id=6034281909";
+		["sports_basketball"] = "http://www.roblox.com/asset/?id=6034230649";
+		["emoji_symbols"] = "http://www.roblox.com/asset/?id=6034281899";
+		["switch_account"] = "http://www.roblox.com/asset/?id=6034227138";
+		["remove_moderator"] = "http://www.roblox.com/asset/?id=6034267998";
+		["coronavirus"] = "http://www.roblox.com/asset/?id=6034275724";
+		["people"] = "http://www.roblox.com/asset/?id=6034287513";
+		["person"] = "http://www.roblox.com/asset/?id=6034287594";
+		["elderly"] = "http://www.roblox.com/asset/?id=6034295698";
+		["clean_hands"] = "http://www.roblox.com/asset/?id=6034275729";
+		["emoji_flags"] = "http://www.roblox.com/asset/?id=6034304898";
+		["psychology"] = "http://www.roblox.com/asset/?id=6034287516";
+		["person_add_alt"] = "http://www.roblox.com/asset/?id=6034267994";
+		["sports_volleyball"] = "http://www.roblox.com/asset/?id=6034227139";
+		["domain"] = "http://www.roblox.com/asset/?id=6034275722";
+		["emoji_objects"] = "http://www.roblox.com/asset/?id=6034281900";
+		["ios_share"] = "http://www.roblox.com/asset/?id=6034281941";
+		["history_edu"] = "http://www.roblox.com/asset/?id=6034281934";
+		["share"] = "http://www.roblox.com/asset/?id=6034230648";
+		["military_tech"] = "http://www.roblox.com/asset/?id=6034295711";
+		["sports_kabaddi"] = "http://www.roblox.com/asset/?id=6034227141";
+		["cake"] = "http://www.roblox.com/asset/?id=6034295702";
+		["engineering"] = "http://www.roblox.com/asset/?id=6034281908";
+		["emoji_food_beverage"] = "http://www.roblox.com/asset/?id=6034304883";
+		["notifications_none"] = "http://www.roblox.com/asset/?id=6034308947";
+		["emoji_people"] = "http://www.roblox.com/asset/?id=6034281904";
+		["thumb_down_alt"] = "http://www.roblox.com/asset/?id=6034227069";
+		["sentiment_very_satisfied"] = "http://www.roblox.com/asset/?id=6034230650";
+		["nights_stay"] = "http://www.roblox.com/asset/?id=6034304881";
+		["reduce_capacity"] = "http://www.roblox.com/asset/?id=6034268013";
+		["add_moderator"] = "http://www.roblox.com/asset/?id=6034295699";
+		["science"] = "http://www.roblox.com/asset/?id=6034230640";
+		["pages"] = "http://www.roblox.com/asset/?id=6034304892";
+		["sentiment_satisfied"] = "http://www.roblox.com/asset/?id=6034230668";
+		["plus_one"] = "http://www.roblox.com/asset/?id=6034268012";
+		["party_mode"] = "http://www.roblox.com/asset/?id=6034287521";
+		["person_remove"] = "http://www.roblox.com/asset/?id=6034267996";
+		["single_bed"] = "http://www.roblox.com/asset/?id=6034230651";
+		["mood"] = "http://www.roblox.com/asset/?id=6034295704";
+		["public"] = "http://www.roblox.com/asset/?id=6034287522";
+		["sports_rugby"] = "http://www.roblox.com/asset/?id=6034227073";
+		["sports_handball"] = "http://www.roblox.com/asset/?id=6034227074";
+		["person_add_alt_1"] = "http://www.roblox.com/asset/?id=6034287519";
+		["people_alt"] = "http://www.roblox.com/asset/?id=6034287518";
+		["notifications_off"] = "http://www.roblox.com/asset/?id=6034304894";
+		["whatshot"] = "http://www.roblox.com/asset/?id=6034287525";
+		["emoji_transportation"] = "http://www.roblox.com/asset/?id=6034281894";
+		["outdoor_grill"] = "http://www.roblox.com/asset/?id=6034304900";
+		["sentiment_very_dissatisfied"] = "http://www.roblox.com/asset/?id=6034230659";
+		["masks"] = "http://www.roblox.com/asset/?id=6034295710";
+		["luggage"] = "http://www.roblox.com/asset/?id=6034295708";
+		["sports_motorsports"] = "http://www.roblox.com/asset/?id=6034227071";
+		["sports_esports"] = "http://www.roblox.com/asset/?id=6034227061";
+		["location_city"] = "http://www.roblox.com/asset/?id=6034304889";
+		["sports_golf"] = "http://www.roblox.com/asset/?id=6034227060";
+		["sentiment_dissatisfied"] = "http://www.roblox.com/asset/?id=6034230637";
+		["no_luggage"] = "http://www.roblox.com/asset/?id=6034304891";
+		["fireplace"] = "http://www.roblox.com/asset/?id=6034281910";
+		["emoji_nature"] = "http://www.roblox.com/asset/?id=6034281896";
+		["group"] = "http://www.roblox.com/asset/?id=6034281901";
+		["thumb_up_alt"] = "http://www.roblox.com/asset/?id=6034227076";
+		["sports_tennis"] = "http://www.roblox.com/asset/?id=6034227068";
+		["facebook"] = "http://www.roblox.com/asset/?id=6034281898";
+		["sports_mma"] = "http://www.roblox.com/asset/?id=6034227072";
+		["person_outline"] = "http://www.roblox.com/asset/?id=6034268008";
+		["sports_baseball"] = "http://www.roblox.com/asset/?id=6034230652";
+		["sports_cricket"] = "http://www.roblox.com/asset/?id=6034230660";
+		["people_outline"] = "http://www.roblox.com/asset/?id=6034287528";
+		["notifications_paused"] = "http://www.roblox.com/asset/?id=6034304896";
+		["emoji_emotions"] = "http://www.roblox.com/asset/?id=6034275731";
+		["follow_the_signs"] = "http://www.roblox.com/asset/?id=6034281911";
+		["sanitizer"] = "http://www.roblox.com/asset/?id=6034287586";
+		["self_improvement"] = "http://www.roblox.com/asset/?id=6034230634";
+		["notifications"] = "http://www.roblox.com/asset/?id=6034308946";
+		["public_off"] = "http://www.roblox.com/asset/?id=6034287538";
+		["recommend"] = "http://www.roblox.com/asset/?id=6034287524";
+		["sports_football"] = "http://www.roblox.com/asset/?id=6034227067";
+		["sports_hockey"] = "http://www.roblox.com/asset/?id=6034227064";
+		["school"] = "http://www.roblox.com/asset/?id=6034230641";
+		["connect_without_contact"] = "http://www.roblox.com/asset/?id=6034275800";
+		["sports"] = "http://www.roblox.com/asset/?id=6034230647";
+		["construction"] = "http://www.roblox.com/asset/?id=6034275725";
+		["inventory"] = "http://www.roblox.com/asset/?id=6035056487";
+		["add_box"] = "http://www.roblox.com/asset/?id=6035047375";
+		["how_to_reg"] = "http://www.roblox.com/asset/?id=6035053288";
+		["unarchive"] = "http://www.roblox.com/asset/?id=6035078921";
+		["block_flipped"] = "http://www.roblox.com/asset/?id=6035047378";
+		["file_copy"] = "http://www.roblox.com/asset/?id=6035053293";
+		["bolt"] = "http://www.roblox.com/asset/?id=6035047381";
+		["remove_circle_outline"] = "http://www.roblox.com/asset/?id=6035067843";
+		["move_to_inbox"] = "http://www.roblox.com/asset/?id=6035067838";
+		["save_alt"] = "http://www.roblox.com/asset/?id=6035067842";
+		["weekend"] = "http://www.roblox.com/asset/?id=6035078894";
+		["where_to_vote"] = "http://www.roblox.com/asset/?id=6035078913";
+		["biotech"] = "http://www.roblox.com/asset/?id=6035047385";
+		["report_off"] = "http://www.roblox.com/asset/?id=6035067830";
+		["clear"] = "http://www.roblox.com/asset/?id=6035047409";
+		["redo"] = "http://www.roblox.com/asset/?id=6035056483";
+		["link"] = "http://www.roblox.com/asset/?id=6035056475";
+		["drafts"] = "http://www.roblox.com/asset/?id=6035053297";
+		["push_pin"] = "http://www.roblox.com/asset/?id=6035056481";
+		["reply"] = "http://www.roblox.com/asset/?id=6035067844";
+		["undo"] = "http://www.roblox.com/asset/?id=6035078896";
+		["archive"] = "http://www.roblox.com/asset/?id=6035047379";
+		["add"] = "http://www.roblox.com/asset/?id=6035047377";
+		["insights"] = "http://www.roblox.com/asset/?id=6035067839";
+		["flag"] = "http://www.roblox.com/asset/?id=6035053279";
+		["save"] = "http://www.roblox.com/asset/?id=6035067857";
+		["text_format"] = "http://www.roblox.com/asset/?id=6035078890";
+		["content_cut"] = "http://www.roblox.com/asset/?id=6035053280";
+		["ballot"] = "http://www.roblox.com/asset/?id=6035047386";
+		["remove"] = "http://www.roblox.com/asset/?id=6035067836";
+		["calculate"] = "http://www.roblox.com/asset/?id=6035047384";
+		["report"] = "http://www.roblox.com/asset/?id=6035067826";
+		["markunread"] = "http://www.roblox.com/asset/?id=6035056476";
+		["delete_sweep"] = "http://www.roblox.com/asset/?id=6035053301";
+		["gesture"] = "http://www.roblox.com/asset/?id=6035053287";
+		["link_off"] = "http://www.roblox.com/asset/?id=6035056484";
+		["forward"] = "http://www.roblox.com/asset/?id=6035053298";
+		["reply_all"] = "http://www.roblox.com/asset/?id=6035067824";
+		["how_to_vote"] = "http://www.roblox.com/asset/?id=6035053295";
+		["square_foot"] = "http://www.roblox.com/asset/?id=6035078918";
+		["outlined_flag"] = "http://www.roblox.com/asset/?id=6035056486";
+		["add_circle"] = "http://www.roblox.com/asset/?id=6035047380";
+		["stacked_bar_chart"] = "http://www.roblox.com/asset/?id=6035078892";
+		["policy"] = "http://www.roblox.com/asset/?id=6035056512";
+		["backspace"] = "http://www.roblox.com/asset/?id=6035047397";
+		["sort"] = "http://www.roblox.com/asset/?id=6035078888";
+		["content_paste"] = "http://www.roblox.com/asset/?id=6035053285";
+		["low_priority"] = "http://www.roblox.com/asset/?id=6035056491";
+		["font_download"] = "http://www.roblox.com/asset/?id=6035053275";
+		["shield"] = "http://www.roblox.com/asset/?id=6035078889";
+		["waves"] = "http://www.roblox.com/asset/?id=6035078898";
+		["select_all"] = "http://www.roblox.com/asset/?id=6035067834";
+		["dynamic_feed"] = "http://www.roblox.com/asset/?id=6035053289";
+		["mail"] = "http://www.roblox.com/asset/?id=6035056477";
+		["amp_stories"] = "http://www.roblox.com/asset/?id=6035047382";
+		["filter_list"] = "http://www.roblox.com/asset/?id=6035053294";
+		["send"] = "http://www.roblox.com/asset/?id=6035067832";
+		["create"] = "http://www.roblox.com/asset/?id=6035053304";
+		["stream"] = "http://www.roblox.com/asset/?id=6035078897";
+		["next_week"] = "http://www.roblox.com/asset/?id=6035067835";
+		["inbox"] = "http://www.roblox.com/asset/?id=6035067831";
+		["add_link"] = "http://www.roblox.com/asset/?id=6035047374";
+		["content_copy"] = "http://www.roblox.com/asset/?id=6035053278";
+		["remove_circle"] = "http://www.roblox.com/asset/?id=6035067837";
+		["add_circle_outline"] = "http://www.roblox.com/asset/?id=6035047391";
+		["block"] = "http://www.roblox.com/asset/?id=6035047387";
+		["tag"] = "http://www.roblox.com/asset/?id=6035078895";
+		["beach_access"] = "http://www.roblox.com/asset/?id=6035107923";
+		["stroller"] = "http://www.roblox.com/asset/?id=6035161535";
+		["family_restroom"] = "http://www.roblox.com/asset/?id=6035121916";
+		["corporate_fare"] = "http://www.roblox.com/asset/?id=6035121908";
+		["no_meeting_room"] = "http://www.roblox.com/asset/?id=6035153649";
+		["do_not_touch"] = "http://www.roblox.com/asset/?id=6035121915";
+		["ac_unit"] = "http://www.roblox.com/asset/?id=6035107929";
+		["business_center"] = "http://www.roblox.com/asset/?id=6035107933";
+		["spa"] = "http://www.roblox.com/asset/?id=6035153639";
+		["no_flash"] = "http://www.roblox.com/asset/?id=6035145424";
+		["no_cell"] = "http://www.roblox.com/asset/?id=6035145376";
+		["room_service"] = "http://www.roblox.com/asset/?id=6035153648";
+		["tapas"] = "http://www.roblox.com/asset/?id=6035161533";
+		["microwave"] = "http://www.roblox.com/asset/?id=6035145367";
+		["meeting_room"] = "http://www.roblox.com/asset/?id=6035145361";
+		["wash"] = "http://www.roblox.com/asset/?id=6035161540";
+		["escalator"] = "http://www.roblox.com/asset/?id=6035121939";
+		["house_siding"] = "http://www.roblox.com/asset/?id=6035145393";
+		["food_bank"] = "http://www.roblox.com/asset/?id=6035121921";
+		["foundation"] = "http://www.roblox.com/asset/?id=6035121918";
+		["elevator"] = "http://www.roblox.com/asset/?id=6035121912";
+		["room_preferences"] = "http://www.roblox.com/asset/?id=6035153642";
+		["do_not_step"] = "http://www.roblox.com/asset/?id=6035121910";
+		["free_breakfast"] = "http://www.roblox.com/asset/?id=6035145363";
+		["house"] = "http://www.roblox.com/asset/?id=6035145364";
+		["child_care"] = "http://www.roblox.com/asset/?id=6035107927";
+		["night_shelter"] = "http://www.roblox.com/asset/?id=6035145378";
+		["child_friendly"] = "http://www.roblox.com/asset/?id=6035121942";
+		["checkroom"] = "http://www.roblox.com/asset/?id=6035107931";
+		["hot_tub"] = "http://www.roblox.com/asset/?id=6035145382";
+		["dry"] = "http://www.roblox.com/asset/?id=6035121909";
+		["charging_station"] = "http://www.roblox.com/asset/?id=6035107925";
+		["all_inclusive"] = "http://www.roblox.com/asset/?id=6035107920";
+		["bento"] = "http://www.roblox.com/asset/?id=6035107924";
+		["no_backpack"] = "http://www.roblox.com/asset/?id=6035145368";
+		["storefront"] = "http://www.roblox.com/asset/?id=6035161534";
+		["no_food"] = "http://www.roblox.com/asset/?id=6035145372";
+		["backpack"] = "http://www.roblox.com/asset/?id=6035107928";
+		["stairs"] = "http://www.roblox.com/asset/?id=6035153637";
+		["carpenter"] = "http://www.roblox.com/asset/?id=6035107955";
+		["no_stroller"] = "http://www.roblox.com/asset/?id=6035153661";
+		["roofing"] = "http://www.roblox.com/asset/?id=6035153656";
+		["umbrella"] = "http://www.roblox.com/asset/?id=6035161550";
+		["sports_bar"] = "http://www.roblox.com/asset/?id=6035153638";
+		["apartment"] = "http://www.roblox.com/asset/?id=6035107922";
+		["smoke_free"] = "http://www.roblox.com/asset/?id=6035153647";
+		["pool"] = "http://www.roblox.com/asset/?id=6035153655";
+		["bathtub"] = "http://www.roblox.com/asset/?id=6035107939";
+		["no_drinks"] = "http://www.roblox.com/asset/?id=6035145390";
+		["escalator_warning"] = "http://www.roblox.com/asset/?id=6035121930";
+		["wheelchair_pickup"] = "http://www.roblox.com/asset/?id=6035161536";
+		["smoking_rooms"] = "http://www.roblox.com/asset/?id=6035153636";
+		["rice_bowl"] = "http://www.roblox.com/asset/?id=6035153662";
+		["tty"] = "http://www.roblox.com/asset/?id=6035161541";
+		["no_photography"] = "http://www.roblox.com/asset/?id=6035153664";
+		["casino"] = "http://www.roblox.com/asset/?id=6035107936";
+		["fence"] = "http://www.roblox.com/asset/?id=6035121923";
+		["grass"] = "http://www.roblox.com/asset/?id=6035145359";
+		["countertops"] = "http://www.roblox.com/asset/?id=6035121914";
+		["kitchen"] = "http://www.roblox.com/asset/?id=6035145362";
+		["golf_course"] = "http://www.roblox.com/asset/?id=6035145423";
+		["soap"] = "http://www.roblox.com/asset/?id=6035153645";
+		["water_damage"] = "http://www.roblox.com/asset/?id=6035161563";
+		["airport_shuttle"] = "http://www.roblox.com/asset/?id=6035107921";
+		["fitness_center"] = "http://www.roblox.com/asset/?id=6035121907";
+		["baby_changing_station"] = "http://www.roblox.com/asset/?id=6035107930";
+		["fire_extinguisher"] = "http://www.roblox.com/asset/?id=6035121913";
+		["sparkle"] = "http://www.roblox.com/asset/?id=4483362748"
 	}
 }
 
-LavaHub.Utilities = {
-	TableToColor = function(Table)
-		if type(Table) ~= "table" then return Table end
-		return Color3.fromHSV(Table[1], Table[2], Table[3])
-	end,
-	ColorToString = function(Color)
-		return ("%i, %i, %i"):format(Color.R * 255, Color.G * 255, Color.B * 255)
-	end,
-	Scale = function(Value, InputMin, InputMax, OutputMin, OutputMax)
-		return OutputMin + (Value - InputMin) * (OutputMax - OutputMin) / (InputMax - InputMin)
-	end,
-	DeepCopy = function(Self, Original)
-		if type(Original) ~= "table" then return Original end
-		local Copy = {}
+-- Other Variables
+local request = (syn and syn.request) or (http and http.request) or http_request or nil
+local tweeninfo = TweenInfo.new(0.3, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
+local PresetGradients = {
+	["Nightlight (Classic)"] = {Color3.fromRGB(147, 255, 239), Color3.fromRGB(201,211,233), Color3.fromRGB(255, 167, 227)},
+	["Nightlight (Neo)"] = {Color3.fromRGB(117, 164, 206), Color3.fromRGB(123, 201, 201), Color3.fromRGB(224, 138, 175)},
+	Starlight = {Color3.fromRGB(147, 255, 239), Color3.fromRGB(181, 206, 241), Color3.fromRGB(214, 158, 243)},
+	Solar = {Color3.fromRGB(242, 157, 76), Color3.fromRGB(240, 179, 81), Color3.fromRGB(238, 201, 86)},
+	Sparkle = {Color3.fromRGB(199, 130, 242), Color3.fromRGB(221, 130, 238), Color3.fromRGB(243, 129, 233)},
+	Lime = {Color3.fromRGB(170, 255, 127), Color3.fromRGB(163, 220, 138), Color3.fromRGB(155, 185, 149)},
+	Vine = {Color3.fromRGB(0, 191, 143), Color3.fromRGB(0, 126, 94), Color3.fromRGB(0, 61, 46)},
+	Cherry = {Color3.fromRGB(148, 54, 54), Color3.fromRGB(168, 67, 70), Color3.fromRGB(188, 80, 86)},
+	Daylight = {Color3.fromRGB(51, 156, 255), Color3.fromRGB(89, 171, 237), Color3.fromRGB(127, 186, 218)},
+	Blossom = {Color3.fromRGB(255, 165, 243), Color3.fromRGB(213, 129, 231), Color3.fromRGB(170, 92, 218)},
+}
 
-		for Index, Value in pairs(Original) do
-			if type(Value) == "table" then
-				Value = Self:DeepCopy(Value)
+local function GetIcon(icon, source)
+	if source == "Custom" then
+		return "rbxassetid://" .. icon
+	elseif source == "Lucide" then
+		-- full credit to latte softworks :)
+		local iconData = not isStudio and game:HttpGet("https://raw.githubusercontent.com/latte-soft/lucide-roblox/refs/heads/master/lib/Icons.luau")
+		local icons = isStudio and IconModule.Lucide or loadstring(iconData)()
+		if not isStudio then
+			icon = string.match(string.lower(icon), "^%s*(.*)%s*$") :: string
+			local sizedicons = icons['48px']
+
+			local r = sizedicons[icon]
+			if not r then
+				error("Lucide Icons: Failed to find icon by the name of \"" .. icon .. "\.", 2)
 			end
 
-			Copy[Index] = Value
-		end
+			local rirs = r[2]
+			local riro = r[3]
 
-		return Copy
-	end,
-	DeepEquals = function(Self, Object1, Object2)
-		if Object1 == Object2 then return true end
-
-		local Object1Type = type(Object1)
-		local Object2Type = type(Object2)
-
-		if Object1Type ~= Object2Type then return false end
-		if Object1Type ~= "table" then return false end
-
-		local KeySet = {}
-
-		for Key1, Value1 in Object1 do
-			local Value2 = Object2[Key1]
-
-			if Value2 == nil or Self:DeepEquals(Value1, Value2) == false then
-				return false
+			if type(r[1]) ~= "number" or type(rirs) ~= "table" or type(riro) ~= "table" then
+				error("Lucide Icons: Internal error: Invalid auto-generated asset entry")
 			end
 
-			KeySet[Key1] = true
-		end
+			local irs = Vector2.new(rirs[1], rirs[2])
+			local iro = Vector2.new(riro[1], riro[2])
 
-		for Key2 in Object2 do
-			if not KeySet[Key2] then
-				return false
-			end
-		end
-
-		return true
-	end,
-	Proxify = function(Table)
-		local Proxy, Events = {}, {}
-		local ChangedEvent = Instance.new("BindableEvent")
-		Proxy.Changed = ChangedEvent.Event
-		Proxy.Internal = Table
-
-		function Proxy:GetPropertyChangedSignal(Property)
-			local PropertyEvent = Instance.new("BindableEvent")
-
-			Events[Property] = Events[Property] or {}
-			table.insert(Events[Property], PropertyEvent)
-
-			return PropertyEvent.Event
-		end
-
-		setmetatable(Proxy, {
-			__index = function(Self, Key)
-				return Table[Key]
-			end,
-			__newindex = function(Self, Key, Value)
-				local OldValue = Table[Key]
-				Table[Key] = Value
-
-				ChangedEvent:Fire(Key, Value, OldValue)
-				if Events[Key] then
-					for Index, Event in ipairs(Events[Key]) do
-						Event:Fire(Value, OldValue)
-					end
-				end
-			end
-		})
-
-		return Proxy
-	end,
-	GetType = function(Self, Object, Type, Default, UseProxy)
-		if typeof(Object) == Type then
-			return UseProxy and Self.Proxify(Object) or Object
-		end
-
-		return UseProxy and Self.Proxify(Default) or Default
-	end,
-	GetTextBounds = function(Text, Font, Size)
-		return TextService:GetTextSize(Text, Size.Y, Font, Vector2.new(Size.X, 1e6))
-	end,
-	MakeDraggable = function(Dragger, Object, OnChange, OnEnd)
-		local Position, StartPosition = nil, nil
-
-		Dragger.InputBegan:Connect(function(Input)
-			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-				Position = UserInputService:GetMouseLocation()
-				StartPosition = Object.AbsolutePosition
-			end
-		end)
-		UserInputService.InputChanged:Connect(function(Input)
-			if StartPosition and Input.UserInputType == Enum.UserInputType.MouseMovement then
-				local Mouse = UserInputService:GetMouseLocation()
-				local Delta = Mouse - Position
-				Position = Mouse
-
-				Delta = Object.Position + UDim2.fromOffset(Delta.X, Delta.Y)
-				if OnChange then OnChange(Delta) end
-			end
-		end)
-		Dragger.InputEnded:Connect(function(Input)
-			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-				if OnEnd then OnEnd(Object.Position, StartPosition) end
-				Position, StartPosition = nil, nil
-			end
-		end)
-	end,
-	MakeResizeable = function(Dragger, Object, MinSize, MaxSize, OnChange, OnEnd)
-		local Position, StartSize = nil, nil
-
-		Dragger.InputBegan:Connect(function(Input)
-			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-				Position = UserInputService:GetMouseLocation()
-				StartSize = Object.AbsoluteSize
-			end
-		end)
-		UserInputService.InputChanged:Connect(function(Input)
-			if StartSize and Input.UserInputType == Enum.UserInputType.MouseMovement then
-				local Mouse = UserInputService:GetMouseLocation()
-				local Delta = Mouse - Position
-				local Size = StartSize + Delta
-
-				local SizeX = math.max(MinSize.X, Size.X)
-				-- SizeX = math.min(MaxSize.X, Size.X)
-
-				local SizeY = math.max(MinSize.Y, Size.Y)
-				-- SizeY = math.min(MaxSize.Y, Size.Y)
-
-				OnChange(UDim2.fromOffset(SizeX, SizeY))
-			end
-		end)
-		Dragger.InputEnded:Connect(function(Input)
-			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-				if OnEnd then OnEnd(Object.Size, StartSize) end
-				Position, StartSize = nil, nil
-			end
-		end)
-	end,
-	ClosePopUps = function()
-		for Index, Object in pairs(LavaHub.Screen:GetChildren()) do
-			if Object.Name == "OptionContainer" or Object.Name == "Palette" then
-				Object.Visible = false
-			end
-		end
-	end,
-	ChooseTab = function(TabButtonAsset, TabAsset)
-		for Index, Object in pairs(LavaHub.Screen:GetChildren()) do
-			if Object.Name == "OptionContainer" or Object.Name == "Palette" then
-				Object.Visible = false
-			end
-		end
-		for Index, Object in pairs(LavaHub.Screen.Window.TabContainer:GetChildren()) do
-			if Object:IsA("ScrollingFrame") then
-				Object.Visible = Object == TabAsset
-			end
-		end
-		for Index, Object in pairs(LavaHub.Screen.Window.TabButtonContainer:GetChildren()) do
-			if Object:IsA("TextButton") then
-				Object.Highlight.Visible = Object == TabButtonAsset
-			end
-		end
-	end,
-	ChooseTabLegacy = function(TabButtonAsset, TabAsset)
-		for Index, Object in pairs(LavaHub.Screen:GetChildren()) do
-			if Object.Name == "OptionContainer" or Object.Name == "Palette" then
-				Object.Visible = false
-			end
-		end
-		for Index, Object in pairs(LavaHub.Screen.Window.TabContainer:GetChildren()) do
-			if Object:IsA("ScrollingFrame") then
-				Object.Visible = Object == TabAsset
-			end
-		end
-		for Index, Object in pairs(LavaHub.Screen.Window.TabButtonContainer:GetChildren()) do
-			if Object:IsA("TextButton") then
-				Object.BackgroundTransparency = (Object == TabButtonAsset) and 0 or 1
-			end
-		end
-	end,
-	GetNumberOfTabs = function()
-		local NumberOfTabs = 0
-
-		for Index, Object in pairs(LavaHub.Screen.Window.TabContainer:GetChildren()) do
-			if Object:IsA("ScrollingFrame") then
-				NumberOfTabs = NumberOfTabs + 1
-			end
-		end
-
-		return NumberOfTabs
-	end,
-	GetLongestSide = function(TabAsset)
-		local LeftSideSize = TabAsset.LeftSide.ListLayout.AbsoluteContentSize
-		local RightSideSize = TabAsset.RightSide.ListLayout.AbsoluteContentSize
-		return LeftSideSize.Y >= RightSideSize.Y and TabAsset.LeftSide or TabAsset.RightSide
-	end,
-	GetShortestSide = function(TabAsset)
-		local LeftSideSize = TabAsset.LeftSide.ListLayout.AbsoluteContentSize
-		local RightSideSize = TabAsset.RightSide.ListLayout.AbsoluteContentSize
-		return LeftSideSize.Y <= RightSideSize.Y and TabAsset.LeftSide or TabAsset.RightSide
-	end,
-	ChooseTabSide = function(Self, TabAsset, Mode)
-		if Mode == "Left" then
-			return TabAsset.LeftSide
-		elseif Mode == "Right" then
-			return TabAsset.RightSide
-		else
-			return Self.GetShortestSide(TabAsset)
-		end
-	end,
-	FindElementByFlag = function(Elements, Flag)
-		for Index, Element in pairs(Elements) do
-			if Element.Flag and Element.Flag == Flag then
-				return Element
-			end
-		end
-	end,
-	GetConfigs = function(FolderName)
-		if not isfolder(FolderName) then makefolder(FolderName) end
-		if not isfolder(FolderName .. "\\Configs") then makefolder(FolderName .. "\\Configs") end
-
-		local Configs = {}
-		for Index, Config in pairs(listfiles(FolderName .. "\\Configs") or {}) do
-			Config = Config:gsub(FolderName .. "\\Configs\\", "")
-			Config = Config:gsub(".json", "")
-
-			Configs[#Configs + 1] = Config
-		end
-
-		return Configs
-	end,
-	ConfigsToList = function(FolderName)
-		if not isfolder(FolderName) then makefolder(FolderName) end
-		if not isfolder(FolderName .. "\\Configs") then makefolder(FolderName .. "\\Configs") end
-		if not isfile(FolderName .. "\\AutoLoads.json") then writefile(FolderName .. "\\AutoLoads.json", "[]") end
-
-		local AutoLoads = HttpService:JSONDecode(readfile(FolderName .. "\\AutoLoads.json"))
-		local AutoLoad = AutoLoads[tostring(game.GameId)]
-
-		local Configs = {}
-		for Index, Config in pairs(listfiles(FolderName .. "\\Configs") or {}) do
-			Config = Config:gsub(FolderName .. "\\Configs\\", "")
-			Config = Config:gsub(".json", "")
-
-			Configs[#Configs + 1] = {
-				Name = Config,
-				Mode = "Button",
-				Value = Config == AutoLoad
+			local asset = {
+				id = r[1],
+				imageRectSize = irs,
+				imageRectOffset = iro,
 			}
-		end
 
-		return Configs
-	end
-}
-LavaHub.Assets = {
-	Screen = function(Self)
-		local Screen = Instance.new("ScreenGui")
-		Screen.Name = "LavaHub"
-		Screen.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-		Screen.ResetOnSpawn = false
-		Screen.ScreenInsets = Enum.ScreenInsets.DeviceSafeInsets
-		Screen.IgnoreGuiInset = true
-		Screen.DisplayOrder = LavaHub.IsLocal and 0 or 10
-
-		local Watermark = Self.Watermark()
-		Watermark.Parent = Screen
-
-		-- Push Notification Container
-		local PNContainer = Self.PNContainer()
-		PNContainer.Parent = Screen
-
-		-- Toast Notification Container
-		local TNContainer = Self.TNContainer()
-		TNContainer.Parent = Screen
-
-		local KeybindList = Self.KeybindList()
-		KeybindList.Parent = Screen
-
-		return Screen
-	end,
-	Tooltip = function()
-		local Tooltip = Instance.new("TextLabel")
-		Tooltip.Name = "Tooltip"
-		Tooltip.ZIndex = 6
-		Tooltip.Visible = false
-		Tooltip.AnchorPoint = Vector2.new(0, 1)
-		Tooltip.Size = UDim2.new(0, 45, 0, 18)
-		Tooltip.BorderColor3 = Color3.fromRGB(63, 63, 63)
-		Tooltip.Position = UDim2.new(0, 50, 0, 50)
-		Tooltip.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
-		Tooltip.TextStrokeTransparency = 0.75
-		Tooltip.TextSize = 14
-		Tooltip.RichText = true
-		Tooltip.TextColor3 = Color3.fromRGB(255, 255, 255)
-		-- Tooltip.TextYAlignment = Enum.TextYAlignment.Top
-		Tooltip.Text = "Tooltip"
-		Tooltip.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-
-		return Tooltip
-	end,
-	Watermark = function()
-		local Watermark = Instance.new("TextLabel")
-		Watermark.Name = "Watermark"
-		Watermark.Visible = false
-		Watermark.AnchorPoint = Vector2.new(1, 0)
-		Watermark.Size = UDim2.new(0, 61, 0, 18)
-		Watermark.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Watermark.Position = UDim2.new(1, -18, 0, 18)
-		Watermark.BorderSizePixel = 2
-		Watermark.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
-		Watermark.TextStrokeTransparency = 0.75
-		Watermark.TextSize = 14
-		Watermark.RichText = true
-		Watermark.TextColor3 = Color3.fromRGB(255, 255, 255)
-		-- Watermark.TextYAlignment = Enum.TextYAlignment.Top
-		Watermark.Text = "Watermark"
-		Watermark.FontFace = Font.fromEnum(Enum.Font.SourceSansSemibold)
-
-		local Stroke = Instance.new("UIStroke")
-		Stroke.Name = "Stroke"
-		Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-		Stroke.LineJoinMode = Enum.LineJoinMode.Miter
-		Stroke.Color = Color3.fromRGB(63, 63, 63)
-		Stroke.Parent = Watermark
-
-		return Watermark
-	end,
-	PNContainer = function()
-		local PNContainer = Instance.new("Frame")
-		PNContainer.Name = "PNContainer"
-		PNContainer.ZIndex = 5
-		PNContainer.AnchorPoint = Vector2.new(0.5, 0.5)
-		PNContainer.Size = UDim2.new(1, 0, 1, 0)
-		PNContainer.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		PNContainer.BackgroundTransparency = 1
-		PNContainer.Position = UDim2.new(0.5, 0, 0.5, 0)
-		PNContainer.BorderSizePixel = 0
-		PNContainer.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-
-		local ListLayout = Instance.new("UIListLayout")
-		ListLayout.Name = "ListLayout"
-		ListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
-		ListLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
-		ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-		ListLayout.Padding = UDim.new(0, 12)
-		ListLayout.Parent = PNContainer
-
-		local Padding = Instance.new("UIPadding")
-		Padding.Name = "Padding"
-		Padding.PaddingTop = UDim.new(0, 10)
-		Padding.PaddingBottom = UDim.new(0, 10)
-		Padding.PaddingLeft = UDim.new(0, 10)
-		Padding.PaddingRight = UDim.new(0, 10)
-		Padding.Parent = PNContainer
-
-
-		return PNContainer
-	end,
-	TNContainer = function()
-		local TNContainer = Instance.new("Frame")
-		TNContainer.Name = "TNContainer"
-		TNContainer.ZIndex = 5
-		TNContainer.AnchorPoint = Vector2.new(0.5, 0.5)
-		TNContainer.Size = UDim2.new(1, 0, 1, 0)
-		TNContainer.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		TNContainer.BackgroundTransparency = 1
-		TNContainer.Position = UDim2.new(0.5, 0, 0.5, 0)
-		TNContainer.BorderSizePixel = 0
-		TNContainer.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-
-		local ListLayout = Instance.new("UIListLayout")
-		ListLayout.Name = "ListLayout"
-		ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-		ListLayout.Padding = UDim.new(0, 5)
-		ListLayout.Parent = TNContainer
-
-		local Padding = Instance.new("UIPadding")
-		Padding.Name = "Padding"
-		Padding.PaddingTop = UDim.new(0, 39)
-		Padding.PaddingBottom = UDim.new(0, 10)
-		Padding.Parent = TNContainer
-
-		return TNContainer
-	end,
-	KeybindList = function()
-		local KeybindList = Instance.new("Frame")
-		KeybindList.Name = "KeybindList"
-		KeybindList.ZIndex = 2
-		KeybindList.Visible = false
-		KeybindList.Size = UDim2.new(0, 121, 0, 246)
-		KeybindList.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		KeybindList.Position = UDim2.new(0, 10, 0.5, -123)
-		KeybindList.BorderSizePixel = 2
-		KeybindList.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
-
-		local Stroke = Instance.new("UIStroke")
-		Stroke.Name = "Stroke"
-		Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-		Stroke.LineJoinMode = Enum.LineJoinMode.Miter
-		Stroke.Color = Color3.fromRGB(63, 63, 63)
-		Stroke.Parent = KeybindList
-
-		local Topbar = Instance.new("Frame")
-		Topbar.Name = "Topbar"
-		Topbar.AnchorPoint = Vector2.new(0.5, 0)
-		Topbar.Size = UDim2.new(1, 0, 0, 18)
-		Topbar.BorderColor3 = Color3.fromRGB(63, 63, 63)
-		Topbar.Position = UDim2.new(0.5, 0, 0, 0)
-		Topbar.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
-		Topbar.Parent = KeybindList
-
-		local Title = Instance.new("TextLabel")
-		Title.Name = "Title"
-		Title.AnchorPoint = Vector2.new(0, 0.5)
-		Title.Size = UDim2.new(1, -8, 1, 0)
-		Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Title.BackgroundTransparency = 1
-		Title.Position = UDim2.new(0, 4, 0.5, 0)
-		Title.BorderSizePixel = 0
-		Title.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Title.TextStrokeTransparency = 0.75
-		Title.TextTruncate = Enum.TextTruncate.SplitWord
-		Title.TextSize = 14
-		Title.RichText = true
-		Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-		-- Title.TextYAlignment = Enum.TextYAlignment.Top
-		Title.Text = "Keybinds"
-		Title.TextWrapped = true
-		Title.FontFace = Font.fromEnum(Enum.Font.SourceSansSemibold)
-		Title.TextXAlignment = Enum.TextXAlignment.Left
-		Title.Parent = Topbar
-
-		local Background = Instance.new("ImageLabel")
-		Background.Name = "Background"
-		Background.ZIndex = 2
-		Background.AnchorPoint = Vector2.new(0.5, 0)
-		Background.Size = UDim2.new(1, 0, 1, -19)
-		Background.ClipsDescendants = true
-		Background.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Background.BackgroundTransparency = 1
-		Background.Position = UDim2.new(0.5, 0, 0, 19)
-		Background.BorderSizePixel = 0
-		Background.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Background.ScaleType = Enum.ScaleType.Tile
-		Background.ImageColor3 = Color3.fromRGB(0, 0, 0)
-		Background.TileSize = UDim2.new(0, 74, 0, 74)
-		Background.Image = "rbxassetid://5553946656"
-		Background.Parent = KeybindList
-
-		local Resize = Instance.new("ImageButton")
-		Resize.Name = "Resize"
-		Resize.ZIndex = 4
-		Resize.AnchorPoint = Vector2.new(1, 1)
-		Resize.Size = UDim2.new(0, 10, 0, 10)
-		Resize.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Resize.BackgroundTransparency = 1
-		Resize.Position = UDim2.new(1, 0, 1, 0)
-		Resize.BorderSizePixel = 0
-		Resize.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Resize.ImageColor3 = Color3.fromRGB(63, 63, 63)
-		Resize.ScaleType = Enum.ScaleType.Fit
-		Resize.ResampleMode = Enum.ResamplerMode.Pixelated
-		Resize.Image = "rbxassetid://7368471234"
-		Resize.Parent = KeybindList
-
-		local BindContainer = Instance.new("ScrollingFrame")
-		BindContainer.Name = "BindContainer"
-		BindContainer.ZIndex = 3
-		BindContainer.AnchorPoint = Vector2.new(0.5, 0)
-		BindContainer.Size = UDim2.new(1, 0, 1, -19)
-		BindContainer.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		BindContainer.BackgroundTransparency = 1
-		BindContainer.Position = UDim2.new(0.5, 0, 0, 19)
-		BindContainer.Active = true
-		BindContainer.BorderSizePixel = 0
-		BindContainer.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		BindContainer.ScrollingDirection = Enum.ScrollingDirection.Y
-		BindContainer.CanvasSize = UDim2.new(0, 0, 0, 0)
-		BindContainer.ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0)
-		BindContainer.MidImage = "rbxassetid://6432766838"
-		BindContainer.ScrollBarThickness = 0
-		BindContainer.TopImage = "rbxassetid://6432766838"
-		BindContainer.VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar
-		BindContainer.BottomImage = "rbxassetid://6432766838"
-		BindContainer.Parent = KeybindList
-
-		local ListLayout = Instance.new("UIListLayout")
-		ListLayout.Name = "ListLayout"
-		ListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-		ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-		ListLayout.Padding = UDim.new(0, 4)
-		ListLayout.Parent = BindContainer
-
-		local Padding = Instance.new("UIPadding")
-		Padding.Name = "Padding"
-		Padding.PaddingTop = UDim.new(0, 4)
-		Padding.PaddingLeft = UDim.new(0, 4)
-		Padding.PaddingRight = UDim.new(0, 4)
-		Padding.Parent = BindContainer
-
-		return KeybindList
-	end,
-	KeybindMimic = function()
-		local KeybindMimic = Instance.new("Frame")
-		KeybindMimic.Name = "KeybindMimic"
-		KeybindMimic.Size = UDim2.new(1, 0, 0, 14)
-		KeybindMimic.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		KeybindMimic.BackgroundTransparency = 1
-		KeybindMimic.BorderSizePixel = 0
-		KeybindMimic.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-
-		local Title = Instance.new("TextLabel")
-		Title.Name = "Title"
-		Title.AnchorPoint = Vector2.new(0, 0.5)
-		Title.Size = UDim2.new(1, -60, 1, 0)
-		Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Title.BackgroundTransparency = 1
-		Title.Position = UDim2.new(0, 14, 0.5, 0)
-		Title.BorderSizePixel = 0
-		Title.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Title.TextStrokeTransparency = 0.75
-		Title.TextTruncate = Enum.TextTruncate.SplitWord
-		Title.TextSize = 14
-		Title.RichText = true
-		Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-		Title.Text = "Keybind Mimic"
-		Title.TextWrapped = true
-		Title.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Title.TextXAlignment = Enum.TextXAlignment.Left
-		Title.Parent = KeybindMimic
-
-		local Tick = Instance.new("Frame")
-		Tick.Name = "Tick"
-		Tick.Size = UDim2.new(0, 10, 0, 10)
-		Tick.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Tick.Position = UDim2.new(0, 0, 0, 2)
-		Tick.BackgroundColor3 = Color3.fromRGB(63, 63, 63)
-		Tick.Parent = KeybindMimic
-
-		local Gradient = Instance.new("UIGradient")
-		Gradient.Name = "Gradient"
-		Gradient.Rotation = 90
-		Gradient.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(191, 191, 191))
-		Gradient.Parent = Tick
-
-		local Layout = Instance.new("Frame")
-		Layout.Name = "Layout"
-		Layout.AnchorPoint = Vector2.new(1, 0)
-		Layout.Size = UDim2.new(1, -14, 0, 14)
-		Layout.ClipsDescendants = true
-		Layout.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Layout.BackgroundTransparency = 1
-		Layout.Position = UDim2.new(1, 0, 0, 0)
-		Layout.BorderSizePixel = 0
-		Layout.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Layout.Parent = KeybindMimic
-
-		local ListLayout = Instance.new("UIListLayout")
-		ListLayout.Name = "ListLayout"
-		ListLayout.FillDirection = Enum.FillDirection.Horizontal
-		ListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
-		ListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-		ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-		ListLayout.Padding = UDim.new(0, 4)
-		ListLayout.Parent = Layout
-
-		local Keybind = Instance.new("TextLabel")
-		Keybind.Name = "Keybind"
-		Keybind.Size = UDim2.new(0, 42, 1, 0)
-		Keybind.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Keybind.BackgroundTransparency = 1
-		Keybind.BorderSizePixel = 0
-		Keybind.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Keybind.FontSize = Enum.FontSize.Size14
-		Keybind.TextStrokeTransparency = 0.75
-		Keybind.TextSize = 14
-		Keybind.RichText = true
-		Keybind.TextColor3 = Color3.fromRGB(191, 191, 191)
-		Keybind.Text = "[ NONE ]"
-		Keybind.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Keybind.Parent = Layout
-
-		return KeybindMimic
-	end,
-	Window = function()
-		local Window = Instance.new("Frame")
-		Window.Name = "Window"
-		Window.ZIndex = 3
-		Window.Size = UDim2.new(0, 496, 0, 496)
-		Window.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Window.Position = UDim2.new(0.5, -248, 0.5, -248)
-		Window.BorderSizePixel = 2
-		Window.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
-
-		local Stroke = Instance.new("UIStroke")
-		Stroke.Name = "Stroke"
-		Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-		Stroke.LineJoinMode = Enum.LineJoinMode.Miter
-		Stroke.Color = Color3.fromRGB(63, 63, 63)
-		Stroke.Parent = Window
-
-		local Topbar = Instance.new("Frame")
-		Topbar.Name = "Topbar"
-		Topbar.AnchorPoint = Vector2.new(0.5, 0)
-		Topbar.Size = UDim2.new(1, 0, 0, 18)
-		Topbar.BorderColor3 = Color3.fromRGB(63, 63, 63)
-		Topbar.Position = UDim2.new(0.5, 0, 0, 0)
-		Topbar.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
-		Topbar.Parent = Window
-
-		local Title = Instance.new("TextLabel")
-		Title.Name = "Title"
-		Title.AnchorPoint = Vector2.new(0, 0.5)
-		Title.Size = UDim2.new(1, -74, 1, 0)
-		Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Title.BackgroundTransparency = 1
-		Title.Position = UDim2.new(0, 4, 0.5, 0)
-		Title.BorderSizePixel = 0
-		Title.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Title.TextStrokeTransparency = 0.75
-		Title.TextTruncate = Enum.TextTruncate.SplitWord
-		Title.TextSize = 14
-		Title.RichText = true
-		Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-		-- Title.TextYAlignment = Enum.TextYAlignment.Top
-		Title.Text = "Title"
-		Title.TextWrapped = true
-		Title.FontFace = Font.fromEnum(Enum.Font.SourceSansSemibold)
-		Title.TextXAlignment = Enum.TextXAlignment.Left
-		Title.Parent = Topbar
-
-		local Label = Instance.new("TextLabel")
-		Label.Name = "Label"
-		Label.AnchorPoint = Vector2.new(1, 0.5)
-		Label.Size = UDim2.new(0, 62, 1, 0)
-		Label.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Label.BackgroundTransparency = 1
-		Label.Position = UDim2.new(1, -4, 0.5, 0)
-		Label.BorderSizePixel = 0
-		Label.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Label.TextStrokeTransparency = 0.75
-		Label.TextSize = 14
-		Label.RichText = true
-		Label.TextColor3 = Color3.fromRGB(191, 191, 191)
-		-- Label.TextYAlignment = Enum.TextYAlignment.Top
-		Label.Text = "LavaHub Beta"
-		Label.FontFace = Font.fromEnum(Enum.Font.SourceSansSemibold)
-		Label.TextXAlignment = Enum.TextXAlignment.Right
-		Label.Parent = Topbar
-
-		local Background = Instance.new("ImageLabel")
-		Background.Name = "Background"
-		Background.ZIndex = 2
-		Background.AnchorPoint = Vector2.new(0.5, 0)
-		Background.Size = UDim2.new(1, 0, 1, -19)
-		Background.ClipsDescendants = true
-		Background.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Background.BackgroundTransparency = 1
-		Background.Position = UDim2.new(0.5, 0, 0, 19)
-		Background.BorderSizePixel = 0
-		Background.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Background.ScaleType = Enum.ScaleType.Tile
-		Background.ImageColor3 = Color3.fromRGB(0, 0, 0)
-		Background.TileSize = UDim2.new(0, 74, 0, 74)
-		Background.Image = "rbxassetid://5553946656"
-		Background.Parent = Window
-
-		local Resize = Instance.new("ImageButton")
-		Resize.Name = "Resize"
-		Resize.ZIndex = 5
-		Resize.AnchorPoint = Vector2.new(1, 1)
-		Resize.Size = UDim2.new(0, 10, 0, 10)
-		Resize.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Resize.BackgroundTransparency = 1
-		Resize.Position = UDim2.new(1, 0, 1, 0)
-		Resize.BorderSizePixel = 0
-		Resize.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Resize.ImageColor3 = Color3.fromRGB(63, 63, 63)
-		Resize.ScaleType = Enum.ScaleType.Fit
-		Resize.ResampleMode = Enum.ResamplerMode.Pixelated
-		Resize.Image = "rbxassetid://7368471234"
-		Resize.Parent = Window
-
-		local TabContainer = Instance.new("Frame")
-		TabContainer.Name = "TabContainer"
-		TabContainer.ZIndex = 4
-		TabContainer.AnchorPoint = Vector2.new(0.5, 0)
-		TabContainer.Size = UDim2.new(1, 0, 1, -49)
-		TabContainer.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		TabContainer.BackgroundTransparency = 1
-		TabContainer.Position = UDim2.new(0.5, 0, 0, 49)
-		TabContainer.BorderSizePixel = 0
-		TabContainer.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		TabContainer.Parent = Window
-
-		local TabButtonContainer = Instance.new("ScrollingFrame")
-		TabButtonContainer.Name = "TabButtonContainer"
-		TabButtonContainer.ZIndex = 3
-		TabButtonContainer.AnchorPoint = Vector2.new(0.5, 0)
-		TabButtonContainer.Size = UDim2.new(1, -12, 0, 18)
-		TabButtonContainer.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		TabButtonContainer.Position = UDim2.new(0.5, 0, 0, 25)
-		TabButtonContainer.Active = true
-		TabButtonContainer.BorderSizePixel = 2
-		TabButtonContainer.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
-		TabButtonContainer.ScrollingDirection = Enum.ScrollingDirection.X
-		TabButtonContainer.CanvasSize = UDim2.new(0, 0, 0, 0)
-		TabButtonContainer.ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0)
-		TabButtonContainer.MidImage = "rbxassetid://6432766838"
-		TabButtonContainer.ScrollBarThickness = 0
-		TabButtonContainer.TopImage = "rbxassetid://6432766838"
-		TabButtonContainer.VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar
-		TabButtonContainer.BottomImage = "rbxassetid://6432766838"
-		TabButtonContainer.Parent = Window
-
-		local ListLayout = Instance.new("UIListLayout")
-		ListLayout.Name = "ListLayout"
-		ListLayout.FillDirection = Enum.FillDirection.Horizontal
-		ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-		ListLayout.Parent = TabButtonContainer
-
-		Stroke = Instance.new("UIStroke")
-		Stroke.Name = "Stroke"
-		Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-		Stroke.LineJoinMode = Enum.LineJoinMode.Miter
-		Stroke.Color = Color3.fromRGB(63, 63, 63)
-		Stroke.Parent = TabButtonContainer
-
-		return Window
-	end,
-	Tab = function()
-		local Tab = Instance.new("ScrollingFrame")
-		Tab.Name = "Tab"
-		Tab.AnchorPoint = Vector2.new(0.5, 0.5)
-		Tab.Size = UDim2.new(1, 0, 1, 0)
-		Tab.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Tab.BackgroundTransparency = 1
-		Tab.Position = UDim2.new(0.5, 0, 0.5, 0)
-		Tab.Active = true
-		Tab.BorderSizePixel = 0
-		Tab.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Tab.ScrollingDirection = Enum.ScrollingDirection.Y
-		Tab.CanvasSize = UDim2.new(0, 0, 0, 0)
-		Tab.ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0)
-		Tab.MidImage = "rbxassetid://6432766838"
-		Tab.ScrollBarThickness = 0
-		Tab.TopImage = "rbxassetid://6432766838"
-		Tab.VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar
-		Tab.BottomImage = "rbxassetid://6432766838"
-
-		local LeftSide = Instance.new("Frame")
-		LeftSide.Name = "LeftSide"
-		LeftSide.Size = UDim2.new(0.5, 0, 1, 0)
-		LeftSide.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		LeftSide.BackgroundTransparency = 1
-		LeftSide.BorderSizePixel = 0
-		LeftSide.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		LeftSide.Parent = Tab
-
-		local ListLayout = Instance.new("UIListLayout")
-		ListLayout.Name = "ListLayout"
-		ListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-		ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-		ListLayout.Padding = UDim.new(0, 14)
-		ListLayout.Parent = LeftSide
-
-		local Padding = Instance.new("UIPadding")
-		Padding.Name = "Padding"
-		Padding.PaddingTop = UDim.new(0, 8)
-		Padding.PaddingLeft = UDim.new(0, 6)
-		Padding.PaddingRight = UDim.new(0, 4)
-		Padding.Parent = LeftSide
-
-		local RightSide = Instance.new("Frame")
-		RightSide.Name = "RightSide"
-		RightSide.AnchorPoint = Vector2.new(1, 0)
-		RightSide.Size = UDim2.new(0.5, 0, 1, 0)
-		RightSide.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		RightSide.BackgroundTransparency = 1
-		RightSide.Position = UDim2.new(1, 0, 0, 0)
-		RightSide.BorderSizePixel = 0
-		RightSide.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		RightSide.Parent = Tab
-
-		ListLayout = Instance.new("UIListLayout")
-		ListLayout.Name = "ListLayout"
-		ListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-		ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-		ListLayout.Padding = UDim.new(0, 14)
-		ListLayout.Parent = RightSide
-
-		Padding = Instance.new("UIPadding")
-		Padding.Name = "Padding"
-		Padding.PaddingTop = UDim.new(0, 8)
-		Padding.PaddingLeft = UDim.new(0, 4)
-		Padding.PaddingRight = UDim.new(0, 6)
-		Padding.Parent = RightSide
-
-		return Tab
-	end,
-	TabButton = function()
-		local TabButton = Instance.new("TextButton")
-		TabButton.Name = "TabButton"
-		TabButton.Size = UDim2.new(0, 67, 1, 0)
-		TabButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		TabButton.BackgroundTransparency = 1
-		TabButton.BorderSizePixel = 0
-		TabButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		TabButton.AutoButtonColor = false
-		TabButton.TextStrokeTransparency = 0.75
-		TabButton.TextSize = 14
-		TabButton.RichText = true
-		TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-		-- TabButton.TextYAlignment = Enum.TextYAlignment.Top
-		TabButton.Text = "TabButton"
-		TabButton.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-
-		local Highlight = Instance.new("Frame")
-		Highlight.Name = "Highlight"
-		Highlight.Visible = false
-		Highlight.AnchorPoint = Vector2.new(0.5, 1)
-		Highlight.Size = UDim2.new(1, 0, 0, 1)
-		Highlight.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Highlight.Position = UDim2.new(0.5, 0, 1, 0)
-		Highlight.BorderSizePixel = 0
-		Highlight.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-		Highlight.Parent = TabButton
-
-		local Gradient = Instance.new("UIGradient")
-		Gradient.Name = "Gradient"
-		Gradient.Transparency = NumberSequence.new({
-			NumberSequenceKeypoint.new(0, 1),
-			NumberSequenceKeypoint.new(0.25, 0),
-			NumberSequenceKeypoint.new(0.75, 0),
-			NumberSequenceKeypoint.new(1, 1)
-		})
-		Gradient.Parent = Highlight
-
-		return TabButton
-	end,
-	LegacyTabButton = function()
-		local TabButton = Instance.new("TextButton")
-		TabButton.Name = "TabButton"
-		TabButton.Size = UDim2.new(0, 243, 1, 0)
-		TabButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		TabButton.BackgroundTransparency = 1
-		TabButton.BorderSizePixel = 0
-		TabButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-		TabButton.AutoButtonColor = false
-		TabButton.TextSize = 14
-		TabButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-		TabButton.Text = ""
-		TabButton.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-
-		local Gradient = Instance.new("UIGradient")
-		Gradient.Name = "Gradient"
-		Gradient.Rotation = 90
-		Gradient.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(191, 191, 191))
-		Gradient.Parent = TabButton
-
-		local Title = Instance.new("TextLabel")
-		Title.Name = "Title"
-		Title.AnchorPoint = Vector2.new(0.5, 0.5)
-		Title.Size = UDim2.new(1, 0, 1, 0)
-		Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Title.BackgroundTransparency = 1
-		Title.Position = UDim2.new(0.5, 0, 0.5, 0)
-		Title.BorderSizePixel = 0
-		Title.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Title.TextStrokeTransparency = 0.75
-		Title.TextTruncate = Enum.TextTruncate.SplitWord
-		Title.TextSize = 14
-		Title.RichText = true
-		Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-		-- Title.TextYAlignment = Enum.TextYAlignment.Top
-		Title.Text = "TabButton"
-		Title.TextWrapped = true
-		Title.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Title.Parent = TabButton
-
-		return TabButton
-	end,
-	Section = function()
-		local Section = Instance.new("Frame")
-		Section.Name = "Section"
-		Section.Size = UDim2.new(1, 0, 0, 434)
-		Section.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Section.BorderSizePixel = 2
-		Section.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
-
-		local Stroke = Instance.new("UIStroke")
-		Stroke.Name = "Stroke"
-		Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-		Stroke.LineJoinMode = Enum.LineJoinMode.Miter
-		Stroke.Color = Color3.fromRGB(63, 63, 63)
-		Stroke.Parent = Section
-
-		local Title = Instance.new("TextLabel")
-		Title.Name = "Title"
-		Title.Size = UDim2.new(1, -12, 0, 14)
-		Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Title.BackgroundTransparency = 1
-		Title.Position = UDim2.new(0, 6, 0, -9)
-		Title.BorderSizePixel = 0
-		Title.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
-		Title.TextStrokeTransparency = 0.75
-		Title.TextTruncate = Enum.TextTruncate.SplitWord
-		Title.TextSize = 14
-		Title.RichText = true
-		Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-		Title.Text = "Section"
-		Title.TextWrapped = true
-		Title.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Title.TextXAlignment = Enum.TextXAlignment.Left
-		Title.Parent = Section
-
-		local Container = Instance.new("Frame")
-		Container.Name = "Container"
-		Container.AnchorPoint = Vector2.new(0.5, 0)
-		Container.Size = UDim2.new(1, 0, 1, -14)
-		Container.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Container.BackgroundTransparency = 1
-		Container.Position = UDim2.new(0.5, 0, 0, 10)
-		Container.BorderSizePixel = 0
-		Container.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Container.Parent = Section
-
-		local ListLayout = Instance.new("UIListLayout")
-		ListLayout.Name = "ListLayout"
-		ListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-		ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-		ListLayout.Padding = UDim.new(0, 6)
-		ListLayout.Parent = Container
-
-		local Padding = Instance.new("UIPadding")
-		Padding.Name = "Padding"
-		Padding.PaddingLeft = UDim.new(0, 5)
-		Padding.PaddingRight = UDim.new(0, 5)
-		Padding.Parent = Container
-
-		return Section
-	end,
-	Divider = function()
-		local Divider = Instance.new("Frame")
-		Divider.Name = "Divider"
-		Divider.Size = UDim2.new(1, 0, 0, 14)
-		Divider.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Divider.BackgroundTransparency = 1
-		Divider.BorderSizePixel = 0
-		Divider.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-
-		local Left = Instance.new("Frame")
-		Left.Name = "Left"
-		Left.AnchorPoint = Vector2.new(0, 0.5)
-		Left.Size = UDim2.new(0.5, -24, 0, 2)
-		Left.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Left.Position = UDim2.new(0, 0, 0.5, 0)
-		Left.BackgroundColor3 = Color3.fromRGB(63, 63, 63)
-		Left.Parent = Divider
-
-		local Right = Instance.new("Frame")
-		Right.Name = "Right"
-		Right.AnchorPoint = Vector2.new(1, 0.5)
-		Right.Size = UDim2.new(0.5, -24, 0, 2)
-		Right.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Right.Position = UDim2.new(1, 0, 0.5, 0)
-		Right.BackgroundColor3 = Color3.fromRGB(63, 63, 63)
-		Right.Parent = Divider
-
-		local Title = Instance.new("TextLabel")
-		Title.Name = "Title"
-		Title.AnchorPoint = Vector2.new(0.5, 0.5)
-		Title.Size = UDim2.new(1, 0, 1, 0)
-		Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Title.BackgroundTransparency = 1
-		Title.Position = UDim2.new(0.5, 0, 0.5, 0)
-		Title.BorderSizePixel = 0
-		Title.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Title.TextStrokeTransparency = 0.75
-		Title.TextSize = 14
-		Title.RichText = true
-		Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-		Title.Text = "Divider"
-		Title.TextWrapped = true
-		Title.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Title.Parent = Divider
-
-		return Divider
-	end,
-	Label = function()
-		local Label = Instance.new("TextLabel")
-		Label.Name = "Label"
-		Label.Size = UDim2.new(1, 0, 0, 14)
-		Label.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Label.BackgroundTransparency = 1
-		Label.BorderSizePixel = 0
-		Label.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Label.TextStrokeTransparency = 0.75
-		Label.TextSize = 14
-		Label.RichText = true
-		Label.TextColor3 = Color3.fromRGB(255, 255, 255)
-		Label.Text = "TextLabel"
-		Label.TextWrapped = true
-		Label.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-
-		return Label
-	end,
-	Button = function()
-		local Button = Instance.new("TextButton")
-		Button.Name = "Button"
-		Button.Size = UDim2.new(1, 0, 0, 18)
-		Button.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Button.BackgroundColor3 = Color3.fromRGB(63, 63, 63)
-		Button.AutoButtonColor = false
-		Button.TextSize = 14
-		Button.TextColor3 = Color3.fromRGB(0, 0, 0)
-		Button.Text = ""
-		Button.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-
-		local Title = Instance.new("TextLabel")
-		Title.Name = "Title"
-		Title.AnchorPoint = Vector2.new(0.5, 0.5)
-		Title.Size = UDim2.new(1, -8, 1, 0)
-		Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Title.BackgroundTransparency = 1
-		Title.Position = UDim2.new(0.5, 0, 0.5, 0)
-		Title.BorderSizePixel = 0
-		Title.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Title.TextStrokeTransparency = 0.75
-		Title.TextSize = 14
-		Title.RichText = true
-		Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-		Title.Text = "Button"
-		Title.TextWrapped = true
-		Title.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Title.Parent = Button
-
-		local Gradient = Instance.new("UIGradient")
-		Gradient.Name = "Gradient"
-		Gradient.Rotation = 90
-		Gradient.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(191, 191, 191))
-		Gradient.Parent = Button
-
-		return Button
-	end,
-	Button2 = function()
-		local Button = Instance.new("Frame")
-		Button.Name = "Button"
-		Button.Size = UDim2.new(1, 0, 0, 18)
-		Button.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Button.BackgroundTransparency = 1
-		Button.BorderSizePixel = 0
-		Button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-
-		local Title = Instance.new("TextLabel")
-		Title.Name = "Title"
-		Title.Size = UDim2.new(1, -48, 1, 0)
-		Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Title.BackgroundTransparency = 1
-		Title.BorderSizePixel = 0
-		Title.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Title.TextStrokeTransparency = 0.75
-		Title.TextSize = 14
-		Title.RichText = true
-		Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-		Title.Text = "Button"
-		Title.TextWrapped = true
-		Title.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Title.TextXAlignment = Enum.TextXAlignment.Left
-		Title.Parent = Button
-
-		local ActualButton = Instance.new("TextButton")
-		ActualButton.Name = "Button"
-		ActualButton.AnchorPoint = Vector2.new(1, 0)
-		ActualButton.Size = UDim2.new(0, 44, 0, 18)
-		ActualButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		ActualButton.Position = UDim2.new(1, 0, 0, 0)
-		ActualButton.BackgroundColor3 = Color3.fromRGB(63, 63, 63)
-		ActualButton.AutoButtonColor = false
-		ActualButton.TextSize = 14
-		ActualButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-		ActualButton.Text = ""
-		ActualButton.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		ActualButton.Parent = Button
-
-		Title = Instance.new("TextLabel")
-		Title.Name = "Title"
-		Title.AnchorPoint = Vector2.new(0.5, 0.5)
-		Title.Size = UDim2.new(1, -8, 1, 0)
-		Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Title.BackgroundTransparency = 1
-		Title.Position = UDim2.new(0.5, 0, 0.5, 0)
-		Title.BorderSizePixel = 0
-		Title.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Title.TextStrokeTransparency = 0.75
-		Title.TextSize = 14
-		Title.RichText = true
-		Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-		Title.Text = "Button"
-		-- Title.TextWrapped = true
-		Title.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Title.Parent = ActualButton
-
-		local Gradient = Instance.new("UIGradient")
-		Gradient.Name = "Gradient"
-		Gradient.Rotation = 90
-		Gradient.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(191, 191, 191))
-		Gradient.Parent = ActualButton
-
-		return Button
-	end,
-	Toggle = function()
-		local Toggle = Instance.new("TextButton")
-		Toggle.Name = "Toggle"
-		Toggle.Size = UDim2.new(1, 0, 0, 14)
-		Toggle.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Toggle.BackgroundTransparency = 1
-		Toggle.BorderSizePixel = 0
-		Toggle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Toggle.AutoButtonColor = false
-		Toggle.TextSize = 14
-		Toggle.TextColor3 = Color3.fromRGB(0, 0, 0)
-		Toggle.Text = ""
-		Toggle.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-
-		local Title = Instance.new("TextLabel")
-		Title.Name = "Title"
-		Title.AnchorPoint = Vector2.new(0, 0.5)
-		Title.Size = UDim2.new(1, -60, 1, 0)
-		Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Title.BackgroundTransparency = 1
-		Title.Position = UDim2.new(0, 14, 0.5, 0)
-		Title.BorderSizePixel = 0
-		Title.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Title.TextStrokeTransparency = 0.75
-		Title.TextTruncate = Enum.TextTruncate.SplitWord
-		Title.TextSize = 14
-		Title.RichText = true
-		Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-		Title.Text = "Toggle"
-		Title.TextWrapped = true
-		Title.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Title.TextXAlignment = Enum.TextXAlignment.Left
-		Title.Parent = Toggle
-
-		local Tick = Instance.new("Frame")
-		Tick.Name = "Tick"
-		Tick.Size = UDim2.new(0, 10, 0, 10)
-		Tick.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Tick.Position = UDim2.new(0, 0, 0, 2)
-		Tick.BackgroundColor3 = Color3.fromRGB(63, 63, 63)
-		Tick.Parent = Toggle
-
-		local Gradient = Instance.new("UIGradient")
-		Gradient.Name = "Gradient"
-		Gradient.Rotation = 90
-		Gradient.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(191, 191, 191))
-		Gradient.Parent = Tick
-
-		local Layout = Instance.new("Frame")
-		Layout.Name = "Layout"
-		Layout.AnchorPoint = Vector2.new(1, 0)
-		Layout.Size = UDim2.new(1, -14, 0, 14)
-		Layout.ClipsDescendants = true
-		Layout.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Layout.BackgroundTransparency = 1
-		Layout.Position = UDim2.new(1, 0, 0, 0)
-		Layout.BorderSizePixel = 0
-		Layout.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Layout.Parent = Toggle
-
-		local ListLayout = Instance.new("UIListLayout")
-		ListLayout.Name = "ListLayout"
-		ListLayout.FillDirection = Enum.FillDirection.Horizontal
-		ListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
-		ListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-		ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-		ListLayout.Padding = UDim.new(0, 4)
-		ListLayout.Parent = Layout
-
-		local Padding = Instance.new("UIPadding")
-		Padding.Name = "Padding"
-		Padding.PaddingRight = UDim.new(0, 1)
-		Padding.Parent = Layout
-
-		return Toggle
-	end,
-	Slider = function()
-		local Slider = Instance.new("TextButton")
-		Slider.Name = "Slider"
-		Slider.Size = UDim2.new(1, 0, 0, 18)
-		Slider.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Slider.BackgroundTransparency = 1
-		Slider.BorderSizePixel = 0
-		Slider.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Slider.AutoButtonColor = false
-		Slider.TextSize = 14
-		Slider.TextColor3 = Color3.fromRGB(0, 0, 0)
-		Slider.Text = ""
-		Slider.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-
-		local Title = Instance.new("TextLabel")
-		Title.Name = "Title"
-		Title.ZIndex = 2
-		Title.Size = UDim2.new(1, -24, 1, 0)
-		Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Title.BackgroundTransparency = 1
-		Title.Position = UDim2.new(0, 4, 0, 0)
-		Title.BorderSizePixel = 0
-		Title.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Title.TextStrokeTransparency = 0.75
-		Title.TextSize = 14
-		Title.RichText = true
-		Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-		Title.Text = "Slider"
-		Title.TextWrapped = true
-		Title.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Title.TextXAlignment = Enum.TextXAlignment.Left
-		Title.Parent = Slider
-
-		local Value = Instance.new("TextBox")
-		Value.Name = "Value"
-		Value.ZIndex = 2
-		Value.AnchorPoint = Vector2.new(1, 0)
-		Value.Size = UDim2.new(0, 12, 1, 0)
-		Value.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Value.BackgroundTransparency = 1
-		Value.Position = UDim2.new(1, -4, 0, 0)
-		Value.BorderSizePixel = 0
-		Value.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Value.TextStrokeTransparency = 0.75
-		Value.PlaceholderColor3 = Color3.fromRGB(191, 191, 191)
-		Value.TextSize = 14
-		Value.TextColor3 = Color3.fromRGB(255, 255, 255)
-		Value.PlaceholderText = "50"
-		Value.Text = ""
-		Value.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Value.TextXAlignment = Enum.TextXAlignment.Right
-		Value.Parent = Slider
-
-		local Background = Instance.new("Frame")
-		Background.Name = "Background"
-		Background.AnchorPoint = Vector2.new(0.5, 0.5)
-		Background.Size = UDim2.new(1, 0, 1, 0)
-		Background.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Background.Position = UDim2.new(0.5, 0, 0.5, 0)
-		Background.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-		Background.Parent = Slider
-
-		local Gradient = Instance.new("UIGradient")
-		Gradient.Name = "Gradient"
-		Gradient.Rotation = 90
-		Gradient.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(191, 191, 191))
-		Gradient.Parent = Background
-
-		local Bar = Instance.new("Frame")
-		Bar.Name = "Bar"
-		Bar.ZIndex = 2
-		Bar.AnchorPoint = Vector2.new(0, 0.5)
-		Bar.Size = UDim2.new(0.5, 0, 1, 0)
-		Bar.BorderColor3 = Color3.fromRGB(30, 30, 30)
-		Bar.Position = UDim2.new(0, 0, 0.5, 0)
-		Bar.BorderSizePixel = 0
-		Bar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-		Bar.Parent = Background
-
-		Gradient = Instance.new("UIGradient")
-		Gradient.Name = "Gradient"
-		Gradient.Rotation = 90
-		Gradient.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(191, 191, 191))
-		Gradient.Parent = Bar
-
-		return Slider
-	end,
-	SlimSlider = function()
-		local SlimSlider = Instance.new("TextButton")
-		SlimSlider.Name = "SlimSlider"
-		SlimSlider.Size = UDim2.new(1, 0, 0, 28)
-		SlimSlider.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		SlimSlider.BackgroundTransparency = 1
-		SlimSlider.BorderSizePixel = 0
-		SlimSlider.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		SlimSlider.AutoButtonColor = false
-		SlimSlider.TextSize = 14
-		SlimSlider.TextColor3 = Color3.fromRGB(0, 0, 0)
-		SlimSlider.Text = ""
-		SlimSlider.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-
-		local Title = Instance.new("TextLabel")
-		Title.Name = "Title"
-		Title.Size = UDim2.new(1, -16, 0, 14)
-		Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Title.BackgroundTransparency = 1
-		Title.BorderSizePixel = 0
-		Title.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Title.TextStrokeTransparency = 0.75
-		Title.TextSize = 14
-		Title.RichText = true
-		Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-		Title.Text = "Slider"
-		Title.TextWrapped = true
-		Title.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Title.TextXAlignment = Enum.TextXAlignment.Left
-		Title.Parent = SlimSlider
-
-		local Value = Instance.new("TextBox")
-		Value.Name = "Value"
-		Value.AnchorPoint = Vector2.new(1, 0)
-		Value.Size = UDim2.new(0, 12, 0, 14)
-		Value.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Value.BackgroundTransparency = 1
-		Value.Position = UDim2.new(1, 0, 0, 0)
-		Value.BorderSizePixel = 0
-		Value.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Value.TextStrokeTransparency = 0.75
-		Value.PlaceholderColor3 = Color3.fromRGB(191, 191, 191)
-		Value.TextSize = 14
-		Value.TextColor3 = Color3.fromRGB(255, 255, 255)
-		Value.PlaceholderText = "50"
-		Value.Text = ""
-		Value.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Value.TextXAlignment = Enum.TextXAlignment.Right
-		Value.Parent = SlimSlider
-
-		local Background = Instance.new("Frame")
-		Background.Name = "Background"
-		Background.AnchorPoint = Vector2.new(0.5, 0)
-		Background.Size = UDim2.new(1, 0, 0, 10)
-		Background.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Background.Position = UDim2.new(0.5, 0, 0, 18)
-		Background.BackgroundColor3 = Color3.fromRGB(63, 63, 63)
-		Background.Parent = SlimSlider
-
-		local Gradient = Instance.new("UIGradient")
-		Gradient.Name = "Gradient"
-		Gradient.Rotation = 90
-		Gradient.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(191, 191, 191))
-		Gradient.Parent = Background
-
-		local Bar = Instance.new("Frame")
-		Bar.Name = "Bar"
-		Bar.AnchorPoint = Vector2.new(0, 0.5)
-		Bar.Size = UDim2.new(0.5, 0, 1, 0)
-		Bar.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Bar.Position = UDim2.new(0, 0, 0.5, 0)
-		Bar.BorderSizePixel = 0
-		Bar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-		Bar.Parent = Background
-
-		Gradient = Instance.new("UIGradient")
-		Gradient.Name = "Gradient"
-		Gradient.Rotation = 90
-		Gradient.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(191, 191, 191))
-		Gradient.Parent = Bar
-
-		return SlimSlider
-	end,
-	Textbox = function()
-		local Textbox = Instance.new("TextButton")
-		Textbox.Name = "Textbox"
-		Textbox.Size = UDim2.new(1, 0, 0, 36)
-		Textbox.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Textbox.BackgroundTransparency = 1
-		Textbox.BorderSizePixel = 0
-		Textbox.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Textbox.AutoButtonColor = false
-		Textbox.TextSize = 14
-		Textbox.TextColor3 = Color3.fromRGB(0, 0, 0)
-		Textbox.Text = ""
-		Textbox.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-
-		local Title = Instance.new("TextLabel")
-		Title.Name = "Title"
-		Title.AnchorPoint = Vector2.new(0.5, 0)
-		Title.Size = UDim2.new(1, 0, 0, 14)
-		Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Title.BackgroundTransparency = 1
-		Title.Position = UDim2.new(0.5, 0, 0, 0)
-		Title.BorderSizePixel = 0
-		Title.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Title.TextStrokeTransparency = 0.75
-		Title.TextSize = 14
-		Title.RichText = true
-		Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-		Title.Text = "Textbox"
-		Title.TextWrapped = true
-		Title.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Title.TextXAlignment = Enum.TextXAlignment.Left
-		Title.Parent = Textbox
-
-		local Background = Instance.new("Frame")
-		Background.Name = "Background"
-		Background.AnchorPoint = Vector2.new(0.5, 0)
-		Background.Size = UDim2.new(1, 0, 0, 18)
-		Background.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Background.Position = UDim2.new(0.5, 0, 0, 18)
-		Background.BackgroundColor3 = Color3.fromRGB(63, 63, 63)
-		Background.Parent = Textbox
-
-		local Gradient = Instance.new("UIGradient")
-		Gradient.Name = "Gradient"
-		Gradient.Rotation = 90
-		Gradient.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(191, 191, 191))
-		Gradient.Parent = Background
-
-		local Input = Instance.new("TextBox")
-		Input.Name = "Input"
-		Input.AnchorPoint = Vector2.new(0.5, 0.5)
-		Input.Size = UDim2.new(1, -10, 1, 0)
-		Input.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Input.BackgroundTransparency = 1
-		Input.Position = UDim2.new(0.5, 0, 0.5, 0)
-		Input.BorderSizePixel = 0
-		Input.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Input.TextStrokeTransparency = 0.75
-		Input.TextWrapped = true
-		Input.PlaceholderColor3 = Color3.fromRGB(191, 191, 191)
-		Input.TextSize = 14
-		Input.TextColor3 = Color3.fromRGB(255, 255, 255)
-		Input.PlaceholderText = "Input here"
-		Input.Text = ""
-		Input.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Input.ClearTextOnFocus = false
-		Input.Parent = Background
-
-		return Textbox
-	end,
-	Keybind = function()
-		local Keybind = Instance.new("TextButton")
-		Keybind.Name = "Keybind"
-		Keybind.Size = UDim2.new(1, 0, 0, 14)
-		Keybind.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Keybind.BackgroundTransparency = 1
-		Keybind.BorderSizePixel = 0
-		Keybind.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Keybind.AutoButtonColor = false
-		Keybind.TextSize = 14
-		Keybind.TextColor3 = Color3.fromRGB(0, 0, 0)
-		Keybind.Text = ""
-		Keybind.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-
-		local Title = Instance.new("TextLabel")
-		Title.Name = "Title"
-		Title.AnchorPoint = Vector2.new(0, 0.5)
-		Title.Size = UDim2.new(1, -46, 1, 0)
-		Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Title.BackgroundTransparency = 1
-		Title.Position = UDim2.new(0, 0, 0.5, 0)
-		Title.BorderSizePixel = 0
-		Title.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Title.TextStrokeTransparency = 0.75
-		Title.TextSize = 14
-		Title.RichText = true
-		Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-		Title.Text = "Keybind"
-		Title.TextWrapped = true
-		Title.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Title.TextXAlignment = Enum.TextXAlignment.Left
-		Title.Parent = Keybind
-
-		local Value = Instance.new("TextLabel")
-		Value.Name = "Value"
-		Value.AnchorPoint = Vector2.new(1, 0)
-		Value.Size = UDim2.new(0, 42, 0, 14)
-		Value.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Value.BackgroundTransparency = 1
-		Value.Position = UDim2.new(1, 0, 0, 0)
-		Value.BorderSizePixel = 0
-		Value.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Value.TextStrokeTransparency = 0.75
-		Value.TextSize = 14
-		Value.RichText = true
-		Value.TextColor3 = Color3.fromRGB(191, 191, 191)
-		Value.Text = "[ NONE ]"
-		Value.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Value.TextXAlignment = Enum.TextXAlignment.Right
-		Value.Parent = Keybind
-
-		return Keybind
-	end,
-	ToggleKeybind = function()
-		local TKeybind = Instance.new("TextButton")
-		TKeybind.Name = "TKeybind"
-		TKeybind.Size = UDim2.new(0, 42, 1, 0)
-		TKeybind.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		TKeybind.BackgroundTransparency = 1
-		TKeybind.BorderSizePixel = 0
-		TKeybind.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		TKeybind.AutoButtonColor = false
-		TKeybind.TextStrokeTransparency = 0.75
-		TKeybind.TextSize = 14
-		TKeybind.RichText = true
-		TKeybind.TextColor3 = Color3.fromRGB(191, 191, 191)
-		TKeybind.Text = "[ NONE ]"
-		TKeybind.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-
-		return TKeybind
-	end,
-	Dropdown = function()
-		local Dropdown = Instance.new("TextButton")
-		Dropdown.Name = "Dropdown"
-		Dropdown.Size = UDim2.new(1, 0, 0, 37)
-		Dropdown.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Dropdown.BackgroundTransparency = 1
-		Dropdown.BorderSizePixel = 0
-		Dropdown.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Dropdown.AutoButtonColor = false
-		Dropdown.TextSize = 14
-		Dropdown.TextColor3 = Color3.fromRGB(0, 0, 0)
-		Dropdown.Text = ""
-		Dropdown.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-
-		local Title = Instance.new("TextLabel")
-		Title.Name = "Title"
-		Title.AnchorPoint = Vector2.new(0.5, 0)
-		Title.Size = UDim2.new(1, 0, 0, 14)
-		Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Title.BackgroundTransparency = 1
-		Title.Position = UDim2.new(0.5, 0, 0, 0)
-		Title.BorderSizePixel = 0
-		Title.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Title.TextStrokeTransparency = 0.75
-		Title.TextSize = 14
-		Title.RichText = true
-		Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-		Title.Text = "Dropdown"
-		Title.TextWrapped = true
-		Title.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Title.TextXAlignment = Enum.TextXAlignment.Left
-		Title.Parent = Dropdown
-
-		local Background = Instance.new("Frame")
-		Background.Name = "Background"
-		Background.AnchorPoint = Vector2.new(0.5, 0)
-		Background.Size = UDim2.new(1, 0, 0, 18)
-		Background.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Background.Position = UDim2.new(0.5, 0, 0, 18)
-		Background.BackgroundColor3 = Color3.fromRGB(63, 63, 63)
-		Background.Parent = Dropdown
-
-		local Gradient = Instance.new("UIGradient")
-		Gradient.Name = "Gradient"
-		Gradient.Rotation = 90
-		Gradient.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(191, 191, 191))
-		Gradient.Parent = Background
-
-		local Value = Instance.new("TextLabel")
-		Value.Name = "Value"
-		Value.AnchorPoint = Vector2.new(0.5, 0.5)
-		Value.Size = UDim2.new(1, -10, 1, 0)
-		Value.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Value.BackgroundTransparency = 1
-		Value.Position = UDim2.new(0.5, 0, 0.5, 0)
-		Value.BorderSizePixel = 0
-		Value.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Value.TextStrokeTransparency = 0.75
-		Value.TextTruncate = Enum.TextTruncate.SplitWord
-		Value.TextSize = 14
-		Value.TextColor3 = Color3.fromRGB(255, 255, 255)
-		Value.Text = "..."
-		Value.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Value.TextXAlignment = Enum.TextXAlignment.Left
-		Value.Parent = Background
-
-		return Dropdown
-	end,
-	OptionContainer = function()
-		local OptionContainer = Instance.new("ScrollingFrame")
-		OptionContainer.Name = "OptionContainer"
-		OptionContainer.ZIndex = 4
-		OptionContainer.Visible = false
-		OptionContainer.Size = UDim2.new(0, 100, 0, 100)
-		OptionContainer.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		OptionContainer.Position = UDim2.new(0, 100, 0, 100)
-		OptionContainer.Active = true
-		OptionContainer.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
-		OptionContainer.ScrollingDirection = Enum.ScrollingDirection.Y
-		OptionContainer.CanvasSize = UDim2.new(0, 0, 0, 0)
-		OptionContainer.ScrollBarImageColor3 = Color3.fromRGB(63, 63, 63)
-		OptionContainer.MidImage = "rbxassetid://6432766838"
-		OptionContainer.ScrollBarThickness = 6
-		OptionContainer.TopImage = "rbxassetid://6432766838"
-		OptionContainer.VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar
-		OptionContainer.BottomImage = "rbxassetid://6432766838"
-
-		local ListLayout = Instance.new("UIListLayout")
-		ListLayout.Name = "ListLayout"
-		ListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-		ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-		ListLayout.Padding = UDim.new(0, 2)
-		ListLayout.Parent = OptionContainer
-
-		local Padding = Instance.new("UIPadding")
-		Padding.Name = "Padding"
-		Padding.PaddingTop = UDim.new(0, 3)
-		Padding.PaddingBottom = UDim.new(0, 3)
-		Padding.PaddingLeft = UDim.new(0, 5)
-		Padding.PaddingRight = UDim.new(0, 5)
-		Padding.Parent = OptionContainer
-
-		return OptionContainer
-	end,
-	DropdownOption = function()
-		local Option = Instance.new("TextButton")
-		Option.Name = "Option"
-		Option.Size = UDim2.new(1, 0, 0, 14)
-		Option.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Option.BackgroundTransparency = 1
-		Option.BorderSizePixel = 0
-		Option.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Option.AutoButtonColor = false
-		Option.TextSize = 14
-		Option.TextColor3 = Color3.fromRGB(0, 0, 0)
-		Option.Text = ""
-		Option.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-
-		local Title = Instance.new("TextLabel")
-		Title.Name = "Title"
-		Title.AnchorPoint = Vector2.new(0, 0.5)
-		Title.Size = UDim2.new(1, -38, 1, 0)
-		Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Title.BackgroundTransparency = 1
-		Title.Position = UDim2.new(0, 14, 0.5, 0)
-		Title.BorderSizePixel = 0
-		Title.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Title.TextStrokeTransparency = 0.75
-		Title.TextTruncate = Enum.TextTruncate.SplitWord
-		Title.TextSize = 14
-		Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-		Title.Text = "Option"
-		Title.TextWrapped = true
-		Title.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Title.TextXAlignment = Enum.TextXAlignment.Left
-		Title.Parent = Option
-
-		local Tick = Instance.new("Frame")
-		Tick.Name = "Tick"
-		Tick.Size = UDim2.new(0, 10, 0, 10)
-		Tick.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Tick.Position = UDim2.new(0, 0, 0, 2)
-		Tick.BackgroundColor3 = Color3.fromRGB(63, 63, 63)
-		Tick.Parent = Option
-
-		local Gradient = Instance.new("UIGradient")
-		Gradient.Name = "Gradient"
-		Gradient.Rotation = 90
-		Gradient.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(191, 191, 191))
-		Gradient.Parent = Tick
-
-		local Layout = Instance.new("Frame")
-		Layout.Name = "Layout"
-		Layout.AnchorPoint = Vector2.new(1, 0)
-		Layout.Size = UDim2.new(1, -14, 0, 14)
-		Layout.ClipsDescendants = true
-		Layout.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Layout.BackgroundTransparency = 1
-		Layout.Position = UDim2.new(1, 0, 0, 0)
-		Layout.BorderSizePixel = 0
-		Layout.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Layout.Parent = Option
-
-		local ListLayout = Instance.new("UIListLayout")
-		ListLayout.Name = "ListLayout"
-		ListLayout.FillDirection = Enum.FillDirection.Horizontal
-		ListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
-		ListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-		ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-		ListLayout.Padding = UDim.new(0, 4)
-		ListLayout.Parent = Layout
-
-		local Padding = Instance.new("UIPadding")
-		Padding.Name = "Padding"
-		Padding.PaddingRight = UDim.new(0, 1)
-		Padding.Parent = Layout
-
-		return Option
-	end,
-	Colorpicker = function()
-		local Colorpicker = Instance.new("TextButton")
-		Colorpicker.Name = "Colorpicker"
-		Colorpicker.Size = UDim2.new(1, 0, 0, 14)
-		Colorpicker.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Colorpicker.BackgroundTransparency = 1
-		Colorpicker.BorderSizePixel = 0
-		Colorpicker.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Colorpicker.AutoButtonColor = false
-		Colorpicker.TextSize = 14
-		Colorpicker.TextColor3 = Color3.fromRGB(0, 0, 0)
-		Colorpicker.Text = ""
-		Colorpicker.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-
-		local Title = Instance.new("TextLabel")
-		Title.Name = "Title"
-		Title.Size = UDim2.new(1, -24, 1, 0)
-		Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Title.BackgroundTransparency = 1
-		Title.BorderSizePixel = 0
-		Title.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Title.TextStrokeTransparency = 0.75
-		Title.TextSize = 14
-		Title.RichText = true
-		Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-		Title.Text = "Colorpicker"
-		Title.TextWrapped = true
-		Title.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Title.TextXAlignment = Enum.TextXAlignment.Left
-		Title.Parent = Colorpicker
-
-		local Color = Instance.new("Frame")
-		Color.Name = "Color"
-		Color.AnchorPoint = Vector2.new(1, 0)
-		Color.Size = UDim2.new(0, 20, 0, 10)
-		Color.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Color.Position = UDim2.new(1, 0, 0, 2)
-		Color.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-		Color.Parent = Colorpicker
-
-		local Gradient = Instance.new("UIGradient")
-		Gradient.Name = "Gradient"
-		Gradient.Rotation = 90
-		Gradient.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(191, 191, 191))
-		Gradient.Parent = Color
-
-		return Colorpicker
-	end,
-	ToggleColorpicker = function()
-		local TColorpicker = Instance.new("TextButton")
-		TColorpicker.Name = "TColorpicker"
-		TColorpicker.AnchorPoint = Vector2.new(1, 0.5)
-		TColorpicker.Size = UDim2.new(0, 20, 0, 10)
-		TColorpicker.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		TColorpicker.Position = UDim2.new(1, 0, 0.5, 0)
-		TColorpicker.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-		TColorpicker.AutoButtonColor = false
-		TColorpicker.TextSize = 14
-		TColorpicker.TextColor3 = Color3.fromRGB(0, 0, 0)
-		TColorpicker.Text = ""
-		TColorpicker.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-
-		local Gradient = Instance.new("UIGradient")
-		Gradient.Name = "Gradient"
-		Gradient.Rotation = 90
-		Gradient.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(191, 191, 191))
-		Gradient.Parent = TColorpicker
-
-		return TColorpicker
-	end,
-	ColorpickerPalette = function()
-		local Palette = Instance.new("Frame")
-		Palette.Name = "Palette"
-		Palette.ZIndex = 4
-		Palette.Visible = false
-		Palette.Size = UDim2.new(0, 150, 0, 290)
-		Palette.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Palette.Position = UDim2.new(0, 100, 0, 100)
-		Palette.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-
-		local Gradient = Instance.new("UIGradient")
-		Gradient.Name = "Gradient"
-		Gradient.Rotation = 90
-		Gradient.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(191, 191, 191))
-		Gradient.Parent = Palette
-
-		local ListLayout = Instance.new("UIListLayout")
-		ListLayout.Name = "ListLayout"
-		ListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-		ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-		ListLayout.Padding = UDim.new(0, 6)
-		ListLayout.Parent = Palette
-
-		local Padding = Instance.new("UIPadding")
-		Padding.Name = "Padding"
-		Padding.PaddingTop = UDim.new(0, 5)
-		Padding.PaddingBottom = UDim.new(0, 5)
-		Padding.PaddingLeft = UDim.new(0, 5)
-		Padding.PaddingRight = UDim.new(0, 5)
-		Padding.Parent = Palette
-
-		local SVPicker = Instance.new("TextButton")
-		SVPicker.Name = "SVPicker"
-		SVPicker.AnchorPoint = Vector2.new(0.5, 0)
-		SVPicker.Size = UDim2.new(1, 0, 0, 180)
-		SVPicker.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		SVPicker.Position = UDim2.new(0.5, 0, 0, 0)
-		SVPicker.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-		SVPicker.AutoButtonColor = false
-		SVPicker.TextSize = 14
-		SVPicker.TextColor3 = Color3.fromRGB(0, 0, 0)
-		SVPicker.Text = ""
-		SVPicker.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		SVPicker.Parent = Palette
-
-		local Brightness = Instance.new("Frame")
-		Brightness.Name = "Brightness"
-		Brightness.AnchorPoint = Vector2.new(0.5, 0.5)
-		Brightness.Size = UDim2.new(1, 0, 1, 0)
-		Brightness.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Brightness.Position = UDim2.new(0.5, 0, 0.5, 0)
-		Brightness.BorderSizePixel = 0
-		Brightness.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-		Brightness.Parent = SVPicker
-
-		Gradient = Instance.new("UIGradient")
-		Gradient.Name = "Gradient"
-		Gradient.Transparency = NumberSequence.new(0, 1)
-		Gradient.Parent = Brightness
-
-		local Saturation = Instance.new("Frame")
-		Saturation.Name = "Saturation"
-		Saturation.ZIndex = 2
-		Saturation.AnchorPoint = Vector2.new(0.5, 0.5)
-		Saturation.Size = UDim2.new(1, 0, 1, 0)
-		Saturation.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Saturation.Position = UDim2.new(0.5, 0, 0.5, 0)
-		Saturation.BorderSizePixel = 0
-		Saturation.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-		Saturation.Parent = SVPicker
-
-		Gradient = Instance.new("UIGradient")
-		Gradient.Name = "Gradient"
-		Gradient.Transparency = NumberSequence.new(1, 0)
-		Gradient.Rotation = 90
-		Gradient.Color = ColorSequence.new(Color3.fromRGB(0, 0, 0))
-		Gradient.Parent = Saturation
-
-		local Pin = Instance.new("Frame")
-		Pin.Name = "Pin"
-		Pin.ZIndex = 3
-		Pin.AnchorPoint = Vector2.new(0.5, 0.5)
-		Pin.Size = UDim2.new(0, 3, 0, 3)
-		Pin.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Pin.Rotation = 45
-		Pin.BackgroundTransparency = 1
-		Pin.Position = UDim2.new(0.5, 0, 0.5, 0)
-		Pin.BorderSizePixel = 0
-		Pin.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Pin.Parent = SVPicker
-
-		local Stroke = Instance.new("UIStroke")
-		Stroke.Name = "Stroke"
-		Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-		Stroke.LineJoinMode = Enum.LineJoinMode.Miter
-		Stroke.Thickness = 1.5
-		Stroke.Parent = Pin
-
-		local Hue = Instance.new("TextButton")
-		Hue.Name = "Hue"
-		Hue.LayoutOrder = 1
-		Hue.AnchorPoint = Vector2.new(0.5, 0)
-		Hue.Size = UDim2.new(1, 0, 0, 10)
-		Hue.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Hue.Position = UDim2.new(0.5, 0, 0, 151)
-		Hue.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-		Hue.AutoButtonColor = false
-		Hue.TextSize = 14
-		Hue.TextColor3 = Color3.fromRGB(0, 0, 0)
-		Hue.Text = ""
-		Hue.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Hue.Parent = Palette
-
-		Gradient = Instance.new("UIGradient")
-		Gradient.Name = "Gradient"
-		Gradient.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)), ColorSequenceKeypoint.new(0.1666667, Color3.fromRGB(255, 0, 255)), ColorSequenceKeypoint.new(0.3333333, Color3.fromRGB(0, 0, 255)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 255, 255)), ColorSequenceKeypoint.new(0.6666667, Color3.fromRGB(0, 255, 0)), ColorSequenceKeypoint.new(0.8333333, Color3.fromRGB(255, 255, 0)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 0))})
-		Gradient.Parent = Hue
-
-		Pin = Instance.new("Frame")
-		Pin.Name = "Pin"
-		Pin.ZIndex = 3
-		Pin.AnchorPoint = Vector2.new(0.5, 0.5)
-		Pin.Size = UDim2.new(0, 1, 1, 0)
-		Pin.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Pin.Position = UDim2.new(0, 0, 0.5, 0)
-		Pin.BackgroundColor3 = Color3.fromRGB(252, 252, 252)
-		Pin.Parent = Hue
-
-		local Alpha = Instance.new("TextButton")
-		Alpha.Name = "Alpha"
-		Alpha.LayoutOrder = 2
-		Alpha.AnchorPoint = Vector2.new(0.5, 0)
-		Alpha.Size = UDim2.new(1, 0, 0, 10)
-		Alpha.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Alpha.Position = UDim2.new(0.5, 0, 0, 207)
-		Alpha.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-		Alpha.AutoButtonColor = false
-		Alpha.TextSize = 14
-		Alpha.TextColor3 = Color3.fromRGB(0, 0, 0)
-		Alpha.Text = ""
-		Alpha.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Alpha.Parent = Palette
-
-		Stroke = Instance.new("UIStroke")
-		Stroke.Name = "Stroke"
-		Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-		Stroke.LineJoinMode = Enum.LineJoinMode.Miter
-		Stroke.Parent = Alpha
-
-		Gradient = Instance.new("UIGradient")
-		Gradient.Name = "Gradient"
-		Gradient.Transparency = NumberSequence.new(0, 1)
-		Gradient.Parent = Alpha
-
-		Pin = Instance.new("Frame")
-		Pin.Name = "Pin"
-		Pin.AnchorPoint = Vector2.new(0.5, 0.5)
-		Pin.Size = UDim2.new(0, 1, 1, 0)
-		Pin.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Pin.Position = UDim2.new(0, 0, 0.5, 0)
-		Pin.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-		Pin.Parent = Alpha
-
-		local Value = Instance.new("TextLabel")
-		Value.Name = "Value"
-		Value.AnchorPoint = Vector2.new(0.5, 0.5)
-		Value.Size = UDim2.new(1, -8, 1, 0)
-		Value.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Value.BackgroundTransparency = 1
-		Value.Position = UDim2.new(0.5, 0, 0.5, 0)
-		Value.BorderSizePixel = 0
-		Value.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Value.TextStrokeTransparency = 0.75
-		Value.TextSize = 12
-		Value.TextColor3 = Color3.fromRGB(255, 255, 255)
-		Value.TextYAlignment = Enum.TextYAlignment.Bottom
-		Value.Text = "1"
-		Value.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Value.TextXAlignment = Enum.TextXAlignment.Right
-		Value.Parent = Alpha
-
-		local RGB = Instance.new("Frame")
-		RGB.Name = "RGB"
-		RGB.LayoutOrder = 3
-		RGB.AnchorPoint = Vector2.new(0.5, 0)
-		RGB.Size = UDim2.new(1, 0, 0, 18)
-		RGB.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		RGB.Position = UDim2.new(0.5, 0, 0, 223)
-		RGB.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-		RGB.Parent = Palette
-
-		local RGBBox = Instance.new("TextBox")
-		RGBBox.Name = "RGBBox"
-		RGBBox.ZIndex = 3
-		RGBBox.AnchorPoint = Vector2.new(0, 0.5)
-		RGBBox.Size = UDim2.new(1, -30, 1, 0)
-		RGBBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		RGBBox.BackgroundTransparency = 1
-		RGBBox.Position = UDim2.new(0, 30, 0.5, 0)
-		RGBBox.BorderSizePixel = 0
-		RGBBox.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		RGBBox.TextStrokeTransparency = 0.75
-		RGBBox.PlaceholderColor3 = Color3.fromRGB(191, 191, 191)
-		RGBBox.TextSize = 14
-		RGBBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-		RGBBox.PlaceholderText = "255, 0, 0"
-		RGBBox.Text = ""
-		RGBBox.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		RGBBox.TextXAlignment = Enum.TextXAlignment.Left
-		RGBBox.Parent = RGB
-
-		Gradient = Instance.new("UIGradient")
-		Gradient.Name = "Gradient"
-		Gradient.Rotation = 90
-		Gradient.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(191, 191, 191))
-		Gradient.Parent = RGB
-
-		local RGBText = Instance.new("TextLabel")
-		RGBText.Name = "RGBText"
-		RGBText.ZIndex = 3
-		RGBText.AnchorPoint = Vector2.new(0, 0.5)
-		RGBText.Size = UDim2.new(0, 26, 1, 0)
-		RGBText.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		RGBText.BackgroundTransparency = 1
-		RGBText.Position = UDim2.new(0, 4, 0.5, 0)
-		RGBText.BorderSizePixel = 0
-		RGBText.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		RGBText.TextStrokeTransparency = 0.75
-		RGBText.TextSize = 14
-		RGBText.TextColor3 = Color3.fromRGB(255, 255, 255)
-		RGBText.Text = "RGB: "
-		RGBText.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		RGBText.TextXAlignment = Enum.TextXAlignment.Left
-		RGBText.Parent = RGB
-
-		local HEX = Instance.new("Frame")
-		HEX.Name = "HEX"
-		HEX.LayoutOrder = 4
-		HEX.AnchorPoint = Vector2.new(0.5, 0)
-		HEX.Size = UDim2.new(1, 0, 0, 18)
-		HEX.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		HEX.Position = UDim2.new(0.5, 0, 0, 249)
-		HEX.BackgroundColor3 = Color3.fromRGB(63, 63, 63)
-		HEX.Parent = Palette
-
-		local HEXBox = Instance.new("TextBox")
-		HEXBox.Name = "HEXBox"
-		HEXBox.AnchorPoint = Vector2.new(0, 0.5)
-		HEXBox.Size = UDim2.new(1, -35, 1, 0)
-		HEXBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		HEXBox.BackgroundTransparency = 1
-		HEXBox.Position = UDim2.new(0, 35, 0.5, 0)
-		HEXBox.BorderSizePixel = 0
-		HEXBox.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		HEXBox.TextStrokeTransparency = 0.75
-		HEXBox.PlaceholderColor3 = Color3.fromRGB(191, 191, 191)
-		HEXBox.TextSize = 14
-		HEXBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-		HEXBox.PlaceholderText = "FF0000"
-		HEXBox.Text = ""
-		HEXBox.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		HEXBox.TextXAlignment = Enum.TextXAlignment.Left
-		HEXBox.Parent = HEX
-
-		local HEXText = Instance.new("TextLabel")
-		HEXText.Name = "HEXText"
-		HEXText.AnchorPoint = Vector2.new(0, 0.5)
-		HEXText.Size = UDim2.new(0, 31, 1, 0)
-		HEXText.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		HEXText.BackgroundTransparency = 1
-		HEXText.Position = UDim2.new(0, 4, 0.5, 0)
-		HEXText.BorderSizePixel = 0
-		HEXText.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		HEXText.FontSize = Enum.FontSize.Size14
-		HEXText.TextStrokeTransparency = 0.75
-		HEXText.TextSize = 14
-		HEXText.TextColor3 = Color3.fromRGB(255, 255, 255)
-		HEXText.Text = "HEX: #"
-		HEXText.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		HEXText.TextXAlignment = Enum.TextXAlignment.Left
-		HEXText.Parent = HEX
-
-		Gradient = Instance.new("UIGradient")
-		Gradient.Name = "Gradient"
-		Gradient.Rotation = 90
-		Gradient.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(191, 191, 191))
-		Gradient.Parent = HEX
-
-		local Rainbow = Instance.new("TextButton")
-		Rainbow.Name = "Rainbow"
-		Rainbow.LayoutOrder = 5
-		Rainbow.AnchorPoint = Vector2.new(0.5, 0)
-		Rainbow.Size = UDim2.new(1, 0, 0, 14)
-		Rainbow.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Rainbow.BackgroundTransparency = 1
-		Rainbow.Position = UDim2.new(0.5, 0, 0, 270)
-		Rainbow.BorderSizePixel = 0
-		Rainbow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Rainbow.AutoButtonColor = false
-		Rainbow.TextSize = 14
-		Rainbow.TextColor3 = Color3.fromRGB(0, 0, 0)
-		Rainbow.Text = ""
-		Rainbow.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Rainbow.Parent = Palette
-
-		local Tick = Instance.new("Frame")
-		Tick.Name = "Tick"
-		Tick.Size = UDim2.new(0, 10, 0, 10)
-		Tick.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Tick.Position = UDim2.new(0, 0, 0, 2)
-		Tick.BackgroundColor3 = Color3.fromRGB(63, 63, 63)
-		Tick.Parent = Rainbow
-
-		Gradient = Instance.new("UIGradient")
-		Gradient.Name = "Gradient"
-		Gradient.Rotation = 90
-		Gradient.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(191, 191, 191))
-		Gradient.Parent = Tick
-
-		local Title = Instance.new("TextLabel")
-		Title.Name = "Title"
-		Title.Size = UDim2.new(1, -14, 1, 0)
-		Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Title.BackgroundTransparency = 1
-		Title.Position = UDim2.new(0, 14, 0, 0)
-		Title.BorderSizePixel = 0
-		Title.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Title.TextStrokeTransparency = 0.75
-		Title.TextSize = 14
-		Title.TextColor3 = Color3.fromRGB(252, 252, 252)
-		Title.Text = "Rainbow"
-		Title.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Title.TextXAlignment = Enum.TextXAlignment.Left
-		Title.Parent = Rainbow
-
-		return Palette
-	end,
-	PushNotification = function()
-		local Push = Instance.new("Frame")
-		Push.Name = "Push"
-		Push.Size = UDim2.new(0, 200, 0, 48)
-		Push.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Push.BorderSizePixel = 2
-		Push.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
-
-		local Stroke = Instance.new("UIStroke")
-		Stroke.Name = "Stroke"
-		Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-		Stroke.LineJoinMode = Enum.LineJoinMode.Miter
-		Stroke.Color = Color3.fromRGB(60, 60, 60)
-		Stroke.Parent = Push
-
-		local ListLayout = Instance.new("UIListLayout")
-		ListLayout.Name = "ListLayout"
-		ListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-		ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-		ListLayout.Padding = UDim.new(0, 5)
-		ListLayout.Parent = Push
-
-		local Padding = Instance.new("UIPadding")
-		Padding.Name = "Padding"
-		Padding.PaddingTop = UDim.new(0, 4)
-		Padding.PaddingBottom = UDim.new(0, 4)
-		Padding.PaddingLeft = UDim.new(0, 4)
-		Padding.PaddingRight = UDim.new(0, 4)
-		Padding.Parent = Push
-
-		local TitleHolder = Instance.new("Frame")
-		TitleHolder.Name = "TitleHolder"
-		TitleHolder.Size = UDim2.new(1, 0, 0, 14)
-		TitleHolder.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		TitleHolder.BackgroundTransparency = 1
-		TitleHolder.BorderSizePixel = 0
-		TitleHolder.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		TitleHolder.Parent = Push
-
-		local Title = Instance.new("TextLabel")
-		Title.Name = "Title"
-		Title.Size = UDim2.new(1, -14, 1, 0)
-		Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Title.BackgroundTransparency = 1
-		Title.BorderSizePixel = 0
-		Title.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Title.TextStrokeTransparency = 0.75
-		Title.TextTruncate = Enum.TextTruncate.SplitWord
-		Title.TextSize = 14
-		Title.RichText = true
-		Title.TextColor3 = Color3.fromRGB(252, 252, 252)
-		-- Title.TextYAlignment = Enum.TextYAlignment.Top
-		Title.Text = "Title"
-		Title.TextWrapped = true
-		Title.FontFace = Font.fromEnum(Enum.Font.SourceSansSemibold)
-		Title.TextXAlignment = Enum.TextXAlignment.Left
-		Title.Parent = TitleHolder
-
-		local Close = Instance.new("TextButton")
-		Close.Name = "Close"
-		Close.AnchorPoint = Vector2.new(1, 0)
-		Close.Size = UDim2.new(0, 14, 0, 14)
-		Close.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Close.BackgroundTransparency = 1
-		Close.Position = UDim2.new(1, 0, 0, 0)
-		Close.BorderSizePixel = 0
-		Close.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Close.AutoButtonColor = false
-		Close.TextStrokeTransparency = 0.75
-		Close.TextSize = 14
-		Close.TextColor3 = Color3.fromRGB(255, 255, 255)
-		Close.Text = "X"
-		Close.FontFace = Font.fromEnum(Enum.Font.Nunito)
-		Close.Parent = TitleHolder
-
-		local Divider = Instance.new("Frame")
-		Divider.Name = "Divider"
-		Divider.LayoutOrder = 1
-		Divider.Size = UDim2.new(1, -2, 0, 2)
-		Divider.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Divider.BackgroundColor3 = Color3.fromRGB(63, 63, 63)
-		Divider.Parent = Push
-
-		local Description = Instance.new("TextLabel")
-		Description.Name = "Description"
-		Description.LayoutOrder = 2
-		Description.Size = UDim2.new(1, 0, 0, 14)
-		Description.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Description.BackgroundTransparency = 1
-		Description.BorderSizePixel = 0
-		Description.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Description.TextStrokeTransparency = 0.75
-		Description.TextSize = 14
-		Description.RichText = true
-		Description.TextColor3 = Color3.fromRGB(255, 255, 255)
-		-- Description.TextYAlignment = Enum.TextYAlignment.Top
-		Description.Text = "Description"
-		Description.TextWrapped = true
-		Description.TextWrap = true
-		Description.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Description.TextXAlignment = Enum.TextXAlignment.Left
-		Description.Parent = Push
-
-		return Push
-	end,
-	ToastNotification = function()
-		local Toast = Instance.new("Frame")
-		Toast.Name = "Toast"
-		Toast.Size = UDim2.new(0, 259, 0, 24)
-		Toast.ClipsDescendants = true
-		Toast.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Toast.BackgroundTransparency = 1
-		Toast.BorderSizePixel = 0
-		Toast.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-
-		local Main = Instance.new("Frame")
-		Main.Name = "Main"
-		Main.AnchorPoint = Vector2.new(0, 0.5)
-		Main.Size = UDim2.new(0, 255, 1, -4)
-		Main.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Main.Position = UDim2.new(0, 2, 0.5, 0)
-		Main.BorderSizePixel = 2
-		Main.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
-		Main.Parent = Toast
-
-		local Stroke = Instance.new("UIStroke")
-		Stroke.Name = "Stroke"
-		Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-		Stroke.LineJoinMode = Enum.LineJoinMode.Miter
-		Stroke.Color = Color3.fromRGB(60, 60, 60)
-		Stroke.Parent = Main
-
-		local GLine = Instance.new("Frame")
-		GLine.Name = "GLine"
-		GLine.AnchorPoint = Vector2.new(1, 0.5)
-		GLine.Size = UDim2.new(0, 2, 1, 4)
-		GLine.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		GLine.Position = UDim2.new(0, 0, 0.5, 0)
-		GLine.BorderSizePixel = 0
-		GLine.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-		GLine.Parent = Main
-
-		local Gradient = Instance.new("UIGradient")
-		Gradient.Name = "Gradient"
-		Gradient.Transparency = NumberSequence.new({
-			NumberSequenceKeypoint.new(0, 1),
-			NumberSequenceKeypoint.new(0.25, 0),
-			NumberSequenceKeypoint.new(0.75, 0),
-			NumberSequenceKeypoint.new(1, 1)
-		})
-		Gradient.Rotation = 90
-		Gradient.Parent = GLine
-
-		local Title = Instance.new("TextLabel")
-		Title.Name = "Title"
-		Title.AnchorPoint = Vector2.new(0.5, 0.5)
-		Title.Size = UDim2.new(1, -10, 1, 0)
-		Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		Title.BackgroundTransparency = 1
-		Title.Position = UDim2.new(0.5, 0, 0.5, 0)
-		Title.BorderSizePixel = 0
-		Title.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		Title.TextStrokeTransparency = 0.75
-		Title.TextSize = 14
-		Title.RichText = true
-		Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-		Title.Text = "Hit OnlyTwentyCharacters in the Head with AK47"
-		Title.FontFace = Font.fromEnum(Enum.Font.SourceSans)
-		Title.TextXAlignment = Enum.TextXAlignment.Left
-		Title.Parent = Main
-
-		return Toast
-	end
-}
-LavaHub.Elements = {
-	Screen = function()
-		local ScreenAsset = LavaHub.Assets:Screen()
-
-		if not LavaHub.IsLocal then sethiddenproperty(ScreenAsset, "OnTopOfCoreBlur", true) end
-		ScreenAsset.Name = "LavaHub " .. game:GetService("HttpService"):GenerateGUID(false)
-		ScreenAsset.Parent = LavaHub.IsLocal and LocalPlayer:FindFirstChildOfClass("PlayerGui") or CoreGui
-
-		return ScreenAsset
-	end,
-	Tooltip = function(Parent, Tooltip)
-		Tooltip = LavaHub.Utilities:GetType(Tooltip, "table", {}, true)
-		Tooltip.Text = LavaHub.Utilities:GetType(Tooltip.Text, "string", "Tooltip")
-		Tooltip.OffsetX = LavaHub.Utilities:GetType(Tooltip.OffsetX, "number", 5)
-		Tooltip.OffsetY = LavaHub.Utilities:GetType(Tooltip.OffsetY, "number", 5)
-
-		local TooltipAsset = LavaHub.Assets.Tooltip()
-		TooltipAsset.Parent = LavaHub.Screen
-
-		Tooltip.Type = "Tooltip"
-		Tooltip.Asset = TooltipAsset
-
-		TooltipAsset.Text = Tooltip.Text
-		TooltipAsset.Size = UDim2.fromOffset(
-			TooltipAsset.TextBounds.X + 6,
-			TooltipAsset.TextBounds.Y + 6
-		)
-
-		Parent.MouseEnter:Connect(function()
-			local Mouse = UserInputService:GetMouseLocation()
-			TooltipAsset.Position = UDim2.fromOffset(Mouse.X + Tooltip.OffsetX, Mouse.Y - Tooltip.OffsetY)
-
-			TooltipAsset.Visible = true
-		end)
-		Parent.MouseLeave:Connect(function()
-			TooltipAsset.Visible = false
-		end)
-
-		UserInputService.InputChanged:Connect(function(Input)
-			if Input.UserInputType == Enum.UserInputType.MouseMovement and TooltipAsset.Visible then
-				local Mouse = Vector2.new(Input.Position.X, Input.Position.Y) + GuiInset -- UserInputService:GetMouseLocation()
-				TooltipAsset.Position = UDim2.fromOffset(Mouse.X + Tooltip.OffsetX, Mouse.Y - Tooltip.OffsetY)
-			end
-		end)
-
-		Tooltip:GetPropertyChangedSignal("Text"):Connect(function(Value)
-			TooltipAsset.Text = Value
-			TooltipAsset.Size = UDim2.fromOffset(
-				TooltipAsset.TextBounds.X + 6,
-				TooltipAsset.TextBounds.Y + 6
-			)
-		end)
-
-		return Tooltip
-	end,
-	Snowflakes = function(WindowAsset)
-		local ParticleEmitter = loadstring(game:HttpGet("https://raw.githubusercontent.com/AlexR32/rParticle/master/Main.lua"))()
-		local Emitter = ParticleEmitter.new(WindowAsset.Background, WindowAsset.Snowflake)
-		local NewRandom = Random.new() Emitter.SpawnRate = 20
-
-		Emitter.OnSpawn = function(Particle)
-			local RandomPosition = NewRandom:NextNumber()
-			local RandomSize = NewRandom:NextInteger(10, 50)
-			local RandomYVelocity = NewRandom:NextInteger(10, 50)
-			local RandomXVelocity = NewRandom:NextInteger(-50, 50)
-
-			Particle.Object.ImageTransparency = RandomSize / 50
-			Particle.Object.Size = UDim2.fromOffset(RandomSize, RandomSize)
-			Particle.Velocity = Vector2.new(RandomXVelocity, RandomYVelocity)
-			Particle.Position = Vector2.new(RandomPosition * WindowAsset.Background.AbsoluteSize.X, 0)
-			Particle.MaxAge = 20 task.wait(0.5) Particle.Object.Visible = true
-		end
-
-		Emitter.OnUpdate = function(Particle, Delta)
-			Particle.Position += Particle.Velocity * Delta
-		end
-	end,
-	Window = function(Window)
-		local WindowAsset = LavaHub.Assets.Window()
-
-		Window.Flags = {}
-		Window.Elements = {}
-		Window.Colorable = {}
-		Window.RainbowHue = 0
-
-		Window.Type = "Window"
-		Window.Asset = WindowAsset
-		Window.Background = Window.Asset.Background
-
-		local Flags = {}
-		local FlagsExclude = {}
-
-		local function IncrementKey(BaseKey)
-			local Suffix = 1
-			local NewKey = `{BaseKey}-{Suffix}`
-
-			while Flags[NewKey] ~= nil do
-				Suffix += 1
-				NewKey = `{BaseKey}-{Suffix}`
-			end
-
-			return NewKey
-		end
-
-		setmetatable(Window.Flags, {
-			__index = function(Self, Key)
-				return Flags[Key]
-			end,
-			__newindex = function(Self, Key, Value)
-				local Element = Window.Elements[#Window.Elements]
-				if Flags[Key] ~= nil and not table.find(FlagsExclude, Element) then
-					local Element = Window.Elements[#Window.Elements]
-					local IncrementedKey = IncrementKey(Key)
-
-					if Element.Flag then Element.Flag = IncrementedKey end
-					table.insert(FlagsExclude, Element)
-
-					warn(`Flag {Key} already exists. Renaming to {IncrementedKey}`)
-					Flags[IncrementedKey] = Value
-					return
-				else
-					table.insert(FlagsExclude, Element)
-					Flags[Key] = Value
-					return
-				end
-			end
-		})
-
-		WindowAsset.Parent = LavaHub.Screen
-		WindowAsset.Visible = Window.Enabled
-		WindowAsset.Topbar.Title.Text = Window.Name
-		WindowAsset.Position = Window.Position
-		WindowAsset.Size = Window.Size
-
-		if not LavaHub.IsLocal and (Window.Enabled and Window.Blur) then
-			RunService:SetRobloxGuiFocused(true)
-		end
-
-		LavaHub.Utilities.MakeDraggable(WindowAsset.Topbar, WindowAsset, function(Position)
-			Window.Position = Position
-		end)
-		LavaHub.Utilities.MakeResizeable(WindowAsset.Resize, WindowAsset, Vector2.new(296, 296), Vector2.new(896, 896), function(Size)
-			Window.Size = Size
-		end)
-
-		-- local Month = tonumber(os.date("%m"))
-		-- if Month == 12 or Month == 1 then task.spawn(LavaHub.Elements.Snowflakes, WindowAsset) end
-		if not Window.LegacyTabButtons then
-			WindowAsset.TabButtonContainer.ListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-				WindowAsset.TabButtonContainer.CanvasSize = UDim2.fromOffset(WindowAsset.TabButtonContainer.ListLayout.AbsoluteContentSize.X, 0)
-			end)
-		end
-
-		RunService.RenderStepped:Connect(function()
-			Window.RainbowHue = os.clock() % Window.RainbowSpeed / Window.RainbowSpeed
-		end)
-
-		Window:GetPropertyChangedSignal("Enabled"):Connect(function(Enabled)
-			WindowAsset.Visible = Enabled
-
-			if not LavaHub.IsLocal then
-				RunService:SetRobloxGuiFocused(Enabled and Window.Blur)
-			end
-			if not Enabled then
-				for Index, Object in pairs(LavaHub.Screen:GetChildren()) do
-					if Object.Name == "Palette" or Object.Name == "OptionContainer" then
-						Object.Visible = false
-					end
-				end
-			end
-		end)
-		Window:GetPropertyChangedSignal("Blur"):Connect(function(Blur)
-			if not LavaHub.IsLocal then
-				RunService:SetRobloxGuiFocused(Window.Enabled and Blur)
-			end
-		end)
-		Window:GetPropertyChangedSignal("Name"):Connect(function(Name)
-			WindowAsset.Topbar.Title.Text = Name
-		end)
-		Window:GetPropertyChangedSignal("Position"):Connect(function(Position)
-			WindowAsset.Position = Position
-		end)
-		Window:GetPropertyChangedSignal("Size"):Connect(function(Size)
-			WindowAsset.Size = Size
-		end)
-		Window:GetPropertyChangedSignal("Color"):Connect(function(Color)
-			for Object, ColorConfig in pairs(Window.Colorable) do
-				if ColorConfig[1] then
-					if ColorConfig[2] == "TextFormat" then
-						local FormatColor = `rgb({LavaHub.Utilities.ColorToString(Color)})`
-						Object.Text = Object.Text:gsub("rgb%(%d+, %d+, %d+%)", FormatColor)
-						continue
-					end
-
-					Object[ColorConfig[2]] = Color
-				end
-			end
-		end)
-
-		function Window.SetValue(Self, Flag, Value)
-			for Index, Element in pairs(Self.Elements) do
-				if Element.Flag and Element.Flag == Flag then
-					Element.Value = Value
-				end
-			end
-		end
-		function Window.GetValue(Self, Flag)
-			for Index, Element in pairs(Self.Elements) do
-				if Element.Flag and Element.Flag == Flag then
-					return Element.Value
-				end
-			end
-		end
-
-		function Window.Watermark(Self, Watermark)
-			Watermark = LavaHub.Utilities:GetType(Watermark, "table", {}, true)
-			Watermark.Enabled = LavaHub.Utilities:GetType(Watermark.Enabled, "boolean", false)
-			Watermark.Title = LavaHub.Utilities:GetType(Watermark.Title, "string", "Hello World!")
-			Watermark.Flag = LavaHub.Utilities:GetType(Watermark.Flag, "string", "UI/Watermark/Position")
-
-			Watermark.Type = "Watermark"
-			Watermark.Asset = LavaHub.Screen.Watermark
-
-			LavaHub.Screen.Watermark.Visible = Watermark.Enabled
-			LavaHub.Screen.Watermark.Text = Watermark.Title
-
-			LavaHub.Screen.Watermark.Size = UDim2.fromOffset(
-				LavaHub.Screen.Watermark.TextBounds.X + 6,
-				LavaHub.Screen.Watermark.TextBounds.Y + 6
-			)
-
-			LavaHub.Utilities.MakeDraggable(LavaHub.Screen.Watermark, LavaHub.Screen.Watermark, function(Position)
-				if not Window.Enabled then return end
-				LavaHub.Screen.Watermark.Position = Position
-			end, function(Position)
-				if not Window.Enabled then return end
-				Watermark.Value = {
-					Position.X.Scale, Position.X.Offset,
-					Position.Y.Scale, Position.Y.Offset
-				}
-			end)
-
-			Watermark:GetPropertyChangedSignal("Enabled"):Connect(function(Enabled)
-				LavaHub.Screen.Watermark.Visible = Enabled
-			end)
-			Watermark:GetPropertyChangedSignal("Title"):Connect(function(Title)
-				LavaHub.Screen.Watermark.Text = Title
-				LavaHub.Screen.Watermark.Size = UDim2.fromOffset(
-					LavaHub.Screen.Watermark.TextBounds.X + 6,
-					LavaHub.Screen.Watermark.TextBounds.Y + 6
-				)
-			end)
-			Watermark:GetPropertyChangedSignal("Value"):Connect(function(Value)
-				if type(Value) ~= "table" then return end
-				LavaHub.Screen.Watermark.Position = UDim2.new(
-					Value[1], Value[2],
-					Value[3], Value[4]
-				)
-				Self.Flags[Watermark.Flag] = {
-					Value[1], Value[2],
-					Value[3], Value[4]
-				}
-			end)
-
-			Self.Elements[#Self.Elements + 1] = Watermark
-			Self.Watermark = Watermark
-			return Watermark
-		end
-		function Window.KeybindList(Self, KeybindList)
-			local KeybindListAsset = LavaHub.Screen.KeybindList
-			KeybindList = LavaHub.Utilities:GetType(KeybindList, "table", {}, true)
-			KeybindList.Enabled = LavaHub.Utilities:GetType(KeybindList.Enabled, "boolean", false)
-			KeybindList.Title = LavaHub.Utilities:GetType(KeybindList.Title, "string", "Keybinds")
-			KeybindList.Position = LavaHub.Utilities:GetType(KeybindList.Position, "UDim2", UDim2.new(0, 10, 0.5, -123))
-			KeybindList.Size = LavaHub.Utilities:GetType(KeybindList.Size, "UDim2", UDim2.new(0, 121, 0, 246))
-
-			KeybindList.Type = "KeybindList"
-			KeybindList.Asset = KeybindListAsset
-			KeybindList.List = KeybindList.Asset.BindContainer
-
-			KeybindListAsset.Visible = KeybindList.Enabled
-			KeybindListAsset.Topbar.Title.Text = KeybindList.Title
-			KeybindListAsset.Position = KeybindList.Position
-			KeybindListAsset.Size = KeybindList.Size
-
-			LavaHub.Utilities.MakeDraggable(KeybindListAsset.Topbar, KeybindListAsset, function(Position)
-				KeybindList.Position = Position
-			end)
-			LavaHub.Utilities.MakeResizeable(KeybindListAsset.Resize, KeybindListAsset, Vector2.new(121, 246), Vector2.new(896, 896), function(Size)
-				KeybindList.Size = Size
-			end)
-
-			KeybindList:GetPropertyChangedSignal("Title"):Connect(function(Title)
-				KeybindListAsset.Topbar.Title.Text = Title
-			end)
-			KeybindList:GetPropertyChangedSignal("Enabled"):Connect(function(Enabled)
-				KeybindListAsset.Visible = Enabled
-			end)
-			KeybindList:GetPropertyChangedSignal("Position"):Connect(function(Position)
-				KeybindListAsset.Position = Position
-			end)
-			KeybindList:GetPropertyChangedSignal("Size"):Connect(function(Size)
-				KeybindListAsset.Size = Size
-			end)
-
-			WindowAsset.Background.Changed:Connect(function(Property)
-				if Property == "Image" then
-					KeybindListAsset.Background.Image = WindowAsset.Background.Image
-				elseif Property == "ImageColor3" then
-					KeybindListAsset.Background.ImageColor3 = WindowAsset.Background.ImageColor3
-				elseif Property == "ImageTransparency" then
-					KeybindListAsset.Background.ImageTransparency = WindowAsset.Background.ImageTransparency
-				elseif Property == "TileSize" then
-					KeybindListAsset.Background.TileSize = WindowAsset.Background.TileSize
-				end
-			end)
-
-			for Index, Element in pairs(Self.Elements) do
-				if Element.Type == "Keybind" and not Element.IgnoreList then
-					Element.ListMimic = {}
-					Element.ListMimic.Asset = LavaHub.Assets.KeybindMimic()
-					Element.ListMimic.Asset.Title.Text = Element.CustomName or Element.Name or Element.Toggle.Name
-					Element.ListMimic.Asset.Visible = Element.Value ~= "NONE"
-					Element.ListMimic.Asset.Layout.Keybind.Text = "[ " .. Element.Value .. " ]"
-					Element.ListMimic.Asset.Parent = KeybindList.List
-
-					Element.ListMimic.Asset.Title:GetPropertyChangedSignal("TextBounds"):Connect(function()
-						Element.ListMimic.Asset.Title.Size = UDim2.new(1, -(Element.ListMimic.Asset.Layout.ListLayout.AbsoluteContentSize.X + 18), 1, 0)
-					end)
-
-					Element.ListMimic.Asset.Layout.Keybind:GetPropertyChangedSignal("TextBounds"):Connect(function()
-						Element.ListMimic.Asset.Layout.Keybind.Size = UDim2.new(0, Element.ListMimic.Asset.Layout.Keybind.TextBounds.X, 1, 0)
-					end)
-
-					Element.ListMimic.ColorConfig = {false, "BackgroundColor3"}
-					Self.Colorable[Element.ListMimic.Asset.Tick] = Element.ListMimic.ColorConfig
-				end
-			end
-
-			Self.Elements[#Self.Elements + 1] = KeybindList
-			Self.KeybindList = KeybindList
-			return KeybindList
-		end
-
-		function Window.SaveConfig(Self, FolderName, Name)
-			local Config = {}
-			for Index, Element in pairs(Self.Elements) do
-				if Element.Flag and not Element.IgnoreFlag then
-					local Value = Self.Flags[Element.Flag]
-
-					if Element.Type == "Colorpicker" then
-						Value = {Value[5] == true and 1 or Value[1], Value[2], Value[3], Value[4], Value[5]}
-					end
-
-					if LavaHub.Utilities:DeepEquals(Element.Default, Value) then
-						continue
-					end
-
-					Config[Element.Flag] = Value
-				end
-			end
-			writefile(
-				FolderName .. "\\Configs\\" .. Name .. ".json",
-				HttpService:JSONEncode(Config)
-			)
-		end
-		function Window.LoadConfig(Self, FolderName, Name)
-			if table.find(LavaHub.Utilities.GetConfigs(FolderName), Name) then
-				local DecodedJSON = HttpService:JSONDecode(
-					readfile(FolderName .. "\\Configs\\" .. Name .. ".json")
-				)
-				for Flag, Value in pairs(DecodedJSON) do
-					local Element = LavaHub.Utilities.FindElementByFlag(Self.Elements, Flag)
-					if Element ~= nil then Element.Value = Value end
-				end
-			end
-		end
-		function Window:DeleteConfig(FolderName, Name)
-			if table.find(LavaHub.Utilities.GetConfigs(FolderName), Name) then
-				delfile(FolderName .. "\\Configs\\" .. Name .. ".json")
-			end
-		end
-		function Window:GetAutoLoadConfig(FolderName)
-			if not isfolder(FolderName) then makefolder(FolderName) end
-			if not isfile(FolderName .. "\\AutoLoads.json") then
-				writefile(FolderName .. "\\AutoLoads.json", "[]")
-			end
-
-			local AutoLoads = HttpService:JSONDecode(
-				readfile(FolderName .. "\\AutoLoads.json")
-			) local AutoLoad = AutoLoads[tostring(game.GameId)]
-
-			if table.find(LavaHub.Utilities.GetConfigs(FolderName), AutoLoad) then
-				return AutoLoad
-			end
-		end
-		function Window:AddToAutoLoad(FolderName, Name)
-			if not isfolder(FolderName) then makefolder(FolderName) end
-			if not isfile(FolderName .. "\\AutoLoads.json") then
-				writefile(FolderName .. "\\AutoLoads.json", "[]")
-			end
-
-			local AutoLoads = HttpService:JSONDecode(
-				readfile(FolderName .. "\\AutoLoads.json")
-			) AutoLoads[tostring(game.GameId)] = Name
-
-			writefile(FolderName .. "\\AutoLoads.json",
-				HttpService:JSONEncode(AutoLoads)
-			)
-		end
-		function Window:RemoveFromAutoLoad(FolderName)
-			if not isfolder(FolderName) then makefolder(FolderName) end
-			if not isfile(FolderName .. "\\AutoLoads.json") then
-				writefile(FolderName .. "\\AutoLoads.json", "[]")
-				return
-			end
-
-			local AutoLoads = HttpService:JSONDecode(
-				readfile(FolderName .. "\\AutoLoads.json")
-			) AutoLoads[tostring(game.GameId)] = nil
-
-			writefile(FolderName .. "\\AutoLoads.json",
-				HttpService:JSONEncode(AutoLoads)
-			)
-		end
-		function Window.AutoLoadConfig(Self, FolderName)
-			if not isfolder(FolderName) then makefolder(FolderName) end
-			if not isfile(FolderName .. "\\AutoLoads.json") then
-				writefile(FolderName .. "\\AutoLoads.json", "[]")
-			end
-
-			local AutoLoads = HttpService:JSONDecode(
-				readfile(FolderName .. "\\AutoLoads.json")
-			) local AutoLoad = AutoLoads[tostring(game.GameId)]
-
-			if table.find(LavaHub.Utilities.GetConfigs(FolderName), AutoLoad) then
-				Self:LoadConfig(FolderName, AutoLoad)
-			end
-		end
-
-		return WindowAsset
-	end,
-	Tab = function(WindowAsset, Window, Tab)
-		local TabAsset = LavaHub.Assets.Tab()
-		local TabButtonAsset = Window.LegacyTabButtons and LavaHub.Assets.LegacyTabButton() or LavaHub.Assets.TabButton()
-		local ChooseTab = Window.LegacyTabButtons and LavaHub.Utilities.ChooseTabLegacy or LavaHub.Utilities.ChooseTab
-		local TabButtonColorable = Window.LegacyTabButtons and TabButtonAsset or TabButtonAsset.Highlight
-		local TabButtonTitle = Window.LegacyTabButtons and TabButtonAsset.Title or TabButtonAsset
-
-		Tab.ColorConfig = {true, "BackgroundColor3"}
-		Window.Colorable[TabButtonColorable] = Tab.ColorConfig
-
-		Tab.Type = "Tab"
-		Tab.Asset = TabAsset
-		Tab.ButtonAsset = TabButtonAsset
-
-		TabAsset.Visible = false
-		TabAsset.Parent = WindowAsset.TabContainer
-
-		TabButtonTitle.Text = Tab.Name
-		
-		if Window.LegacyTabButtons then
-			TabButtonAsset.BackgroundColor3 = Window.Color
-			TabButtonAsset.Size = UDim2.new(1 / LavaHub.Utilities.GetNumberOfTabs() + 1, 0, 1, 0)
-			WindowAsset.TabButtonContainer.ChildAdded:Connect(function()
-				TabButtonAsset.Size = UDim2.new(1 / LavaHub.Utilities.GetNumberOfTabs(), 0, 1, 0)
-			end)
+			return asset
 		else
-			TabButtonAsset.Highlight.BackgroundColor3 = Window.Color
-			TabButtonAsset.Size = UDim2.new(0, TabButtonTitle.TextBounds.X + 12, 1, 0)
-			TabButtonAsset:GetPropertyChangedSignal("TextBounds"):Connect(function()
-				TabButtonAsset.Size = UDim2.new(0, TabButtonTitle.TextBounds.X + 12, 1, 0)
-			end)
+			return "rbxassetid://10723434557"
 		end
-		TabButtonAsset.Parent = WindowAsset.TabButtonContainer
-
-		TabAsset.LeftSide.ListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-			local Side = LavaHub.Utilities.GetLongestSide(TabAsset)
-			TabAsset.CanvasSize = UDim2.fromOffset(0, Side.ListLayout.AbsoluteContentSize.Y + 16)
-		end)
-		TabAsset.RightSide.ListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-			local Side = LavaHub.Utilities.GetLongestSide(TabAsset)
-			TabAsset.CanvasSize = UDim2.fromOffset(0, Side.ListLayout.AbsoluteContentSize.Y + 16)
-		end)
-		TabButtonAsset.MouseButton1Click:Connect(function()
-			ChooseTab(TabButtonAsset, TabAsset)
-		end)
-
-		if #WindowAsset.TabContainer:GetChildren() == 1 then
-			ChooseTab(TabButtonAsset, TabAsset)
-		end
-
-		Tab:GetPropertyChangedSignal("Name"):Connect(function(Name)
-			TabButtonTitle.Text = Name
-		end)
-
-		return TabAsset
-	end,
-	Section = function(Parent, Section)
-		local SectionAsset = LavaHub.Assets.Section()
-
-		Section.Type = "Section"
-		Section.Asset = SectionAsset
-		Section.Container = Section.Asset.Container
-
-		SectionAsset.Parent = Parent
-		SectionAsset.Title.Text = Section.Name
-		SectionAsset.Title.Size = UDim2.fromOffset(
-			SectionAsset.Title.TextBounds.X + 6, 14
-		)
-
-		SectionAsset.Container.ListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-			SectionAsset.Size = UDim2.new(1, 0, 0, SectionAsset.Container.ListLayout.AbsoluteContentSize.Y + 15)
-		end)
-
-		Section:GetPropertyChangedSignal("Name"):Connect(function(Name)
-			SectionAsset.Title.Text = Name
-			SectionAsset.Title.Size = UDim2.fromOffset(
-				Section.Title.TextBounds.X + 6, 14
-			)
-		end)
-
-		return SectionAsset.Container
-	end,
-	Divider = function(Parent, Divider)
-		local DividerAsset = LavaHub.Assets.Divider()
-
-		Divider.Type = "Divider"
-		Divider.Asset = DividerAsset
-
-		DividerAsset.Parent = Parent
-		DividerAsset.Title.Text = Divider.Text
-
-		DividerAsset.Title:GetPropertyChangedSignal("TextBounds"):Connect(function()
-			if DividerAsset.Title.TextBounds.X > 0 then
-				DividerAsset.Size = UDim2.new(1, 0, 0, DividerAsset.Title.TextBounds.Y)
-				DividerAsset.Left.Size = UDim2.new(0.5, -(DividerAsset.Title.TextBounds.X / 2) - 6, 0 , 2)
-				DividerAsset.Right.Size = UDim2.new(0.5, -(DividerAsset.Title.TextBounds.X / 2) - 6, 0, 2)
-			else
-				DividerAsset.Size = UDim2.new(1, 0, 0, 14)
-				DividerAsset.Left.Size = UDim2.new(1, 0, 0, 2)
-				DividerAsset.Right.Size = UDim2.new(1, 0, 0, 2)
-			end
-		end)
-
-		Divider:GetPropertyChangedSignal("Text"):Connect(function(Text)
-			DividerAsset.Title.Text = Text
-		end)
-	end,
-	Label = function(Parent, Label)
-		local LabelAsset = LavaHub.Assets.Label()
-
-		Label.Type = "Label"
-		Label.Asset = LabelAsset
-
-		LabelAsset.Parent = Parent
-		LabelAsset.Text = Label.Text
-
-		LabelAsset:GetPropertyChangedSignal("TextBounds"):Connect(function()
-			LabelAsset.Size = UDim2.new(1, 0, 0, LabelAsset.TextBounds.Y)
-		end)
-
-		Label:GetPropertyChangedSignal("Text"):Connect(function(Text)
-			LabelAsset.Text = Text
-		end)
-	end,
-	Button = function(Parent, Window, Button)
-		local ButtonAsset = LavaHub.Assets.Button()
-
-		Button.Type = "Button"
-		Button.Asset = ButtonAsset
-
-		Button.ColorConfig = {false, "BorderColor3"}
-		Window.Colorable[ButtonAsset] = Button.ColorConfig
-
-		Button.Connection = ButtonAsset.MouseButton1Click:Connect(Button.Callback)
-
-		ButtonAsset.Parent = Parent
-		ButtonAsset.Title.Text = Button.Name
-
-		ButtonAsset.MouseButton1Down:Connect(function()
-			Button.ColorConfig[1] = true
-			ButtonAsset.BorderColor3 = Window.Color
-		end)
-		ButtonAsset.MouseButton1Up:Connect(function()
-			Button.ColorConfig[1] = false
-			ButtonAsset.BorderColor3 = Color3.new(0, 0, 0)
-		end)
-		ButtonAsset.MouseLeave:Connect(function()
-			Button.ColorConfig[1] = false
-			ButtonAsset.BorderColor3 = Color3.new(0, 0, 0)
-		end)
-		ButtonAsset.Title:GetPropertyChangedSignal("TextBounds"):Connect(function()
-			ButtonAsset.Size = UDim2.new(1, 0, 0, ButtonAsset.Title.TextBounds.Y + 4)
-		end)
-
-		Button:GetPropertyChangedSignal("Name"):Connect(function(Name)
-			ButtonAsset.Title.Text = Name
-		end)
-		Button:GetPropertyChangedSignal("Callback"):Connect(function(Callback)
-			Button.Connection:Disconnect()
-			Button.Connection = ButtonAsset.MouseButton1Click:Connect(Callback)
-		end)
-
-		function Button:Tooltip(Text)
-			Button.Tooltip = LavaHub.Elements.Tooltip(ButtonAsset, {Text = Text})
-		end
-	end,
-	Button2 = function(Parent, Window, Button)
-		local ButtonAsset = LavaHub.Assets.Button2()
-
-		Button.Type = "Button"
-		Button.Asset = ButtonAsset
-
-		Button.ColorConfig = {false, "BorderColor3"}
-		Window.Colorable[ButtonAsset.Button] = Button.ColorConfig
-
-		Button.Connection = ButtonAsset.Button.MouseButton1Click:Connect(Button.Callback)
-
-		ButtonAsset.Parent = Parent
-		ButtonAsset.Title.Text = Button.Name
-		ButtonAsset.Button.Title.Text = Button.ButtonName
-		ButtonAsset.Button.Size = UDim2.new(0, ButtonAsset.Button.Title.TextBounds.X + 8, 0, 18)
-		ButtonAsset.Title.Size = UDim2.new(1, -(ButtonAsset.Button.Size.X.Offset + 4), 1, 0)
-
-		ButtonAsset.Button.MouseButton1Down:Connect(function()
-			Button.ColorConfig[1] = true
-			ButtonAsset.Button.BorderColor3 = Window.Color
-		end)
-		ButtonAsset.Button.MouseButton1Up:Connect(function()
-			Button.ColorConfig[1] = false
-			ButtonAsset.Button.BorderColor3 = Color3.new(0, 0, 0)
-		end)
-		ButtonAsset.Button.MouseLeave:Connect(function()
-			Button.ColorConfig[1] = false
-			ButtonAsset.Button.BorderColor3 = Color3.new(0, 0, 0)
-		end)
-		ButtonAsset.Button.Title:GetPropertyChangedSignal("TextBounds"):Connect(function()
-			ButtonAsset.Button.Size = UDim2.new(0, ButtonAsset.Button.Title.TextBounds.X + 8, 0, 18)
-			ButtonAsset.Title.Size = UDim2.new(1, -(ButtonAsset.Button.Size.X.Offset + 4), 1, 0)
-		end)
-
-		Button:GetPropertyChangedSignal("Name"):Connect(function(Name)
-			ButtonAsset.Title.Text = Name
-		end)
-		Button:GetPropertyChangedSignal("ButtonName"):Connect(function(Name)
-			ButtonAsset.Button.Title.Text = Name
-		end)
-		Button:GetPropertyChangedSignal("Callback"):Connect(function(Callback)
-			Button.Connection:Disconnect()
-			Button.Connection = ButtonAsset.MouseButton1Click:Connect(Callback)
-		end)
-
-		function Button:Tooltip(Text)
-			Button.Tooltip = LavaHub.Elements.Tooltip(ButtonAsset, {Text = Text})
-		end
-	end,
-	Toggle = function(Parent, Window, Toggle)
-		local ToggleAsset = LavaHub.Assets.Toggle()
-
-		Toggle.Type = "Toggle"
-		Toggle.Asset = ToggleAsset
-
-		Toggle.ColorConfig = {Toggle.Value, "BackgroundColor3"}
-		Window.Colorable[ToggleAsset.Tick] = Toggle.ColorConfig
-
-		Toggle.Default = LavaHub.Utilities:DeepCopy(Toggle.Value)
-
-		ToggleAsset.Parent = Parent
-		ToggleAsset.Title.Text = Toggle.Name
-		ToggleAsset.Tick.BackgroundColor3 = Toggle.Value
-			and Window.Color or Color3.fromRGB(63, 63, 63)
-
-		ToggleAsset.MouseButton1Click:Connect(function()
-			Toggle.Value = not Toggle.Value
-		end)
-		ToggleAsset.Title:GetPropertyChangedSignal("TextBounds"):Connect(function()
-			ToggleAsset.Size = UDim2.new(1, 0, 0, ToggleAsset.Title.TextBounds.Y)
-			ToggleAsset.Title.Size = UDim2.new(1, -(ToggleAsset.Layout.ListLayout.AbsoluteContentSize.X + 18), 1, 0)
-		end)
-		ToggleAsset.Layout.ListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-			ToggleAsset.Title.Size = UDim2.new(1, -(ToggleAsset.Layout.ListLayout.AbsoluteContentSize.X + 18), 1, 0)
-		end)
-
-		Toggle:GetPropertyChangedSignal("Name"):Connect(function(Name)
-			ToggleAsset.Title.Text = Name
-		end)
-		Toggle:GetPropertyChangedSignal("Value"):Connect(function(Value)
-			Toggle.ColorConfig[1] = Value
-			ToggleAsset.Tick.BackgroundColor3 = Value
-				and Window.Color or Color3.fromRGB(63, 63, 63)
-			Window.Flags[Toggle.Flag] = Value
-			Toggle.Callback(Value)
-		end)
-
-		function Toggle:Keybind(Keybind)
-			Keybind = LavaHub.Utilities:GetType(Keybind, "table", {}, true)
-			Keybind.Flag = LavaHub.Utilities:GetType(Keybind.Flag, "string", Toggle.Flag .. "/Keybind")
-
-			Keybind.Value = LavaHub.Utilities:GetType(Keybind.Value, "string", "NONE")
-			Keybind.Mouse = LavaHub.Utilities:GetType(Keybind.Mouse, "boolean", false)
-			Keybind.HoldMode = LavaHub.Utilities:GetType(Keybind.HoldMode, "boolean", false)
-			Keybind.Callback = LavaHub.Utilities:GetType(Keybind.Callback, "function", function() end)
-			Keybind.Blacklist = LavaHub.Utilities:GetType(Keybind.Blacklist, "table", {"W", "A", "S", "D", "Slash", "Tab", "Backspace", "Escape", "Space", "Delete", "Unknown", "Backquote"})
-
-			Window.Elements[#Window.Elements + 1] = Keybind
-			Window.Flags[Keybind.Flag] = Keybind.Value
-
-			LavaHub.Elements.ToggleKeybind(ToggleAsset.Layout, Window, Keybind, Toggle)
-			return Keybind
-		end
-		function Toggle:Colorpicker(Colorpicker)
-			Colorpicker = LavaHub.Utilities:GetType(Colorpicker, "table", {}, true)
-			Colorpicker.Flag = LavaHub.Utilities:GetType(Colorpicker.Flag, "string", Toggle.Flag .. "/Colorpicker")
-
-			Colorpicker.Value = LavaHub.Utilities:GetType(Colorpicker.Value, "table", {1, 1, 1, 0, false})
-			Colorpicker.Callback = LavaHub.Utilities:GetType(Colorpicker.Callback, "function", function() end)
-
-			Window.Elements[#Window.Elements + 1] = Colorpicker
-			Window.Flags[Colorpicker.Flag] = Colorpicker.Value
-
-			LavaHub.Elements.ToggleColorpicker(ToggleAsset.Layout, Window, Colorpicker)
-			return Colorpicker
-		end
-
-		function Toggle:Tooltip(Text)
-			Toggle.Tooltip = LavaHub.Elements.Tooltip(ToggleAsset, {Text = Text})
-		end
-
-		return ToggleAsset
-	end,
-	Slider = function(Parent, Window, Slider)
-		local SliderAsset = Slider.Slim and LavaHub.Assets.SlimSlider() or LavaHub.Assets.Slider()
-
-		Slider.Type = "Slider"
-		Slider.Asset = SliderAsset
-
-		Slider.ColorConfig = {true, "BackgroundColor3"}
-		Window.Colorable[SliderAsset.Background.Bar] = Slider.ColorConfig
-
-		Slider.Value = tonumber(string.format("%." .. Slider.Precise .. "f", Slider.Value))
-		Slider.Default = LavaHub.Utilities:DeepCopy(Slider.Value)
-		Slider.Active = false
-
-		SliderAsset.Parent = Parent
-		SliderAsset.Title.Text = Slider.Name
-		SliderAsset.Background.Bar.BackgroundColor3 = Window.Color
-		SliderAsset.Background.Bar.Size = UDim2.fromScale(LavaHub.Utilities.Scale(Slider.Value, Slider.Min, Slider.Max, 0, 1), 1)
-		SliderAsset.Value.PlaceholderText = #Slider.Unit == 0 and Slider.Value or Slider.Value .. " " .. Slider.Unit
-
-		local function AttachToMouse(Input)
-			local ScaleX = math.clamp((Input.Position.X - SliderAsset.Background.AbsolutePosition.X) / SliderAsset.Background.AbsoluteSize.X, 0, 1)
-			Slider.Value = LavaHub.Utilities.Scale(ScaleX, 0, 1, Slider.Min, Slider.Max)
-		end
-
-		if Slider.Slim then
-			SliderAsset.Title:GetPropertyChangedSignal("TextBounds"):Connect(function()
-				SliderAsset.Value.Size = UDim2.fromOffset(SliderAsset.Value.TextBounds.X, 14)
-				SliderAsset.Title.Size = UDim2.new(1, -(SliderAsset.Value.Size.X.Offset + 4), 0, 14)
-				SliderAsset.Background.Position = UDim2.new(0.5, 0, 0, SliderAsset.Title.TextBounds.Y + 4)
-				SliderAsset.Size = UDim2.new(1, 0, 0, SliderAsset.Title.TextBounds.Y + 14)
-			end)
-			SliderAsset.Value:GetPropertyChangedSignal("TextBounds"):Connect(function()
-				SliderAsset.Value.Size = UDim2.fromOffset(SliderAsset.Value.TextBounds.X, 14)
-				SliderAsset.Title.Size = UDim2.new(1, -(SliderAsset.Value.Size.X.Offset + 4), 0, 14)
-				SliderAsset.Background.Position = UDim2.new(0.5, 0, 0, SliderAsset.Title.TextBounds.Y + 4)
-				SliderAsset.Size = UDim2.new(1, 0, 0, SliderAsset.Title.TextBounds.Y + 14)
-			end)
+	else	
+		if icon ~= nil and IconModule[source] then
+			local sourceicon = IconModule[source]
+			return sourceicon[icon]
 		else
-			SliderAsset.Title:GetPropertyChangedSignal("TextBounds"):Connect(function()
-				SliderAsset.Value.Size = UDim2.new(0, SliderAsset.Value.TextBounds.X, 1, 0)
-				SliderAsset.Title.Size = UDim2.new(1, -(SliderAsset.Value.Size.X.Offset + 12), 1, 0)
-				SliderAsset.Size = UDim2.new(1, 0, 0, SliderAsset.Title.TextBounds.Y + 4)
-			end)
-			SliderAsset.Value:GetPropertyChangedSignal("TextBounds"):Connect(function()
-				SliderAsset.Value.Size = UDim2.new(0, SliderAsset.Value.TextBounds.X, 1, 0)
-				SliderAsset.Title.Size = UDim2.new(1, -(SliderAsset.Value.Size.X.Offset + 12), 1, 0)
-				SliderAsset.Size = UDim2.new(1, 0, 0, SliderAsset.Title.TextBounds.Y + 4)
-			end)
+			return nil
 		end
-
-		SliderAsset.Value.FocusLost:Connect(function()
-			if not tonumber(SliderAsset.Value.Text) then
-				SliderAsset.Value.Text = ""
-				return
-			end
-
-			Slider.Value = SliderAsset.Value.Text
-			SliderAsset.Value.Text = ""
-		end)
-		SliderAsset.InputBegan:Connect(function(Input)
-			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-				AttachToMouse(Input)
-				Slider.Active = true
-			end
-		end)
-		SliderAsset.InputEnded:Connect(function(Input)
-			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-				Slider.Active = false
-			end
-		end)
-		UserInputService.InputChanged:Connect(function(Input)
-			if Slider.Active and Input.UserInputType == Enum.UserInputType.MouseMovement then
-				AttachToMouse(Input)
-			end
-		end)
-
-		Slider:GetPropertyChangedSignal("Name"):Connect(function(Name)
-			SliderAsset.Title.Text = Name
-		end)
-		Slider:GetPropertyChangedSignal("Value"):Connect(function(Value)
-			Value = tonumber(string.format("%." .. Slider.Precise .. "f", Value))
-
-			if Value < Slider.Min then
-				Value = Slider.Min
-			elseif Value > Slider.Max then
-				Value = Slider.Max
-			end
-
-			if Slider.OnlyOdd and Slider.Precise == 0 then
-				if Value % 2 == 0 then return end
-			elseif Slider.OnlyEven and Slider.Precise == 0 then
-				if Value % 2 == 1 then return end
-			end
-
-			SliderAsset.Background.Bar.Size = UDim2.fromScale(LavaHub.Utilities.Scale(Value, Slider.Min, Slider.Max, 0, 1), 1)
-			SliderAsset.Value.PlaceholderText = #Slider.Unit == 0 and Value or Value .. " " .. Slider.Unit
-
-			Slider.Internal.Value = Value
-			Window.Flags[Slider.Flag] = Value
-			Slider.Callback(Value)
-		end)
-
-		function Slider:Tooltip(Text)
-			Slider.Tooltip = LavaHub.Elements.Tooltip(SliderAsset, {Text = Text})
-		end
-	end,
-	Textbox = function(Parent, Window, Textbox)
-		local TextboxAsset = LavaHub.Assets.Textbox()
-
-		Textbox.Type = "Textbox"
-		Textbox.Asset = TextboxAsset
-
-		Textbox.Default = LavaHub.Utilities:DeepCopy(Textbox.Value)
-		Textbox.EnterPressed = false
-
-		TextboxAsset.Parent = Parent
-		TextboxAsset.Title.Text = Textbox.Name
-		TextboxAsset.Background.Input.Text = Textbox.Value
-		TextboxAsset.Background.Input.PlaceholderText = Textbox.Placeholder
-		TextboxAsset.Title.Visible = not Textbox.HideName
-
-		TextboxAsset.Title:GetPropertyChangedSignal("TextBounds"):Connect(function()
-			TextboxAsset.Title.Size = Textbox.HideName and UDim2.fromScale(1, 0)
-				or UDim2.new(1, 0, 0, TextboxAsset.Title.TextBounds.Y)
-
-			TextboxAsset.Background.Position = UDim2.new(0.5, 0, 0, TextboxAsset.Title.Size.Y.Offset + (Textbox.HideName and 0 or 4))
-			TextboxAsset.Size = UDim2.new(1, 0, 0, TextboxAsset.Title.Size.Y.Offset + TextboxAsset.Background.Size.Y.Offset)
-		end)
-		TextboxAsset.Background.Input:GetPropertyChangedSignal("Text"):Connect(function()
-			local TextBounds = LavaHub.Utilities.GetTextBounds(
-				TextboxAsset.Background.Input.Text,
-				TextboxAsset.Background.Input.Font.Name,
-				Vector2.new(TextboxAsset.Background.Input.AbsoluteSize.X, TextboxAsset.Background.Input.TextSize)
-			)
-
-			TextboxAsset.Background.Size = UDim2.new(1, 0, 0, TextBounds.Y + 4)
-			TextboxAsset.Size = UDim2.new(1, 0, 0, TextboxAsset.Title.Size.Y.Offset + TextboxAsset.Background.Size.Y.Offset)
-		end)
-
-		TextboxAsset.Background.Input.Focused:Connect(function()
-			local TextBounds = LavaHub.Utilities.GetTextBounds(
-				TextboxAsset.Background.Input.Text,
-				TextboxAsset.Background.Input.Font.Name,
-				Vector2.new(TextboxAsset.Background.Input.AbsoluteSize.X, TextboxAsset.Background.Input.TextSize)
-			)
-
-			TextboxAsset.Background.Size = UDim2.new(1, 0, 0, TextBounds.Y + 4)
-			TextboxAsset.Size = UDim2.new(1, 0, 0, TextboxAsset.Title.Size.Y.Offset + TextboxAsset.Background.Size.Y.Offset)
-
-			TextboxAsset.Background.Input.Text = Textbox.Value
-		end)
-		TextboxAsset.Background.Input.FocusLost:Connect(function(EnterPressed)
-			local Input = TextboxAsset.Background.Input
-
-			Textbox.EnterPressed = EnterPressed
-			Textbox.Value = Input.Text Textbox.EnterPressed = false
-		end)
-
-		Textbox:GetPropertyChangedSignal("Name"):Connect(function(Name)
-			TextboxAsset.Title.Text = Name
-		end)
-		Textbox:GetPropertyChangedSignal("Placeholder"):Connect(function(PlaceHolder)
-			TextboxAsset.Background.Input.PlaceholderText = PlaceHolder
-		end)
-		Textbox:GetPropertyChangedSignal("Value"):Connect(function(Value)
-			local Input = TextboxAsset.Background.Input
-			Input.Text = Textbox.AutoClear and "" or Value
-			if Textbox.PasswordMode then Input.Text = string.rep(utf8.char(8226), #Input.Text) end
-
-			TextboxAsset.Background.Size = UDim2.new(1, 0, 0, Input.TextSize + 4)
-			TextboxAsset.Size = UDim2.new(1, 0, 0, TextboxAsset.Title.Size.Y.Offset + TextboxAsset.Background.Size.Y.Offset)
-
-			Window.Flags[Textbox.Flag] = Value
-			Textbox.Callback(Value, Textbox.EnterPressed)
-		end)
-
-		function Textbox:Tooltip(Text)
-			Textbox.Tooltip = LavaHub.Elements.Tooltip(TextboxAsset, {Text = Text})
-		end
-	end,
-	Keybind = function(Parent, Window, Keybind)
-		local KeybindAsset = LavaHub.Assets.Keybind()
-
-		Keybind.Type = "Keybind"
-		Keybind.Asset = KeybindAsset
-
-		Keybind.Default = LavaHub.Utilities:DeepCopy(Keybind.Value)
-		Keybind.WaitingForBind = false
-		Keybind.Binding = false
-
-		KeybindAsset.Parent = Parent
-		KeybindAsset.Title.Text = Keybind.Name
-		KeybindAsset.Value.Text = "[ " .. Keybind.Value .. " ]"
-
-		KeybindAsset.MouseButton1Click:Connect(function()
-			KeybindAsset.Value.Text = "[ ... ]"
-			Keybind.WaitingForBind = true
-			Keybind.Binding = true
-		end)
-		KeybindAsset.Title:GetPropertyChangedSignal("TextBounds"):Connect(function()
-			KeybindAsset.Size = UDim2.new(1, 0, 0, KeybindAsset.Title.TextBounds.Y)
-		end)
-		KeybindAsset.Value:GetPropertyChangedSignal("TextBounds"):Connect(function()
-			KeybindAsset.Value.Size = UDim2.new(0, KeybindAsset.Value.TextBounds.X, 1, 0)
-			KeybindAsset.Title.Size = UDim2.new(1, -(KeybindAsset.Value.Size.X.Offset + 4), 1, 0)
-		end)
-
-		if type(Window.KeybindList) == "table" and not Keybind.IgnoreList then
-			Keybind.ListMimic = {}
-			Keybind.ListMimic.Asset = LavaHub.Assets.KeybindMimic()
-			Keybind.ListMimic.Asset.Title.Text = Keybind.CustomName or Keybind.Name
-			Keybind.ListMimic.Asset.Visible = Keybind.Value ~= "NONE"
-			Keybind.ListMimic.Asset.Layout.Keybind.Text = "[ " .. Keybind.Value .. " ]"
-			Keybind.ListMimic.Asset.Parent = Window.KeybindList.List
-
-			Keybind.ListMimic.Asset.Title:GetPropertyChangedSignal("TextBounds"):Connect(function()
-				Keybind.ListMimic.Asset.Title.Size = UDim2.new(1, -(Keybind.ListMimic.Asset.Layout.ListLayout.AbsoluteContentSize.X + 18), 1, 0)
-			end)
-
-			Keybind.ListMimic.Asset.Layout.Keybind:GetPropertyChangedSignal("TextBounds"):Connect(function()
-				Keybind.ListMimic.Asset.Layout.Keybind.Size = UDim2.new(0, Keybind.ListMimic.Asset.Layout.Keybind.TextBounds.X, 1, 0)
-			end)
-
-			Keybind.ListMimic.ColorConfig = {false, "BackgroundColor3"}
-			Window.Colorable[Keybind.ListMimic.Asset.Tick] = Keybind.ListMimic.ColorConfig
-		end
-
-		UserInputService.InputBegan:Connect(function(Input, GameProcessedEvent)
-			if GameProcessedEvent then return end
-
-			if Input.UserInputType.Name == "Keyboard" then
-				local Key = Input.KeyCode.Name
-
-				if Keybind.WaitingForBind then
-					Keybind.Value = Key
-					return
-				end
-
-				if Key == Keybind.Value and not Keybind.Binding then
-					Keybind.Toggle = not Keybind.Toggle
-					if Keybind.ListMimic then
-						Keybind.ListMimic.ColorConfig[1] = true
-						Keybind.ListMimic.Asset.Tick.BackgroundColor3 = Window.Color
-					end
-
-					Keybind.Callback(Keybind.Value, true, Keybind.Toggle)
-				end
-			end
-
-			if Keybind.Mouse then
-				local Key = Input.UserInputType.Name
-
-				if Key == "MouseButton1" or Key == "MouseButton2" or Key == "MouseButton3" then
-					if Keybind.WaitingForBind then
-						Keybind.Value = Key
-						return
-					end
-
-					if Key == Keybind.Value and not Keybind.Binding then
-						Keybind.Toggle = not Keybind.Toggle
-						if Keybind.ListMimic then
-							Keybind.ListMimic.ColorConfig[1] = true
-							Keybind.ListMimic.Asset.Tick.BackgroundColor3 = Window.Color
-						end
-
-						Keybind.Callback(Keybind.Value, true, Keybind.Toggle)
-					end
-				end
-			end
-		end)
-		UserInputService.InputEnded:Connect(function(Input, GameProcessedEvent)
-			if GameProcessedEvent then return end
-
-			if Input.UserInputType.Name == "Keyboard" then
-				local Key = Input.KeyCode.Name
-
-				if Keybind.Binding then
-					if Key == Keybind.Value then Keybind.Binding = false end
-					return
-				end
-
-				if Key == Keybind.Value then
-					if Keybind.ListMimic then
-						Keybind.ListMimic.ColorConfig[1] = false
-						Keybind.ListMimic.Asset.Tick.BackgroundColor3 = Color3.fromRGB(63, 63, 63)
-					end
-
-					Keybind.Callback(Keybind.Value, false, Keybind.Toggle)
-				end
-			end
-
-			if Keybind.Mouse then
-				local Key = Input.UserInputType.Name
-
-				if Key == "MouseButton1" or Key == "MouseButton2" or Key == "MouseButton3" then
-					if Keybind.Binding then
-						if Key == Keybind.Value then Keybind.Binding = false end
-						return
-					end
-
-					if Key == Keybind.Value then
-						if Keybind.ListMimic then
-							Keybind.ListMimic.ColorConfig[1] = false
-							Keybind.ListMimic.Asset.Tick.BackgroundColor3 = Color3.fromRGB(63, 63, 63)
-						end
-
-						Keybind.Callback(Keybind.Value, false, Keybind.Toggle)
-					end
-				end
-			end
-		end)
-
-		Keybind:GetPropertyChangedSignal("Name"):Connect(function(Name)
-			KeybindAsset.Title.Text = Name
-		end)
-		Keybind:GetPropertyChangedSignal("CustomName"):Connect(function(Value)
-			if Keybind.ListMimic then
-				Keybind.ListMimic.Asset.Title.Text = Value or Keybind.Name
-			end
-		end)
-		Keybind:GetPropertyChangedSignal("Value"):Connect(function(Value, OldValue)
-			if table.find(Keybind.Blacklist, Value) then
-				Value = Keybind.DoNotClear and OldValue or "NONE"
-			end
-
-			KeybindAsset.Value.Text = "[ " .. tostring(Value) .. " ]"
-			if Keybind.ListMimic then
-				Keybind.ListMimic.Asset.Visible = Value ~= "NONE"
-				Keybind.ListMimic.Asset.Layout.Keybind.Text = "[ " .. tostring(Value) .. " ]"
-			end
-
-			Keybind.WaitingForBind = false
-			Keybind.Internal.Value = Value
-			Window.Flags[Keybind.Flag] = Value
-			Keybind.Callback(Value, false, Keybind.Toggle)
-		end)
-
-		function Keybind:Tooltip(Text)
-			Keybind.Tooltip = LavaHub.Elements.Tooltip(KeybindAsset, {Text = Text})
-		end
-	end,
-	ToggleKeybind = function(Parent, Window, Keybind, Toggle)
-		local KeybindAsset = LavaHub.Assets.ToggleKeybind()
-
-		Keybind.Type = "Keybind"
-		Keybind.Asset = KeybindAsset
-
-		Keybind.Default = LavaHub.Utilities:DeepCopy(Keybind.Value)
-		Keybind.WaitingForBind = false
-		Keybind.Binding = false
-		Keybind.Toggle = Toggle
-
-		KeybindAsset.Parent = Parent
-		KeybindAsset.Text = "[ " .. Keybind.Value .. " ]"
-
-		local Tooltip = LavaHub.Elements.Tooltip(KeybindAsset, {Text = Keybind.HoldMode
-			and `<font color=\"rgb({LavaHub.Utilities.ColorToString(Window.Color)})\">Hold</font>\nToggle`
-			or `Hold\n<font color=\"rgb({LavaHub.Utilities.ColorToString(Window.Color)})\">Toggle</font>`})
-		Window.Colorable[Tooltip] = {true, "TextFormat"}
-
-		KeybindAsset.MouseButton1Click:Connect(function()
-			KeybindAsset.Text = "[ ... ]"
-			Keybind.WaitingForBind = true
-			Keybind.Binding = true
-		end)
-		KeybindAsset.MouseButton2Click:Connect(function()
-			Keybind.HoldMode = not Keybind.HoldMode
-		end)
-
-		KeybindAsset:GetPropertyChangedSignal("TextBounds"):Connect(function()
-			KeybindAsset.Size = UDim2.new(0, KeybindAsset.TextBounds.X, 1, 0)
-		end)
-
-		if type(Window.KeybindList) == "table" and not Keybind.IgnoreList then
-			Keybind.ListMimic = {}
-			Keybind.ListMimic.Asset = LavaHub.Assets.KeybindMimic()
-			Keybind.ListMimic.Asset.Title.Text = Keybind.CustomName or Toggle.Name
-			Keybind.ListMimic.Asset.Visible = Keybind.Value ~= "NONE"
-			Keybind.ListMimic.Asset.Layout.Keybind.Text = "[ " .. Keybind.Value .. " ]"
-			Keybind.ListMimic.Asset.Parent = Window.KeybindList.List
-
-			Keybind.ListMimic.Asset.Title:GetPropertyChangedSignal("TextBounds"):Connect(function()
-				Keybind.ListMimic.Asset.Title.Size = UDim2.new(1, -(Keybind.ListMimic.Asset.Layout.ListLayout.AbsoluteContentSize.X + 18), 1, 0)
-			end)
-
-			Keybind.ListMimic.Asset.Layout.Keybind:GetPropertyChangedSignal("TextBounds"):Connect(function()
-				Keybind.ListMimic.Asset.Layout.Keybind.Size = UDim2.new(0, Keybind.ListMimic.Asset.Layout.Keybind.TextBounds.X, 1, 0)
-			end)
-
-			Keybind.ListMimic.ColorConfig = {false, "BackgroundColor3"}
-			Window.Colorable[Keybind.ListMimic.Asset.Tick] = Keybind.ListMimic.ColorConfig
-		end
-
-		UserInputService.InputBegan:Connect(function(Input, GameProcessedEvent)
-			if GameProcessedEvent then return end
-
-			if Keybind.Mouse then
-				local Key = Input.UserInputType.Name
-
-				if Key == "MouseButton1" or Key == "MouseButton2" or Key == "MouseButton3" then
-					if Keybind.WaitingForBind then
-						Keybind.Value = Key
-						return
-					end
-
-					if Key == Keybind.Value and not Keybind.Binding then
-						if not Keybind.DisableToggle then
-							if Keybind.HoldMode and Toggle.Value == false then
-								Toggle.Value = true
-							else
-								Toggle.Value = not Toggle.Value
-							end
-						end
-
-						Keybind.Callback(Keybind.Value, true, Toggle.Value)
-					end
-				end
-			end
-
-			if Input.UserInputType.Name == "Keyboard" then
-				local Key = Input.KeyCode.Name
-
-				if Keybind.WaitingForBind then
-					Keybind.Value = Key
-					return
-				end
-
-				if Key == Keybind.Value and not Keybind.Binding then
-					if not Keybind.DisableToggle then
-						if Keybind.HoldMode and Toggle.Value == false then
-							Toggle.Value = true
-						else
-							Toggle.Value = not Toggle.Value
-						end
-					end
-
-					Keybind.Callback(Keybind.Value, true, Toggle.Value)
-				end
-			end
-		end)
-		UserInputService.InputEnded:Connect(function(Input, GameProcessedEvent)
-			if GameProcessedEvent then return end
-
-			if Keybind.Mouse then
-				local Key = Input.UserInputType.Name
-
-				if Key == "MouseButton1" or Key == "MouseButton2" or Key == "MouseButton3" then
-					if Keybind.Binding then
-						if Key == Keybind.Value then Keybind.Binding = false end
-						return
-					end
-
-					if Key == Keybind.Value then
-						if not Keybind.DisableToggle then
-							if Keybind.HoldMode and Toggle.Value == true then
-								Toggle.Value = false
-							end
-						end
-
-						Keybind.Callback(Keybind.Value, false, Toggle.Value)
-					end
-				end
-			end
-
-			if Input.UserInputType.Name == "Keyboard" then
-				local Key = Input.KeyCode.Name
-
-				if Keybind.Binding then
-					if Key == Keybind.Value then Keybind.Binding = false end
-					return
-				end
-
-				if Key == Keybind.Value then
-					if not Keybind.DisableToggle then
-						if Keybind.HoldMode and Toggle.Value == true then
-							Toggle.Value = false
-						end
-					end
-
-					Keybind.Callback(Keybind.Value, false, Toggle.Value)
-				end
-			end
-		end)
-
-		Toggle:GetPropertyChangedSignal("Value"):Connect(function(Value)
-			if Keybind.ListMimic then
-				Keybind.ListMimic.ColorConfig[1] = Value
-				Keybind.ListMimic.Asset.Tick.BackgroundColor3 = Value
-					and Window.Color or Color3.fromRGB(63, 63, 63)
-			end
-		end)
-
-		Keybind:GetPropertyChangedSignal("CustomName"):Connect(function(Value)
-			if Keybind.ListMimic then
-				Keybind.ListMimic.Asset.Title.Text = Value or Toggle.Name
-			end
-		end)
-		Keybind:GetPropertyChangedSignal("HoldMode"):Connect(function(Value)
-			Tooltip.Text = Value
-				and `<font color=\"rgb({LavaHub.Utilities.ColorToString(Window.Color)})\">Hold</font>\nToggle`
-				or `Hold\n<font color=\"rgb({LavaHub.Utilities.ColorToString(Window.Color)})\">Toggle</font>`
-		end)
-		Keybind:GetPropertyChangedSignal("Value"):Connect(function(Value, OldValue)
-			if table.find(Keybind.Blacklist, Value) then
-				Value = Keybind.DoNotClear and OldValue or "NONE"
-			end
-
-			KeybindAsset.Text = "[ " .. tostring(Value) .. " ]"
-			if Keybind.ListMimic then
-				Keybind.ListMimic.Asset.Visible = Value ~= "NONE"
-				Keybind.ListMimic.Asset.Layout.Keybind.Text = "[ " .. tostring(Value) .. " ]"
-			end
-
-			Keybind.WaitingForBind = false
-			Keybind.Internal.Value = Value
-			Window.Flags[Keybind.Flag] = Value
-			Keybind.Callback(Value, false, Toggle.Value)
-		end)
-	end,
-	Dropdown = function(Parent, Window, Dropdown)
-		local OptionContainerAsset = LavaHub.Assets.OptionContainer()
-		local DropdownAsset = LavaHub.Assets.Dropdown()
-
-		Dropdown.Type = "Dropdown"
-		Dropdown.Asset = DropdownAsset
-
-		Dropdown.OptionContainerAsset = OptionContainerAsset
-		Dropdown.Internal.Value = {}
-		local ContainerRender = nil
-
-		DropdownAsset.Parent = Parent
-		OptionContainerAsset.Parent = LavaHub.Screen
-
-		DropdownAsset.Title.Text = Dropdown.Name
-		DropdownAsset.Title.Visible = not Dropdown.HideName
-
-		local function RefreshSelected()
-			table.clear(Dropdown.Internal.Value)
-
-			for Index, Option in pairs(Dropdown.List) do
-				if Option.Value then
-					table.insert(Dropdown.Internal.Value, Option.Name)
-				end
-			end
-
-			Window.Flags[Dropdown.Flag] = Dropdown.Internal.Value
-			DropdownAsset.Background.Value.Text = #Dropdown.Internal.Value == 0
-				and "..." or table.concat(Dropdown.Internal.Value, ", ")
-		end
-
-		local function SetValue(Option, Value)
-			Option.Value = Value
-			Option.ColorConfig[1] = Value
-			Option.Object.Tick.BackgroundColor3 = Value
-				and Window.Color or Color3.fromRGB(63, 63, 63)
-			-- Option.Callback(Dropdown.Selected, Option)
-		end
-
-		local function AddOption(Option, AddToList, Order)
-			Option = LavaHub.Utilities:GetType(Option, "table", {}, true)
-			Option.Name = LavaHub.Utilities:GetType(Option.Name, "string", "Option")
-			Option.Mode = LavaHub.Utilities:GetType(Option.Mode, "string", "Button")
-			Option.Value = LavaHub.Utilities:GetType(Option.Value, "boolean", false)
-			Option.Callback = LavaHub.Utilities:GetType(Option.Callback, "function", function() end)
-
-			local OptionAsset = LavaHub.Assets.DropdownOption()
-			Option.Object = OptionAsset
-
-			OptionAsset.LayoutOrder = Order
-			OptionAsset.Parent = OptionContainerAsset
-			OptionAsset.Title.Text = Option.Name
-			OptionAsset.Tick.BackgroundColor3 = Option.Value
-				and Window.Color or Color3.fromRGB(63, 63, 63)
-
-			Option.ColorConfig = {Option.Value, "BackgroundColor3"}
-			Window.Colorable[OptionAsset.Tick] = Option.ColorConfig
-			if AddToList then table.insert(Dropdown.List, Option) end
-
-			OptionAsset.MouseButton1Click:Connect(function()
-				Option.Value = not Option.Value
-			end)
-			OptionAsset.Title:GetPropertyChangedSignal("TextBounds"):Connect(function()
-				OptionAsset.Title.Size = UDim2.new(1, -(OptionAsset.Layout.ListLayout.AbsoluteContentSize.X + 18), 1, 0)
-			end)
-
-			Option:GetPropertyChangedSignal("Name"):Connect(function(Name)
-				OptionAsset.Title.Text = Name
-			end)
-			Option:GetPropertyChangedSignal("Value"):Connect(function(Value)
-				if Option.Mode == "Button" then
-					for Index, OldOption in pairs(Dropdown.List) do
-						SetValue(OldOption.Internal, false)
-					end
-
-					Value = true
-					Option.Internal.Value = Value
-					OptionContainerAsset.Visible = false
-				end
-
-				RefreshSelected()
-				Option.ColorConfig[1] = Value
-				Option.Object.Tick.BackgroundColor3 = Value
-					and Window.Color or Color3.fromRGB(63, 63, 63)
-				Option.Callback(Dropdown.Value, Option)
-			end)
-
-			for Index, Value in pairs(Option.Internal) do
-				if string.find(Index, "Colorpicker") then
-					Option[Index] = LavaHub.Utilities:GetType(Option[Index], "table", {}, true)
-					Option[Index].Flag = LavaHub.Utilities:GetType(Option[Index].Flag, "string",
-						Dropdown.Flag .. "/" .. Option.Name .. "/Colorpicker")
-
-					Option[Index].Value = LavaHub.Utilities:GetType(Option[Index].Value, "table", {1, 1, 1, 0, false})
-					Option[Index].Callback = LavaHub.Utilities:GetType(Option[Index].Callback, "function", function() end)
-					Window.Elements[#Window.Elements + 1] = Option[Index]
-					Window.Flags[Option[Index].Flag] = Option[Index].Value
-
-					LavaHub.Elements.ToggleColorpicker(OptionAsset.Layout, Window, Option[Index])
-				end
-			end
-
-			return Option
-		end
-
-		DropdownAsset.MouseButton1Click:Connect(function()
-			if not OptionContainerAsset.Visible and OptionContainerAsset.ListLayout.AbsoluteContentSize.Y ~= 0 then
-				LavaHub.Utilities.ClosePopUps()
-				OptionContainerAsset.Visible = true
-
-				ContainerRender = RunService.RenderStepped:Connect(function()
-					if not OptionContainerAsset.Visible then ContainerRender:Disconnect() end
-
-					local TabPosition = Window.Asset.TabContainer.AbsolutePosition.Y + Window.Asset.TabContainer.AbsoluteSize.Y
-					local DropdownPosition = DropdownAsset.Background.AbsolutePosition.Y + DropdownAsset.Background.AbsoluteSize.Y
-					if TabPosition < DropdownPosition then
-						OptionContainerAsset.Visible = false
-					end
-
-					TabPosition = Window.Asset.TabContainer.AbsolutePosition.Y
-					DropdownPosition = DropdownAsset.Background.AbsolutePosition.Y
-					if TabPosition > DropdownPosition then
-						OptionContainerAsset.Visible = false
-					end
-
-					OptionContainerAsset.Position = UDim2.fromOffset(
-						DropdownAsset.Background.AbsolutePosition.X + 1,
-						(DropdownAsset.Background.AbsolutePosition.Y + GuiInset.Y) + DropdownAsset.Background.AbsoluteSize.Y + 4
-					)
-					OptionContainerAsset.Size = UDim2.fromOffset(
-						DropdownAsset.Background.AbsoluteSize.X,
-						math.clamp(OptionContainerAsset.ListLayout.AbsoluteContentSize.Y, 14, 84) + 6
-						-- OptionContainerAsset.ListLayout.AbsoluteContentSize.Y + 2
-					)
-				end)
-			else
-				OptionContainerAsset.Visible = false
-			end
-		end)
-		DropdownAsset.Title:GetPropertyChangedSignal("TextBounds"):Connect(function()
-			DropdownAsset.Title.Size = Dropdown.HideName and UDim2.fromScale(1, 0)
-				or UDim2.new(1, 0, 0, DropdownAsset.Title.TextBounds.Y)
-
-			DropdownAsset.Background.Position = UDim2.new(0.5, 0, 0, DropdownAsset.Title.Size.Y.Offset + (Dropdown.HideName and 0 or 4))
-			DropdownAsset.Size = UDim2.new(1, 0, 0, DropdownAsset.Title.Size.Y.Offset + DropdownAsset.Background.Size.Y.Offset)
-		end)
-		OptionContainerAsset.ListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-			OptionContainerAsset.CanvasSize = UDim2.fromOffset(0, OptionContainerAsset.ListLayout.AbsoluteContentSize.Y + 6)
-		end)
-		--[[DropdownAsset.Background.Value:GetPropertyChangedSignal("TextBounds"):Connect(function()
-			DropdownAsset.Background.Size = UDim2.new(1, 0, 0, DropdownAsset.Background.Value.TextBounds.Y + 2)
-			DropdownAsset.Size = UDim2.new(1, 0, 0, DropdownAsset.Title.Size.Y.Offset + DropdownAsset.Background.Size.Y.Offset)
-		end)]]
-
-		Dropdown:GetPropertyChangedSignal("Name"):Connect(function(Name)
-			DropdownAsset.Title.Text = Name
-		end)
-		Dropdown:GetPropertyChangedSignal("Value"):Connect(function(Value)
-			if type(Value) ~= "table" then return end
-			if #Value == 0 then RefreshSelected() return end
-
-			for Index, Option in pairs(Dropdown.List) do
-				if table.find(Value, Option.Name) then
-					Option.Value = true
-				else
-					if Option.Mode ~= "Button" then
-						Option.Value = false
-					end
-				end
-			end
-		end)
-
-		-- Dropdown Update
-		for Index, Option in pairs(Dropdown.List) do
-			Dropdown.List[Index] = AddOption(Option, false, Index)
-		end
-		for Index, Option in pairs(Dropdown.List) do
-			if Option.Value then Option.Value = true end
-		end
-		RefreshSelected()
-		Dropdown.Default = LavaHub.Utilities:DeepCopy(Dropdown.Value)
-
-		function Dropdown:BulkAdd(Table)
-			for Index, Option in pairs(Table) do
-				AddOption(Option, true, Index)
-			end
-		end
-		function Dropdown.AddOption(Self, Option)
-			AddOption(Option, true, #Self.List)
-		end
-
-		function Dropdown.Clear(Self)
-			for Index, Option in pairs(Self.List) do
-				Option.Object:Destroy()
-			end table.clear(Self.List)
-		end
-		function Dropdown.RemoveOption(Self, Name)
-			for Index, Option in pairs(Self.List) do
-				if Option.Name == Name then
-					Option.Object:Destroy()
-					table.remove(Self.List, Index)
-				end
-			end
-			for Index, Option in pairs(Self.List) do
-				Option.Object.LayoutOrder = Index
-			end
-		end
-		function Dropdown.RefreshToPlayers(Self, ToggleMode)
-			local Players = {}
-			for Index, Player in pairs(PlayerService:GetPlayers()) do
-				if Player == LocalPlayer then continue end
-				table.insert(Players, {Name = Player.Name,
-					Mode = ToggleMode == "Toggle" or "Button"
-				})
-			end
-			Self:Clear()
-			Self:BulkAdd(Players)
-		end
-
-		function Dropdown:Tooltip(Text)
-			Dropdown.Tooltip = LavaHub.Elements.Tooltip(DropdownAsset, {Text = Text})
-		end
-	end,
-	Colorpicker = function(Parent, Window, Colorpicker)
-		local ColorpickerAsset = LavaHub.Assets.Colorpicker()
-		local PaletteAsset = LavaHub.Assets.ColorpickerPalette()
-
-		Colorpicker.Type = "Colorpicker"
-		Colorpicker.Asset = ColorpickerAsset
-		Colorpicker.PaletteAsset = PaletteAsset
-
-		Colorpicker.ColorConfig = {Colorpicker.Value[5], "BackgroundColor3"}
-		Window.Colorable[PaletteAsset.Rainbow.Tick] = Colorpicker.ColorConfig
-
-		Colorpicker.Default = LavaHub.Utilities:DeepCopy(Colorpicker.Value)
-
-		local PaletteRender, SVRender, HueRender, AlphaRender = nil, nil, nil, nil
-
-		ColorpickerAsset.Parent = Parent
-		PaletteAsset.Parent = LavaHub.Screen
-
-		ColorpickerAsset.Title.Text = Colorpicker.Name
-		PaletteAsset.Rainbow.Tick.BackgroundColor3 = Colorpicker.Value[5]
-			and Window.Color or Color3.fromRGB(63, 63, 63)
-
-		ColorpickerAsset.Title:GetPropertyChangedSignal("TextBounds"):Connect(function()
-			ColorpickerAsset.Size = UDim2.new(1, 0, 0, ColorpickerAsset.Title.TextBounds.Y)
-		end)
-
-		ColorpickerAsset.MouseButton1Click:Connect(function()
-			if not PaletteAsset.Visible then
-				LavaHub.Utilities.ClosePopUps()
-				PaletteAsset.Visible = true
-
-				PaletteRender = RunService.RenderStepped:Connect(function()
-					if not PaletteAsset.Visible then PaletteRender:Disconnect() end
-
-					local TabPosition = Window.Asset.TabContainer.AbsolutePosition.Y + Window.Asset.TabContainer.AbsoluteSize.Y
-					local ColorpickerPosition = ColorpickerAsset.Color.AbsolutePosition.Y + ColorpickerAsset.Color.AbsoluteSize.Y
-					if TabPosition < ColorpickerPosition then
-						PaletteAsset.Visible = false
-					end
-
-					TabPosition = Window.Asset.TabContainer.AbsolutePosition.Y
-					ColorpickerPosition = ColorpickerAsset.Color.AbsolutePosition.Y
-					if TabPosition > ColorpickerPosition then
-						PaletteAsset.Visible = false
-					end
-
-					PaletteAsset.Position = UDim2.fromOffset(
-						(ColorpickerAsset.Color.AbsolutePosition.X - PaletteAsset.AbsoluteSize.X) + 20,
-						(ColorpickerAsset.Color.AbsolutePosition.Y + GuiInset.Y) + 14
-					)
-				end)
-			else
-				PaletteAsset.Visible = false
-			end
-		end)
-
-		PaletteAsset.Rainbow.MouseButton1Click:Connect(function()
-			Colorpicker.Value[5] = not Colorpicker.Value[5]
-			Colorpicker.ColorConfig[1] = Colorpicker.Value[5]
-			PaletteAsset.Rainbow.Tick.BackgroundColor3 = Colorpicker.Value[5]
-				and Window.Color or Color3.fromRGB(63, 63, 63)
-		end)
-		PaletteAsset.SVPicker.InputBegan:Connect(function(Input)
-			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-				if SVRender then SVRender:Disconnect() end
-				SVRender = RunService.RenderStepped:Connect(function()
-					if not PaletteAsset.Visible then SVRender:Disconnect() end
-					local Mouse = UserInputService:GetMouseLocation()
-					local ColorX = math.clamp(Mouse.X - PaletteAsset.SVPicker.AbsolutePosition.X, 0, PaletteAsset.SVPicker.AbsoluteSize.X) / PaletteAsset.SVPicker.AbsoluteSize.X
-					local ColorY = math.clamp(Mouse.Y - (PaletteAsset.SVPicker.AbsolutePosition.Y + GuiInset.Y), 0, PaletteAsset.SVPicker.AbsoluteSize.Y) / PaletteAsset.SVPicker.AbsoluteSize.Y
-
-					Colorpicker.Value[2] = ColorX
-					Colorpicker.Value[3] = 1 - ColorY
-					Colorpicker.Value = Colorpicker.Value
-				end)
-			end
-		end)
-		PaletteAsset.SVPicker.InputEnded:Connect(function(Input)
-			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-				if SVRender then SVRender:Disconnect() end
-			end
-		end)
-		PaletteAsset.Hue.InputBegan:Connect(function(Input)
-			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-				if HueRender then HueRender:Disconnect() end
-				HueRender = RunService.RenderStepped:Connect(function()
-					if not PaletteAsset.Visible then HueRender:Disconnect() end
-					local Mouse = UserInputService:GetMouseLocation()
-					local ColorX = math.clamp(Mouse.X - PaletteAsset.Hue.AbsolutePosition.X, 0, PaletteAsset.Hue.AbsoluteSize.X) / PaletteAsset.Hue.AbsoluteSize.X
-					Colorpicker.Value[1] = 1 - ColorX
-					Colorpicker.Value = Colorpicker.Value
-				end)
-			end
-		end)
-		PaletteAsset.Hue.InputEnded:Connect(function(Input)
-			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-				if HueRender then HueRender:Disconnect() end
-			end
-		end)
-		PaletteAsset.Alpha.InputBegan:Connect(function(Input)
-			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-				if AlphaRender then AlphaRender:Disconnect() end
-				AlphaRender = RunService.RenderStepped:Connect(function()
-					if not PaletteAsset.Visible then AlphaRender:Disconnect() end
-					local Mouse = UserInputService:GetMouseLocation()
-					local ColorX = math.clamp(Mouse.X - PaletteAsset.Alpha.AbsolutePosition.X, 0, PaletteAsset.Alpha.AbsoluteSize.X) / PaletteAsset.Alpha.AbsoluteSize.X
-					Colorpicker.Value[4] = math.floor(ColorX * 10^2) / (10^2) -- idk %.2f little bit broken with this
-					Colorpicker.Value = Colorpicker.Value
-				end)
-			end
-		end)
-		PaletteAsset.Alpha.InputEnded:Connect(function(Input)
-			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-				if AlphaRender then AlphaRender:Disconnect() end
-			end
-		end)
-
-		PaletteAsset.RGB.RGBBox.FocusLost:Connect(function(Enter)
-			if not Enter then return end
-			local ColorString = string.split(string.gsub(PaletteAsset.RGB.RGBBox.Text, " ", ""), ", ")
-			local Hue, Saturation, Value = Color3.fromRGB(ColorString[1], ColorString[2], ColorString[3]):ToHSV()
-			PaletteAsset.RGB.RGBBox.Text = ""
-			Colorpicker.Value[1] = Hue
-			Colorpicker.Value[2] = Saturation
-			Colorpicker.Value[3] = Value
-			Colorpicker.Value = Colorpicker.Value
-		end)
-		PaletteAsset.HEX.HEXBox.FocusLost:Connect(function(Enter)
-			if not Enter then return end
-			local Hue, Saturation, Value = Color3.fromHex("#" .. PaletteAsset.HEX.HEXBox.Text):ToHSV()
-			PaletteAsset.RGB.RGBBox.Text = ""
-			Colorpicker.Value[1] = Hue
-			Colorpicker.Value[2] = Saturation
-			Colorpicker.Value[3] = Value
-			Colorpicker.Value = Colorpicker.Value
-		end)
-
-		RunService.Heartbeat:Connect(function()
-			if Colorpicker.Value[5] then
-				if PaletteAsset.Visible then
-					Colorpicker.Value[1] = Window.RainbowHue
-					Colorpicker.Value = Colorpicker.Value
-				else
-					Colorpicker.Value[1] = Window.RainbowHue
-					Colorpicker.Value[6] = LavaHub.Utilities.TableToColor(Colorpicker.Value)
-					ColorpickerAsset.Color.BackgroundColor3 = Colorpicker.Value[6]
-
-					Window.Flags[Colorpicker.Flag] = Colorpicker.Value
-					Colorpicker.Callback(Colorpicker.Value, Colorpicker.Value[6])
-				end
-			end
-		end)
-
-		Colorpicker:GetPropertyChangedSignal("Name"):Connect(function(Name)
-			ColorpickerAsset.Title.Text = Name
-		end)
-		Colorpicker:GetPropertyChangedSignal("Value"):Connect(function(Value)
-			Value[6] = LavaHub.Utilities.TableToColor(Value)
-			Colorpicker.ColorConfig[1] = Colorpicker.Value[5]
-			ColorpickerAsset.Color.BackgroundColor3 = Value[6]
-
-			PaletteAsset.Rainbow.Tick.BackgroundColor3 = Colorpicker.Value[5]
-				and Window.Color or Color3.fromRGB(63, 63, 63)
-
-			PaletteAsset.SVPicker.BackgroundColor3 = Color3.fromHSV(Value[1], 1, 1)
-			PaletteAsset.SVPicker.Pin.Position = UDim2.fromScale(Value[2], 1 - Value[3])
-			PaletteAsset.Hue.Pin.Position = UDim2.fromScale(1 - Value[1], 0.5)
-
-			PaletteAsset.Alpha.Pin.Position = UDim2.fromScale(Value[4], 0.5)
-			PaletteAsset.Alpha.Value.Text = Value[4]
-			PaletteAsset.Alpha.BackgroundColor3 = Value[6]
-
-			PaletteAsset.RGB.RGBBox.PlaceholderText = LavaHub.Utilities.ColorToString(Value[6])
-			PaletteAsset.HEX.HEXBox.PlaceholderText = string.upper(Value[6]:ToHex())
-			Window.Flags[Colorpicker.Flag] = Value
-			Colorpicker.Callback(Value, Value[6])
-		end)
-
-		function Colorpicker:Tooltip(Text)
-			Colorpicker.Tooltip = LavaHub.Elements.Tooltip(ColorpickerAsset, {Text = Text})
-		end
-
-		Colorpicker.Value = Colorpicker.Value
-	end,
-	ToggleColorpicker = function(Parent, Window, Colorpicker)
-		local ColorpickerAsset = LavaHub.Assets.ToggleColorpicker()
-		local PaletteAsset = LavaHub.Assets.ColorpickerPalette()
-
-		Colorpicker.Type = "Colorpicker"
-		Colorpicker.Asset = ColorpickerAsset
-		Colorpicker.PaletteAsset = PaletteAsset
-
-		Colorpicker.ColorConfig = {Colorpicker.Value[5], "BackgroundColor3"}
-		Window.Colorable[PaletteAsset.Rainbow.Tick] = Colorpicker.ColorConfig
-
-		Colorpicker.Default = LavaHub.Utilities:DeepCopy(Colorpicker.Value)
-
-		local PaletteRender, SVRender, HueRender, AlphaRender = nil, nil, nil, nil
-
-		ColorpickerAsset.Parent = Parent
-		PaletteAsset.Parent = LavaHub.Screen
-
-		PaletteAsset.Rainbow.Tick.BackgroundColor3 = Colorpicker.Value[5]
-			and Window.Color or Color3.fromRGB(63, 63, 63)
-
-		ColorpickerAsset.MouseButton1Click:Connect(function()
-			if not PaletteAsset.Visible then
-				LavaHub.Utilities.ClosePopUps()
-				PaletteAsset.Visible = true
-
-				PaletteRender = RunService.RenderStepped:Connect(function()
-					if not PaletteAsset.Visible then PaletteRender:Disconnect() end
-
-					local TabPosition = Window.Asset.TabContainer.AbsolutePosition.Y + Window.Asset.TabContainer.AbsoluteSize.Y
-					local ColorpickerPosition = ColorpickerAsset.AbsolutePosition.Y + ColorpickerAsset.AbsoluteSize.Y
-					if TabPosition < ColorpickerPosition then
-						PaletteAsset.Visible = false
-					end
-
-					TabPosition = Window.Asset.TabContainer.AbsolutePosition.Y
-					ColorpickerPosition = ColorpickerAsset.AbsolutePosition.Y
-					if TabPosition > ColorpickerPosition then
-						PaletteAsset.Visible = false
-					end
-
-					PaletteAsset.Position = UDim2.fromOffset(
-						(ColorpickerAsset.AbsolutePosition.X - PaletteAsset.AbsoluteSize.X) + 24,
-						(ColorpickerAsset.AbsolutePosition.Y + GuiInset.Y) + 16
-					)
-				end)
-			else
-				PaletteAsset.Visible = false
-			end
-		end)
-
-		PaletteAsset.Rainbow.MouseButton1Click:Connect(function()
-			Colorpicker.Value[5] = not Colorpicker.Value[5]
-			Colorpicker.ColorConfig[1] = Colorpicker.Value[5]
-			PaletteAsset.Rainbow.Tick.BackgroundColor3 = Colorpicker.Value[5]
-				and Window.Color or Color3.fromRGB(63, 63, 63)
-		end)
-		PaletteAsset.SVPicker.InputBegan:Connect(function(Input)
-			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-				if SVRender then SVRender:Disconnect() end
-				SVRender = RunService.RenderStepped:Connect(function()
-					if not PaletteAsset.Visible then SVRender:Disconnect() end
-					local Mouse = UserInputService:GetMouseLocation()
-					local ColorX = math.clamp(Mouse.X - PaletteAsset.SVPicker.AbsolutePosition.X, 0, PaletteAsset.SVPicker.AbsoluteSize.X) / PaletteAsset.SVPicker.AbsoluteSize.X
-					local ColorY = math.clamp(Mouse.Y - (PaletteAsset.SVPicker.AbsolutePosition.Y + GuiInset.Y), 0, PaletteAsset.SVPicker.AbsoluteSize.Y) / PaletteAsset.SVPicker.AbsoluteSize.Y
-
-					Colorpicker.Value[2] = ColorX
-					Colorpicker.Value[3] = 1 - ColorY
-					Colorpicker.Value = Colorpicker.Value
-				end)
-			end
-		end)
-		PaletteAsset.SVPicker.InputEnded:Connect(function(Input)
-			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-				if SVRender then SVRender:Disconnect() end
-			end
-		end)
-		PaletteAsset.Hue.InputBegan:Connect(function(Input)
-			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-				if HueRender then HueRender:Disconnect() end
-				HueRender = RunService.RenderStepped:Connect(function()
-					if not PaletteAsset.Visible then HueRender:Disconnect() end
-					local Mouse = UserInputService:GetMouseLocation()
-					local ColorX = math.clamp(Mouse.X - PaletteAsset.Hue.AbsolutePosition.X, 0, PaletteAsset.Hue.AbsoluteSize.X) / PaletteAsset.Hue.AbsoluteSize.X
-					Colorpicker.Value[1] = 1 - ColorX
-					Colorpicker.Value = Colorpicker.Value
-				end)
-			end
-		end)
-		PaletteAsset.Hue.InputEnded:Connect(function(Input)
-			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-				if HueRender then HueRender:Disconnect() end
-			end
-		end)
-		PaletteAsset.Alpha.InputBegan:Connect(function(Input)
-			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-				if AlphaRender then AlphaRender:Disconnect() end
-				AlphaRender = RunService.RenderStepped:Connect(function()
-					if not PaletteAsset.Visible then AlphaRender:Disconnect() end
-					local Mouse = UserInputService:GetMouseLocation()
-					local ColorX = math.clamp(Mouse.X - PaletteAsset.Alpha.AbsolutePosition.X, 0, PaletteAsset.Alpha.AbsoluteSize.X) / PaletteAsset.Alpha.AbsoluteSize.X
-					Colorpicker.Value[4] = math.floor(ColorX * 10^2) / (10^2) -- idk %.2f little bit broken with this
-					Colorpicker.Value = Colorpicker.Value
-				end)
-			end
-		end)
-		PaletteAsset.Alpha.InputEnded:Connect(function(Input)
-			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-				if AlphaRender then AlphaRender:Disconnect() end
-			end
-		end)
-
-		PaletteAsset.RGB.RGBBox.FocusLost:Connect(function(Enter)
-			if not Enter then return end
-			local ColorString = string.split(string.gsub(PaletteAsset.RGB.RGBBox.Text, " ", ""), ", ")
-			local Hue, Saturation, Value = Color3.fromRGB(ColorString[1], ColorString[2], ColorString[3]):ToHSV()
-			PaletteAsset.RGB.RGBBox.Text = ""
-			Colorpicker.Value[1] = Hue
-			Colorpicker.Value[2] = Saturation
-			Colorpicker.Value[3] = Value
-			Colorpicker.Value = Colorpicker.Value
-		end)
-		PaletteAsset.HEX.HEXBox.FocusLost:Connect(function(Enter)
-			if not Enter then return end
-			local Hue, Saturation, Value = Color3.fromHex("#" .. PaletteAsset.HEX.HEXBox.Text):ToHSV()
-			PaletteAsset.RGB.RGBBox.Text = ""
-			Colorpicker.Value[1] = Hue
-			Colorpicker.Value[2] = Saturation
-			Colorpicker.Value[3] = Value
-			Colorpicker.Value = Colorpicker.Value
-		end)
-
-		RunService.Heartbeat:Connect(function()
-			if Colorpicker.Value[5] then
-				if PaletteAsset.Visible then
-					Colorpicker.Value[1] = Window.RainbowHue
-					Colorpicker.Value = Colorpicker.Value
-				else
-					Colorpicker.Value[1] = Window.RainbowHue
-					Colorpicker.Value[6] = LavaHub.Utilities.TableToColor(Colorpicker.Value)
-					ColorpickerAsset.BackgroundColor3 = Colorpicker.Value[6]
-
-					Window.Flags[Colorpicker.Flag] = Colorpicker.Value
-					Colorpicker.Callback(Colorpicker.Value, Colorpicker.Value[6])
-				end
-			end
-		end)
-		Colorpicker:GetPropertyChangedSignal("Value"):Connect(function(Value)
-			Value[6] = LavaHub.Utilities.TableToColor(Value)
-			Colorpicker.ColorConfig[1] = Colorpicker.Value[5]
-			ColorpickerAsset.BackgroundColor3 = Value[6]
-
-			PaletteAsset.Rainbow.Tick.BackgroundColor3 = Colorpicker.Value[5]
-				and Window.Color or Color3.fromRGB(63, 63, 63)
-
-			PaletteAsset.SVPicker.BackgroundColor3 = Color3.fromHSV(Value[1], 1, 1)
-			PaletteAsset.SVPicker.Pin.Position = UDim2.fromScale(Value[2], 1 - Value[3])
-			PaletteAsset.Hue.Pin.Position = UDim2.fromScale(1 - Value[1], 0.5)
-
-			PaletteAsset.Alpha.Pin.Position = UDim2.fromScale(Value[4], 0.5)
-			PaletteAsset.Alpha.Value.Text = Value[4]
-			PaletteAsset.Alpha.BackgroundColor3 = Value[6]
-
-			PaletteAsset.RGB.RGBBox.PlaceholderText = LavaHub.Utilities.ColorToString(Value[6])
-			PaletteAsset.HEX.HEXBox.PlaceholderText = string.upper(Value[6]:ToHex())
-			Window.Flags[Colorpicker.Flag] = Value
-			Colorpicker.Callback(Value, Value[6])
-		end)
-
-		Colorpicker.Value = Colorpicker.Value
-	end
-}
-
-function LavaHub:Window(Window)
-	Window = LavaHub.Utilities:GetType(Window, "table", {}, true)
-	Window.Blur = LavaHub.Utilities:GetType(Window.Blur, "boolean", false)
-	Window.Name = LavaHub.Utilities:GetType(Window.Name, "string", "Window")
-	Window.Enabled = LavaHub.Utilities:GetType(Window.Enabled, "boolean", true)
-	Window.RainbowSpeed = LavaHub.Utilities:GetType(Window.RainbowSpeed, "number", 10)
-	Window.Color = LavaHub.Utilities:GetType(Window.Color, "Color3", Color3.new(1, 0.5, 0.25))
-	Window.Position = LavaHub.Utilities:GetType(Window.Position, "UDim2", UDim2.new(0.5, -248, 0.5, -248))
-	Window.Size = LavaHub.Utilities:GetType(Window.Size, "UDim2", UDim2.new(0, 496, 0, 496))
-
-	local WindowAsset = LavaHub.Elements.Window(Window)
-
-	function Window:Tab(Tab)
-		Tab = LavaHub.Utilities:GetType(Tab, "table", {}, true)
-		Tab.Name = LavaHub.Utilities:GetType(Tab.Name, "string", "Tab")
-
-		LavaHub.Elements.Tab(WindowAsset, Window, Tab)
-
-		function Tab.AddConfigSection(Self, FolderName, Side)
-			local ConfigSection = Self:Section({Name = "Config System", Side = Side}) do
-				local ConfigList = LavaHub.Utilities.ConfigsToList(FolderName)
-				local AutoLoadConfig = Window:GetAutoLoadConfig(FolderName)
-
-				local ConfigDropdown = nil
-				local ConfigTextbox = nil
-
-				local function UpdateConfigList(Name)
-					ConfigDropdown:Clear()
-					ConfigList = LavaHub.Utilities.ConfigsToList(FolderName)
-					ConfigDropdown:BulkAdd(ConfigList)
-					ConfigDropdown.Value = {}
-					-- ConfigDropdown.Value = {Name or (ConfigList[#ConfigList] and ConfigList[#ConfigList].Name)}
-				end
-
-				ConfigTextbox = ConfigSection:Textbox({HideName = true, Placeholder = "Config Name", IgnoreFlag = true})
-				ConfigSection:Button({Name = "Create", Callback = function()
-					Window:SaveConfig(FolderName, ConfigTextbox.Value)
-					UpdateConfigList(ConfigTextbox.Value)
-				end})
-
-				ConfigSection:Divider({Text = "Configs"})
-
-				ConfigDropdown = ConfigSection:Dropdown({HideName = true, IgnoreFlag = true, List = ConfigList})
-				-- ConfigDropdown.Value = {ConfigList[#ConfigList] and ConfigList[#ConfigList].Name}
-
-				ConfigSection:Button({Name = "Save", Callback = function()
-					if ConfigDropdown.Value and ConfigDropdown.Value[1] then
-						Window:SaveConfig(FolderName, ConfigDropdown.Value[1])
-					else
-						LavaHub:Push({
-							Title = "Config System",
-							Description = "Select Config First",
-							Duration = 10
-						})
-					end
-				end})
-				ConfigSection:Button({Name = "Load", Callback = function()
-					if ConfigDropdown.Value and ConfigDropdown.Value[1] then
-						Window:LoadConfig(FolderName, ConfigDropdown.Value[1])
-					else
-						LavaHub:Push({
-							Title = "Config System",
-							Description = "Select Config First",
-							Duration = 10
-						})
-					end
-				end})
-				ConfigSection:Button({Name = "Delete", Callback = function()
-					if ConfigDropdown.Value and ConfigDropdown.Value[1] then
-						Window:DeleteConfig(FolderName, ConfigDropdown.Value[1])
-						UpdateConfigList()
-					else
-						LavaHub:Push({
-							Title = "Config System",
-							Description = "Select Config First",
-							Duration = 10
-						})
-					end
-				end})
-				ConfigSection:Button({Name = "Refresh", Callback = UpdateConfigList})
-
-				local ConfigDivider = ConfigSection:Divider({Text = not AutoLoadConfig and "AutoLoad Config"
-					or "AutoLoad Config\n<font color=\"rgb(191, 191, 191)\">[ " .. AutoLoadConfig .. " ]</font>"})
-
-				ConfigSection:Button({Name = "Set AutoLoad Config", Callback = function()
-					if ConfigDropdown.Value and ConfigDropdown.Value[1] then
-						Window:AddToAutoLoad(FolderName, ConfigDropdown.Value[1])
-						ConfigDivider.Text = "AutoLoad Config\n<font color=\"rgb(191, 191, 191)\">[ " .. ConfigDropdown.Value[1] .. " ]</font>"
-					else
-						LavaHub:Push({
-							Title = "Config System",
-							Description = "Select Config First",
-							Duration = 10
-						})
-					end
-				end})
-				ConfigSection:Button({Name = "Clear AutoLoad Config", Callback = function()
-					Window:RemoveFromAutoLoad(FolderName)
-					ConfigDivider.Text = "AutoLoad Config"
-				end})
-			end
-		end
-
-		function Tab.Divider(Self, Divider)
-			Divider = LavaHub.Utilities:GetType(Divider, "table", {}, true)
-			Divider.Text = LavaHub.Utilities:GetType(Divider.Text, "string", "")
-
-			local Parent = Self.Type == "Tab" and LavaHub.Utilities:ChooseTabSide(Self.Asset, Divider.Side) or Self.Container
-			LavaHub.Elements.Divider(Parent, Divider)
-			return Divider
-		end
-		function Tab.Label(Self, Label)
-			Label = LavaHub.Utilities:GetType(Label, "table", {}, true)
-			Label.Text = LavaHub.Utilities:GetType(Label.Text, "string", "Label")
-
-			local Parent = Self.Type == "Tab" and LavaHub.Utilities:ChooseTabSide(Self.Asset, Label.Side) or Self.Container
-			LavaHub.Elements.Label(Parent, Label)
-			return Label
-		end
-		function Tab.Button(Self, Button)
-			Button = LavaHub.Utilities:GetType(Button, "table", {}, true)
-			Button.Name = LavaHub.Utilities:GetType(Button.Name, "string", "Button")
-			if Button.AltStyle then Button.ButtonName = LavaHub.Utilities:GetType(Button.ButtonName, "string", "Click Me!") end
-			Button.Callback = LavaHub.Utilities:GetType(Button.Callback, "function", function() end)
-
-			local Parent = Self.Type == "Tab" and LavaHub.Utilities:ChooseTabSide(Self.Asset, Button.Side) or Self.Container
-			local ButtonElement = Button.AltStyle and LavaHub.Elements.Button2 or LavaHub.Elements.Button
-			ButtonElement(Parent, Window, Button)
-			return Button
-		end
-		function Tab.Toggle(Self, Toggle)
-			Toggle = LavaHub.Utilities:GetType(Toggle, "table", {}, true)
-			Toggle.Name = LavaHub.Utilities:GetType(Toggle.Name, "string", "Toggle")
-			Toggle.Flag = LavaHub.Utilities:GetType(Toggle.Flag, "string", Toggle.Name)
-
-			Toggle.Value = LavaHub.Utilities:GetType(Toggle.Value, "boolean", false)
-			Toggle.Callback = LavaHub.Utilities:GetType(Toggle.Callback, "function", function() end)
-
-			Window.Elements[#Window.Elements + 1] = Toggle
-			Window.Flags[Toggle.Flag] = Toggle.Value
-
-			local Parent = Self.Type == "Tab" and LavaHub.Utilities:ChooseTabSide(Self.Asset, Toggle.Side) or Self.Container
-			LavaHub.Elements.Toggle(Parent, Window, Toggle)
-			return Toggle
-		end
-		function Tab.Slider(Self, Slider)
-			Slider = LavaHub.Utilities:GetType(Slider, "table", {}, true)
-			Slider.Name = LavaHub.Utilities:GetType(Slider.Name, "string", "Slider")
-			Slider.Flag = LavaHub.Utilities:GetType(Slider.Flag, "string", Slider.Name)
-
-			Slider.Min = LavaHub.Utilities:GetType(Slider.Min, "number", 0)
-			Slider.Max = LavaHub.Utilities:GetType(Slider.Max, "number", 100)
-			Slider.Precise = LavaHub.Utilities:GetType(Slider.Precise, "number", 0)
-			Slider.Unit = LavaHub.Utilities:GetType(Slider.Unit, "string", "")
-			Slider.Value = LavaHub.Utilities:GetType(Slider.Value, "number", Slider.Max / 2)
-			Slider.Callback = LavaHub.Utilities:GetType(Slider.Callback, "function", function() end)
-
-			Window.Elements[#Window.Elements + 1] = Slider
-			Window.Flags[Slider.Flag] = Slider.Value
-
-			local Parent = Self.Type == "Tab" and LavaHub.Utilities:ChooseTabSide(Self.Asset, Slider.Side) or Self.Container
-			LavaHub.Elements.Slider(Parent, Window, Slider)
-			return Slider
-		end
-		function Tab.Textbox(Self, Textbox)
-			Textbox = LavaHub.Utilities:GetType(Textbox, "table", {}, true)
-			Textbox.Name = LavaHub.Utilities:GetType(Textbox.Name, "string", "Textbox")
-			Textbox.Flag = LavaHub.Utilities:GetType(Textbox.Flag, "string", Textbox.Name)
-
-			Textbox.Value = LavaHub.Utilities:GetType(Textbox.Value, "string", "")
-			Textbox.NumbersOnly = LavaHub.Utilities:GetType(Textbox.NumbersOnly, "boolean", false)
-			Textbox.Placeholder = LavaHub.Utilities:GetType(Textbox.Placeholder, "string", "Input here")
-			Textbox.Callback = LavaHub.Utilities:GetType(Textbox.Callback, "function", function() end)
-
-			Window.Elements[#Window.Elements + 1] = Textbox
-			Window.Flags[Textbox.Flag] = Textbox.Value
-
-			local Parent = Self.Type == "Tab" and LavaHub.Utilities:ChooseTabSide(Self.Asset, Textbox.Side) or Self.Container
-			LavaHub.Elements.Textbox(Parent, Window, Textbox)
-			return Textbox
-		end
-		function Tab.Keybind(Self, Keybind)
-			Keybind = LavaHub.Utilities:GetType(Keybind, "table", {}, true)
-			Keybind.Name = LavaHub.Utilities:GetType(Keybind.Name, "string", "Keybind")
-			Keybind.Flag = LavaHub.Utilities:GetType(Keybind.Flag, "string", Keybind.Name)
-
-			Keybind.Value = LavaHub.Utilities:GetType(Keybind.Value, "string", "NONE")
-			Keybind.Mouse = LavaHub.Utilities:GetType(Keybind.Mouse, "boolean", false)
-			Keybind.Callback = LavaHub.Utilities:GetType(Keybind.Callback, "function", function() end)
-			Keybind.Blacklist = LavaHub.Utilities:GetType(Keybind.Blacklist, "table", {"W", "A", "S", "D", "Slash", "Tab", "Backspace", "Escape", "Space", "Delete", "Unknown", "Backquote"})
-
-			Window.Elements[#Window.Elements + 1] = Keybind
-			Window.Flags[Keybind.Flag] = Keybind.Value
-
-			local Parent = Self.Type == "Tab" and LavaHub.Utilities:ChooseTabSide(Self.Asset, Keybind.Side) or Self.Container
-			LavaHub.Elements.Keybind(Parent, Window, Keybind)
-			return Keybind
-		end
-		function Tab.Dropdown(Self, Dropdown)
-			Dropdown = LavaHub.Utilities:GetType(Dropdown, "table", {}, true)
-			Dropdown.Name = LavaHub.Utilities:GetType(Dropdown.Name, "string", "Dropdown")
-			Dropdown.Flag = LavaHub.Utilities:GetType(Dropdown.Flag, "string", Dropdown.Name)
-			Dropdown.List = LavaHub.Utilities:GetType(Dropdown.List, "table", {})
-
-			Window.Elements[#Window.Elements + 1] = Dropdown
-			Window.Flags[Dropdown.Flag] = Dropdown.Value
-
-			local Parent = Self.Type == "Tab" and LavaHub.Utilities:ChooseTabSide(Self.Asset, Dropdown.Side) or Self.Container
-			LavaHub.Elements.Dropdown(Parent, Window, Dropdown)
-			return Dropdown
-		end
-		function Tab.Colorpicker(Self, Colorpicker)
-			Colorpicker = LavaHub.Utilities:GetType(Colorpicker, "table", {}, true)
-			Colorpicker.Name = LavaHub.Utilities:GetType(Colorpicker.Name, "string", "Colorpicker")
-			Colorpicker.Flag = LavaHub.Utilities:GetType(Colorpicker.Flag, "string", Colorpicker.Name)
-
-			Colorpicker.Value = LavaHub.Utilities:GetType(Colorpicker.Value, "table", {1, 1, 1, 0, false})
-			Colorpicker.Callback = LavaHub.Utilities:GetType(Colorpicker.Callback, "function", function() end)
-
-			Window.Elements[#Window.Elements + 1] = Colorpicker
-			Window.Flags[Colorpicker.Flag] = Colorpicker.Value
-
-			local Parent = Self.Type == "Tab" and LavaHub.Utilities:ChooseTabSide(Self.Asset, Colorpicker.Side) or Self.Container
-			LavaHub.Elements.Colorpicker(Parent, Window, Colorpicker)
-			return Colorpicker
-		end
-		function Tab.Section(Self, Section)
-			Section = LavaHub.Utilities:GetType(Section, "table", {}, true)
-			Section.Name = LavaHub.Utilities:GetType(Section.Name, "string", "Section")
-
-			local Parent = LavaHub.Utilities:ChooseTabSide(Self.Asset, Section.Side)
-			LavaHub.Elements.Section(Parent, Section)
-
-			for Index, Value in pairs(Self.Internal) do
-				if table.find(LavaHub.SectionInclude, Index) then
-					Section.Internal[Index] = Value
-				end
-			end
-
-			return Section
-		end
-		return Tab
-	end
-	return Window
-end
-
-function LavaHub:Push(Notification)
-	Notification = LavaHub.Utilities:GetType(Notification, "table", {})
-	Notification.Title = LavaHub.Utilities:GetType(Notification.Title, "string", "Title")
-	Notification.Description = LavaHub.Utilities:GetType(Notification.Description, "string", "Description")
-
-	local NotificationAsset = LavaHub.Assets.PushNotification()
-	NotificationAsset.Parent = LavaHub.Screen.PNContainer
-	NotificationAsset.TitleHolder.Title.Text = Notification.Title
-	NotificationAsset.Description.Text = Notification.Description
-	NotificationAsset.TitleHolder.Title.Size = UDim2.new(1, 0, 0, NotificationAsset.TitleHolder.Title.TextBounds.Y)
-	NotificationAsset.Description.Size = UDim2.new(1, 0, 0, NotificationAsset.Description.TextBounds.Y)
-
-	NotificationAsset.Size = UDim2.fromOffset(
-		(NotificationAsset.TitleHolder.Title.TextBounds.X > NotificationAsset.Description.TextBounds.X
-			and NotificationAsset.TitleHolder.Title.TextBounds.X or NotificationAsset.Description.TextBounds.X) + 24,
-		NotificationAsset.ListLayout.AbsoluteContentSize.Y + 8
-	)
-
-	if Notification.Duration then
-		task.spawn(function()
-			for Time = Notification.Duration, 1, -1 do
-				NotificationAsset.TitleHolder.Close.Text = Time
-				task.wait(1)
-			end
-			NotificationAsset.TitleHolder.Close.Text = 0
-
-			NotificationAsset:Destroy()
-			if Notification.Callback then
-				Notification.Callback()
-			end
-		end)
-	else
-		NotificationAsset.TitleHolder.Close.MouseButton1Click:Connect(function()
-			NotificationAsset:Destroy()
-		end)
 	end
 end
 
-function LavaHub:Toast(Notification)
-	Notification = LavaHub.Utilities:GetType(Notification, "table", {})
-	Notification.Title = LavaHub.Utilities:GetType(Notification.Title, "string", "Title")
-	Notification.Duration = LavaHub.Utilities:GetType(Notification.Duration, "number", 5)
-	Notification.Color = LavaHub.Utilities:GetType(Notification.Color, "Color3", Color3.new(1, 0.5, 0.25))
+local function RemoveTable(tablre, value)
+	for i,v in pairs(tablre) do
+		if tostring(v) == tostring(value) then
+			table.remove(tablre, i)
+		end
+	end
+end
 
-	local NotificationAsset = LavaHub.Assets.ToastNotification()
-	NotificationAsset.Parent = LavaHub.Screen.TNContainer
-	NotificationAsset.Main.Title.Text = Notification.Title
-	NotificationAsset.Main.GLine.BackgroundColor3 = Notification.Color
+local function Kwargify(defaults, passed)
+	for i, v in pairs(defaults) do
+		if passed[i] == nil then
+			passed[i] = v
+		end
+	end
+	return passed
+end
 
-	NotificationAsset.Main.Size = UDim2.fromOffset(
-		NotificationAsset.Main.Title.TextBounds.X + 10,
-		NotificationAsset.Main.Title.TextBounds.Y + 6
-	)
-	NotificationAsset.Size = UDim2.fromOffset(0,
-		NotificationAsset.Main.Size.Y.Offset + 4
-	)
+local function PackColor(Color)
+	return {R = Color.R * 255, G = Color.G * 255, B = Color.B * 255}
+end    
 
-	local function TweenSize(X, Y, Callback)
-		NotificationAsset:TweenSize(
-			UDim2.fromOffset(X, Y),
-			Enum.EasingDirection.InOut,
-			Enum.EasingStyle.Linear,
-			0.25, false, Callback
-		)
+local function UnpackColor(Color)
+	return Color3.fromRGB(Color.R, Color.G, Color.B)
+end
+
+function tween(object, goal, callback, tweenin)
+	local tween = TweenService:Create(object,tweenin or tweeninfo, goal)
+	tween.Completed:Connect(callback or function() end)
+	tween:Play()
+end
+
+local function BlurModule(Frame)
+	local RunService = game:GetService('RunService')
+	local camera = workspace.CurrentCamera
+	local MTREL = "Glass"
+	local binds = {}
+	local root = Instance.new('Folder', camera)
+	root.Name = 'LunaBlur'
+
+	local gTokenMH = 99999999
+	local gToken = math.random(1, gTokenMH)
+
+	local DepthOfField = Instance.new('DepthOfFieldEffect', game:GetService('Lighting'))
+	DepthOfField.FarIntensity = 0
+	DepthOfField.FocusDistance = 51.6
+	DepthOfField.InFocusRadius = 50
+	DepthOfField.NearIntensity = 6
+	DepthOfField.Name = "DPT_"..gToken
+
+	local frame = Instance.new('Frame')
+	frame.Parent = Frame
+	frame.Size = UDim2.new(0.95, 0, 0.95, 0)
+	frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+	frame.AnchorPoint = Vector2.new(0.5, 0.5)
+	frame.BackgroundTransparency = 1
+
+	local GenUid; do -- Generate unique names for RenderStepped bindings
+		local id = 0
+		function GenUid()
+			id = id + 1
+			return 'neon::'..tostring(id)
+		end
 	end
 
-	TweenSize(NotificationAsset.Main.Size.X.Offset + 4, NotificationAsset.Main.Size.Y.Offset + 4, function()
-		task.wait(Notification.Duration) TweenSize(0, NotificationAsset.Main.Size.Y.Offset + 4, function()
-			NotificationAsset:Destroy() if Notification.Callback then Notification.Callback() end
+	do
+		local function IsNotNaN(x)
+			return x == x
+		end
+		local continue = IsNotNaN(camera:ScreenPointToRay(0,0).Origin.x)
+		while not continue do
+			RunService.RenderStepped:wait()
+			continue = IsNotNaN(camera:ScreenPointToRay(0,0).Origin.x)
+		end
+	end
+
+	local DrawQuad; do
+
+		local acos, max, pi, sqrt = math.acos, math.max, math.pi, math.sqrt
+		local sz = 0.22
+		local function DrawTriangle(v1, v2, v3, p0, p1) -- I think Stravant wrote this function
+
+			local s1 = (v1 - v2).magnitude
+			local s2 = (v2 - v3).magnitude
+			local s3 = (v3 - v1).magnitude
+			local smax = max(s1, s2, s3)
+			local A, B, C
+			if s1 == smax then
+				A, B, C = v1, v2, v3
+			elseif s2 == smax then
+				A, B, C = v2, v3, v1
+			elseif s3 == smax then
+				A, B, C = v3, v1, v2
+			end
+
+			local para = ( (B-A).x*(C-A).x + (B-A).y*(C-A).y + (B-A).z*(C-A).z ) / (A-B).magnitude
+			local perp = sqrt((C-A).magnitude^2 - para*para)
+			local dif_para = (A - B).magnitude - para
+
+			local st = CFrame.new(B, A)
+			local za = CFrame.Angles(pi/2,0,0)
+
+			local cf0 = st
+
+			local Top_Look = (cf0 * za).lookVector
+			local Mid_Point = A + CFrame.new(A, B).lookVector * para
+			local Needed_Look = CFrame.new(Mid_Point, C).lookVector
+			local dot = Top_Look.x*Needed_Look.x + Top_Look.y*Needed_Look.y + Top_Look.z*Needed_Look.z
+
+			local ac = CFrame.Angles(0, 0, acos(dot))
+
+			cf0 = cf0 * ac
+			if ((cf0 * za).lookVector - Needed_Look).magnitude > 0.01 then
+				cf0 = cf0 * CFrame.Angles(0, 0, -2*acos(dot))
+			end
+			cf0 = cf0 * CFrame.new(0, perp/2, -(dif_para + para/2))
+
+			local cf1 = st * ac * CFrame.Angles(0, pi, 0)
+			if ((cf1 * za).lookVector - Needed_Look).magnitude > 0.01 then
+				cf1 = cf1 * CFrame.Angles(0, 0, 2*acos(dot))
+			end
+			cf1 = cf1 * CFrame.new(0, perp/2, dif_para/2)
+
+			if not p0 then
+				p0 = Instance.new('Part')
+				p0.FormFactor = 'Custom'
+				p0.TopSurface = 0
+				p0.BottomSurface = 0
+				p0.Anchored = true
+				p0.CanCollide = false
+				p0.CastShadow = false
+				p0.Material = MTREL
+				p0.Size = Vector3.new(sz, sz, sz)
+				local mesh = Instance.new('SpecialMesh', p0)
+				mesh.MeshType = 2
+				mesh.Name = 'WedgeMesh'
+			end
+			p0.WedgeMesh.Scale = Vector3.new(0, perp/sz, para/sz)
+			p0.CFrame = cf0
+
+			if not p1 then
+				p1 = p0:clone()
+			end
+			p1.WedgeMesh.Scale = Vector3.new(0, perp/sz, dif_para/sz)
+			p1.CFrame = cf1
+
+			return p0, p1
+		end
+
+		function DrawQuad(v1, v2, v3, v4, parts)
+			parts[1], parts[2] = DrawTriangle(v1, v2, v3, parts[1], parts[2])
+			parts[3], parts[4] = DrawTriangle(v3, v2, v4, parts[3], parts[4])
+		end
+	end
+
+	if binds[frame] then
+		return binds[frame].parts
+	end
+
+	local uid = GenUid()
+	local parts = {}
+	local f = Instance.new('Folder', root)
+	f.Name = frame.Name
+
+	local parents = {}
+	do
+		local function add(child)
+			if child:IsA'GuiObject' then
+				parents[#parents + 1] = child
+				add(child.Parent)
+			end
+		end
+		add(frame)
+	end
+
+	local function UpdateOrientation(fetchProps)
+		local properties = {
+			Transparency = 0.98;
+			BrickColor = BrickColor.new('Institutional white');
+		}
+		local zIndex = 1 - 0.05*frame.ZIndex
+
+		local tl, br = frame.AbsolutePosition, frame.AbsolutePosition + frame.AbsoluteSize
+		local tr, bl = Vector2.new(br.x, tl.y), Vector2.new(tl.x, br.y)
+		do
+			local rot = 0;
+			for _, v in ipairs(parents) do
+				rot = rot + v.Rotation
+			end
+			if rot ~= 0 and rot%180 ~= 0 then
+				local mid = tl:lerp(br, 0.5)
+				local s, c = math.sin(math.rad(rot)), math.cos(math.rad(rot))
+				local vec = tl
+				tl = Vector2.new(c*(tl.x - mid.x) - s*(tl.y - mid.y), s*(tl.x - mid.x) + c*(tl.y - mid.y)) + mid
+				tr = Vector2.new(c*(tr.x - mid.x) - s*(tr.y - mid.y), s*(tr.x - mid.x) + c*(tr.y - mid.y)) + mid
+				bl = Vector2.new(c*(bl.x - mid.x) - s*(bl.y - mid.y), s*(bl.x - mid.x) + c*(bl.y - mid.y)) + mid
+				br = Vector2.new(c*(br.x - mid.x) - s*(br.y - mid.y), s*(br.x - mid.x) + c*(br.y - mid.y)) + mid
+			end
+		end
+		DrawQuad(
+			camera:ScreenPointToRay(tl.x, tl.y, zIndex).Origin, 
+			camera:ScreenPointToRay(tr.x, tr.y, zIndex).Origin, 
+			camera:ScreenPointToRay(bl.x, bl.y, zIndex).Origin, 
+			camera:ScreenPointToRay(br.x, br.y, zIndex).Origin, 
+			parts
+		)
+		if fetchProps then
+			for _, pt in pairs(parts) do
+				pt.Parent = f
+			end
+			for propName, propValue in pairs(properties) do
+				for _, pt in pairs(parts) do
+					pt[propName] = propValue
+				end
+			end
+		end
+
+	end
+
+	UpdateOrientation(true)
+	RunService:BindToRenderStep(uid, 2000, UpdateOrientation)
+end
+
+local function unpackt(array : table)
+
+	local val = ""
+	local i = 0
+	for _,v in pairs(array) do
+		if i < 3 then
+			val = val .. v .. ", "
+			i += 1
+		else
+			val = "Various"
+			break
+		end
+	end
+
+	return val
+end
+
+-- Interface Management
+local LunaUI = isStudio and script.Parent:WaitForChild("Luna UI") or game:GetObjects("rbxassetid://86467455075715")[1]
+
+local SizeBleh = nil
+
+local function Hide(Window, bind, notif)
+	SizeBleh = Window.Size
+	bind = string.split(tostring(bind), "Enum.KeyCode.")
+	bind = bind[2]
+	if notif then
+		Luna:Notification({Title = "Interface Hidden", Content = "The interface has been hidden, you may reopen the interface by Pressing the UI Bind In Settings ("..tostring(bind)..")", Icon = "visibility_off"})
+	end
+	tween(Window, {BackgroundTransparency = 1})
+	tween(Window.Elements, {BackgroundTransparency = 1})
+	tween(Window.Line, {BackgroundTransparency = 1})
+	tween(Window.Title.Title, {TextTransparency = 1})
+	tween(Window.Title.subtitle, {TextTransparency = 1})
+	tween(Window.Logo, {ImageTransparency = 1})
+	tween(Window.Navigation.Line, {BackgroundTransparency = 1})
+
+	for _, TopbarButton in ipairs(Window.Controls:GetChildren()) do
+		if TopbarButton.ClassName == "Frame" then
+			tween(TopbarButton, {BackgroundTransparency = 1})
+			tween(TopbarButton.UIStroke, {Transparency = 1})
+			tween(TopbarButton.ImageLabel, {ImageTransparency = 1})
+			TopbarButton.Visible = false
+		end
+	end
+	for _, tabbtn in ipairs(Window.Navigation.Tabs:GetChildren()) do
+		if tabbtn.ClassName == "Frame" and tabbtn.Name ~= "InActive Template" then
+			TweenService:Create(tabbtn, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
+			TweenService:Create(tabbtn.ImageLabel, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
+			TweenService:Create(tabbtn.DropShadowHolder.DropShadow, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
+			TweenService:Create(tabbtn.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+		end
+	end
+
+	task.wait(0.28)
+	Window.Size = UDim2.new(0,0,0,0)
+	Window.Parent.ShadowHolder.Visible = false
+	task.wait()
+	Window.Elements.Parent.Visible = false
+	Window.Visible = false
+end
+
+
+if gethui then
+	LunaUI.Parent = gethui()
+elseif syn and syn.protect_gui then 
+	syn.protect_gui(LunaUI)
+	LunaUI.Parent = CoreGui
+elseif not isStudio and CoreGui:FindFirstChild("RobloxGui") then
+	LunaUI.Parent = CoreGui:FindFirstChild("RobloxGui")
+elseif not isStudio then
+	LunaUI.Parent = CoreGui
+end
+
+if gethui then
+	for _, Interface in ipairs(gethui():GetChildren()) do
+		if Interface.Name == LunaUI.Name and Interface ~= LunaUI then
+			Hide(Interface.SmartWindow)
+			Interface.Enabled = false
+			Interface.Name = "Luna-Old"
+		end
+	end
+elseif not isStudio then
+	for _, Interface in ipairs(CoreGui:GetChildren()) do
+		if Interface.Name == LunaUI.Name and Interface ~= LunaUI then
+			Hide(Interface.SmartWindow)
+			Interface.Enabled = false
+			Interface.Name = "Luna-Old"
+		end
+	end
+end
+
+LunaUI.Enabled = false
+LunaUI.SmartWindow.Visible = false
+LunaUI.Notifications.Template.Visible = false
+LunaUI.DisplayOrder = 1000000000
+
+local Main : Frame = LunaUI.SmartWindow
+local Dragger = Main.Drag
+local dragBar = LunaUI.Drag
+local dragInteract = dragBar and dragBar.Interact or nil
+local dragBarCosmetic = dragBar and dragBar.Drag or nil
+local Elements = Main.Elements.Interactions
+local LoadingFrame = Main.LoadingFrame
+local Navigation = Main.Navigation
+local Tabs = Navigation.Tabs
+local Notifications = LunaUI.Notifications
+local KeySystem : Frame = Main.KeySystem
+
+-- local function LoadConfiguration(Configuration, autoload)
+-- 	local Data = HttpService:JSONDecode(Configuration)
+-- 	local changed
+-- 	local notified = false
+
+-- 	-- Iterate through current UI elements' flags
+-- 	for FlagName, Flag in pairs(Luna.Flags) do
+-- 		local FlagValue = Data[FlagName]
+
+-- 		if FlagValue then
+-- 			task.spawn(function()
+-- 				if Flag.Type == "ColorPicker" then
+-- 					changed = true
+-- 					Flag:Set(UnpackColor(FlagValue))
+-- 				else
+-- 					if (Flag.CurrentValue or Flag.CurrentKeybind or Flag.CurrentOption or Flag.Color) ~= FlagValue then 
+-- 						changed = true
+-- 						Flag:Set(FlagValue) 	
+-- 					end
+-- 				end
+-- 			end)
+-- 		else
+-- 			notified = true
+-- 			Luna:Notification({Title = "Config Error", Content = "Luna was unable to load or find '"..FlagName.. "'' in the current script. Check ".. website .." for help.", Icon = "flag"})
+-- 		end
+-- 	end
+-- 	if autoload and notified == false then
+-- 		Luna:Notification({
+-- 			Title = "Config Autoloaded",
+-- 			Content = "The Configuration Has Been Automatically Loaded. Thank You For Using Luna Library",
+-- 			Icon = "file-code-2",
+-- 			ImageSource = "Lucide"
+-- 		})
+-- 	elseif notified == false then
+-- 		Luna:Notification({
+-- 			Title = "Config Loaded",
+-- 			Content = "The Configuration Has Been Loaded. Thank You For Using Luna Library",
+-- 			Icon = "file-code-2",
+-- 			ImageSource = "Lucide"
+-- 		})
+-- 	end
+
+-- 	return changed
+-- end
+
+-- local function SaveConfiguration(Configuration, ConfigFolder, hasRoot)
+-- 	local Data = {}
+-- 	for i,v in pairs(Luna.Flags) do
+-- 		if v.Type == "ColorPicker" then
+-- 			Data[i] = PackColor(v.Color)
+-- 		else
+-- 			Data[i] = v.CurrentValue or v.CurrentBind or v.CurrentOption or v.Color
+-- 		end
+-- 	end	
+-- 	if hasRoot then
+-- 		writefile(ConfigurationFolder .. "/" .. hasRoot .. "/" .. ConfigFolder .. "/" .. Configuration .. ConfigurationExtension, tostring(HttpService:JSONEncode(Data)))
+-- 	else
+-- 		writefile(ConfigurationFolder .. "/" .. "/" .. ConfigFolder .. Configuration .. ConfigurationExtension, tostring(HttpService:JSONEncode(Data)))
+-- 	end
+-- end
+
+-- local function SetAutoload(ConfigName, ConfigFolder, hasRoot)
+-- 	if hasRoot then
+-- 		writefile(ConfigurationFolder .. "/" .. hasRoot .. "/" .. ConfigFolder .. "/" .. "autoload.txt", tostring(ConfigName) .. ConfigurationExtension)
+-- 	else
+-- 		writefile(ConfigurationFolder .. "/" .. "/" .. ConfigFolder .. "autoload.txt", tostring(ConfigName) .. ConfigurationExtension)
+-- 	end
+-- end
+
+-- local function LoadAutoLoad(ConfigFolder, hasRoot)
+-- 	local autoload = isfile(ConfigurationFolder .. "/" .. "/" .. ConfigFolder .. "autoload.txt")
+-- 	if hasRoot then
+-- 		autoload = isfile(ConfigurationFolder .. "/" .. hasRoot .. "/" .. ConfigFolder .. "/" .. "autoload.txt")
+-- 	end
+
+-- 	if autoload then
+-- 		if hasRoot then
+-- 			LoadConfiguration(readfile(ConfigurationFolder .. "/" .. hasRoot .. "/" .. ConfigFolder .. "/" .. readfile(ConfigurationFolder .. "/" .. hasRoot .. "/" .. ConfigFolder .. "/" .. "autoload.txt")), true)
+-- 		else
+-- 			LoadConfiguration(readfile(ConfigurationFolder .. "/" .. ConfigFolder .. "/" .. readfile(ConfigurationFolder .. "/" .. ConfigFolder .. "/" .. "autoload.txt")), true)
+-- 		end
+-- 	end
+-- end
+
+local function Draggable(Bar, Window, enableTaptic, tapticOffset)
+	pcall(function()
+		local Dragging, DragInput, MousePos, FramePos
+
+		local function connectFunctions()
+			if dragBar and enableTaptic then
+				dragBar.MouseEnter:Connect(function()
+					if not Dragging then
+						TweenService:Create(dragBarCosmetic, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {BackgroundTransparency = 0.5, Size = UDim2.new(0, 120, 0, 4)}):Play()
+					end
+				end)
+
+				dragBar.MouseLeave:Connect(function()
+					if not Dragging then
+						TweenService:Create(dragBarCosmetic, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {BackgroundTransparency = 0.7, Size = UDim2.new(0, 100, 0, 4)}):Play()
+					end
+				end)
+			end
+		end
+
+		connectFunctions()
+
+		Bar.InputBegan:Connect(function(Input)
+			if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
+				Dragging = true
+				MousePos = Input.Position
+				FramePos = Window.Position
+
+				if enableTaptic then
+					TweenService:Create(dragBarCosmetic, TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 110, 0, 4), BackgroundTransparency = 0}):Play()
+				end
+
+				Input.Changed:Connect(function()
+					if Input.UserInputState == Enum.UserInputState.End then
+						Dragging = false
+						connectFunctions()
+
+						if enableTaptic then
+							TweenService:Create(dragBarCosmetic, TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 100, 0, 4), BackgroundTransparency = 0.7}):Play()
+						end
+					end
+				end)
+			end
 		end)
+
+		Bar.InputChanged:Connect(function(Input)
+			if Input.UserInputType == Enum.UserInputType.MouseMovement or Input.UserInputType == Enum.UserInputType.Touch then
+				DragInput = Input
+			end
+		end)
+
+		UserInputService.InputChanged:Connect(function(Input)
+			if Input == DragInput and Dragging then
+				local Delta = Input.Position - MousePos
+
+				local newMainPosition = UDim2.new(FramePos.X.Scale, FramePos.X.Offset + Delta.X, FramePos.Y.Scale, FramePos.Y.Offset + Delta.Y)
+				TweenService:Create(Window, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {Position = newMainPosition}):Play()
+
+				if dragBar then
+					local newDragBarPosition = UDim2.new(FramePos.X.Scale, FramePos.X.Offset + Delta.X, FramePos.Y.Scale, FramePos.Y.Offset + Delta.Y + 240)
+					dragBar.Position = newDragBarPosition
+				end
+			end
+		end)
+
 	end)
 end
 
-if LavaHub.IsLocal then
-	function isfolder(path)
-		print("Folder check", path)
-		return true
-	end
-	function makefolder(path)
-		print("Creating folder", path)
-	end
-	function isfile(path)
-		print("File check", path)
-		return true
-	end
-	function listfiles(path)
-		print("Listing files", path)
-		return {
-			"Testing Config System",
-			"Yeah I know it's dumb",
-			"But what You gonna do about this?",
-			"Oh also you can't use special characters in file names LOL"
-		}
-	end
-	function writefile(path, data)
-		print("Writing file", path, data)
-	end
-	function readfile(path)
-		print("Reading file", path)
-		return "[]"
-	end
-	function delfile(path)
-		print("Deleting file", path)
-	end
-	function sethiddenproperty(object, prop, value)
-		print("Setting property", object, prop, value)
-	end
+function Luna:Notification(data) -- action e.g open messages
+	task.spawn(function()
+		data = Kwargify({
+			Title = "Missing Title",
+			Content = "Missing or Unknown Content",
+			Icon = "view_in_ar",
+			ImageSource = "Material"
+		}, data or {})
+
+		-- Notification Object Creation
+		local newNotification = Notifications.Template:Clone()
+		newNotification.Name = data.Title
+		newNotification.Parent = Notifications
+		newNotification.LayoutOrder = #Notifications:GetChildren()
+		newNotification.Visible = false
+		BlurModule(newNotification)
+
+		-- Set Data
+		newNotification.Title.Text = data.Title
+		newNotification.Description.Text = data.Content 
+		newNotification.Icon.Image = GetIcon(data.Icon, data.ImageSource)
+
+		-- Set initial transparency values
+		newNotification.BackgroundTransparency = 1
+		newNotification.Title.TextTransparency = 1
+		newNotification.Description.TextTransparency = 1
+		newNotification.UIStroke.Transparency = 1
+		newNotification.Shadow.ImageTransparency = 1
+		newNotification.Icon.ImageTransparency = 1
+		newNotification.Icon.BackgroundTransparency = 1
+
+		task.wait()
+
+		-- Calculate textbounds and set initial values
+		newNotification.Size = UDim2.new(1, 0, 0, -Notifications:FindFirstChild("UIListLayout").Padding.Offset)
+
+		newNotification.Icon.Size = UDim2.new(0, 28, 0, 28)
+		newNotification.Icon.Position = UDim2.new(0, 16, 0.5, -1)
+
+		newNotification.Visible = true
+
+		newNotification.Description.Size = UDim2.new(1, -65, 0, math.huge)
+		local bounds = newNotification.Description.TextBounds.Y + 55
+		newNotification.Description.Size = UDim2.new(1,-65,0, bounds - 35)
+		newNotification.Size = UDim2.new(1, 0, 0, -Notifications:FindFirstChild("UIListLayout").Padding.Offset)
+		TweenService:Create(newNotification, TweenInfo.new(0.6, Enum.EasingStyle.Exponential), {Size = UDim2.new(1, 0, 0, bounds)}):Play()
+
+		task.wait(0.15)
+		TweenService:Create(newNotification, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.45}):Play()
+		TweenService:Create(newNotification.Title, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+
+		task.wait(0.05)
+
+		TweenService:Create(newNotification.Icon, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {ImageTransparency = 0}):Play()
+
+		task.wait(0.05)
+		TweenService:Create(newNotification.Description, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0.35}):Play()
+		TweenService:Create(newNotification.UIStroke, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {Transparency = 0.95}):Play()
+		TweenService:Create(newNotification.Shadow, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {ImageTransparency = 0.82}):Play()
+
+		local waitDuration = math.min(math.max((#newNotification.Description.Text * 0.1) + 2.5, 3), 10)
+		task.wait(data.Duration or waitDuration)
+
+		newNotification.Icon.Visible = false
+		TweenService:Create(newNotification, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
+		TweenService:Create(newNotification.UIStroke, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+		TweenService:Create(newNotification.Shadow, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
+		TweenService:Create(newNotification.Title, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
+		TweenService:Create(newNotification.Description, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
+
+		TweenService:Create(newNotification, TweenInfo.new(1, Enum.EasingStyle.Exponential), {Size = UDim2.new(1, -90, 0, 0)}):Play()
+
+		task.wait(1)
+
+		TweenService:Create(newNotification, TweenInfo.new(1, Enum.EasingStyle.Exponential), {Size = UDim2.new(1, -90, 0, -Notifications:FindFirstChild("UIListLayout").Padding.Offset)}):Play()
+
+		newNotification.Visible = false
+		newNotification:Destroy()
+	end)
 end
 
--- // Initialize ScreenGui
-LavaHub.Screen = LavaHub.Elements.Screen()
+local function Unhide(Window, currentTab)
+	Window.Size = SizeBleh
+	Window.Elements.Visible = true
+	Window.Visible = true
+	task.wait()
+	tween(Window, {BackgroundTransparency = 0.2})
+	tween(Window.Elements, {BackgroundTransparency = 0.08})
+	tween(Window.Line, {BackgroundTransparency = 0})
+	tween(Window.Title.Title, {TextTransparency = 0})
+	tween(Window.Title.subtitle, {TextTransparency = 0})
+	tween(Window.Logo, {ImageTransparency = 0})
+	tween(Window.Navigation.Line, {BackgroundTransparency = 0})
 
-return LavaHub
+	for _, TopbarButton in ipairs(Window.Controls:GetChildren()) do
+		if TopbarButton.ClassName == "Frame" and TopbarButton.Name ~= "Theme" then
+			TopbarButton.Visible = true
+			tween(TopbarButton, {BackgroundTransparency = 0.25})
+			tween(TopbarButton.UIStroke, {Transparency = 0.5})
+			tween(TopbarButton.ImageLabel, {ImageTransparency = 0.25})
+		end
+	end
+	for _, tabbtn in ipairs(Window.Navigation.Tabs:GetChildren()) do
+		if tabbtn.ClassName == "Frame" and tabbtn.Name ~= "InActive Template" then
+			if tabbtn.Name == currentTab then
+				TweenService:Create(tabbtn, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+				TweenService:Create(tabbtn.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {Transparency = 0.41}):Play()
+			end
+			TweenService:Create(tabbtn.ImageLabel, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {ImageTransparency = 0}):Play()
+			TweenService:Create(tabbtn.DropShadowHolder.DropShadow, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
+		end
+	end
+
+end
+
+local MainSize
+local MinSize 
+if Camera.ViewportSize.X > 774 and Camera.ViewportSize.Y > 503 then
+	MainSize = UDim2.fromOffset(675, 424)
+	MinSize = UDim2.fromOffset(500, 42)
+else
+	MainSize = UDim2.fromOffset(Camera.ViewportSize.X - 100, Camera.ViewportSize.Y - 100)
+	MinSize = UDim2.fromOffset(Camera.ViewportSize.X - 275, 42)
+end
+
+local function Maximise(Window)
+	Window.Controls.ToggleSize.ImageLabel.Image = "rbxassetid://10137941941"
+	tween(Window, {Size = MainSize})
+	Window.Elements.Visible = true
+	Window.Navigation.Visible = true
+end
+
+local function Minimize(Window)
+	Window.Controls.ToggleSize.ImageLabel.Image = "rbxassetid://11036884234"
+	Window.Elements.Visible = false
+	Window.Navigation.Visible = false
+	tween(Window, {Size = MinSize})
+end
+
+
+function Luna:CreateWindow(WindowSettings)
+
+	WindowSettings = Kwargify({
+		Name = "Luna UI Example Window",
+		Subtitle = "",
+		LogoID = "6031097225",
+		LoadingEnabled = true,
+		LoadingTitle = "Luna Interface Suite",
+		LoadingSubtitle = "by Nebula Softworks",
+
+		ConfigSettings = {},
+
+		KeySystem = false,
+		KeySettings = {}
+	}, WindowSettings or {})
+
+	WindowSettings.ConfigSettings = Kwargify({
+		RootFolder = nil,
+		ConfigFolder = "Big Hub"
+	}, WindowSettings.ConfigSettings or {})
+
+	WindowSettings.KeySettings = Kwargify({
+		Title = WindowSettings.Name,
+		Subtitle = "Key System",
+		Note = "No Instructions",
+		SaveInRoot = false, -- Enabling will save the key in your RootFolder (YOU MUST HAVE ONE BEFORE ENABLING THIS OPTION)
+		SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+		Key = {""}, -- List of keys that will be accepted by the system, please use a system like Pelican or Luarmor that provide key strings based on your HWID since putting a simple string is very easy to bypass
+		SecondAction = {}	
+	}, WindowSettings.KeySettings or {})
+
+	WindowSettings.KeySettings.SecondAction = Kwargify({
+		Enabled = false,
+		Type = "Discord", -- Link/Discord
+		Parameter = "" -- for discord, add the invite link like home tab. for link, type the link of ur key sys
+	}, WindowSettings.KeySettings.SecondAction)
+
+	local Passthrough = false
+
+	local Window = { Bind = Enum.KeyCode.K, CurrentTab = nil, State = true, Size = false, Settings = nil }
+
+	Main.Title.Title.Text = WindowSettings.Name
+	Main.Title.subtitle.Text = WindowSettings.Subtitle
+	Main.Logo.Image = "rbxassetid://" .. WindowSettings.LogoID
+	Main.Visible = true
+	Main.BackgroundTransparency = 1
+	Main.Size = MainSize
+	Main.Size = UDim2.fromOffset(Main.Size.X.Offset - 70, Main.Size.Y.Offset - 55)
+	Main.Parent.ShadowHolder.Size = Main.Size
+	LoadingFrame.Frame.Frame.Title.TextTransparency = 1
+	LoadingFrame.Frame.Frame.Subtitle.TextTransparency = 1
+	LoadingFrame.Version.TextTransparency = 1
+	LoadingFrame.Frame.ImageLabel.ImageTransparency = 1
+
+	tween(Elements.Parent, {BackgroundTransparency = 1})
+	Elements.Parent.Visible = false
+
+	LoadingFrame.Frame.Frame.Title.Text = WindowSettings.LoadingTitle
+	LoadingFrame.Frame.Frame.Subtitle.Text = WindowSettings.LoadingSubtitle
+	LoadingFrame.Version.Text = LoadingFrame.Frame.Frame.Title.Text == "Luna Interface Suite" and Release or "Luna UI"
+
+	Navigation.Player.icon.ImageLabel.Image = Players:GetUserThumbnailAsync(Players.LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size48x48)
+	Navigation.Player.Namez.Text = Players.LocalPlayer.DisplayName
+	Navigation.Player.TextLabel.Text = Players.LocalPlayer.Name
+
+	for i,v in pairs(Main.Controls:GetChildren()) do
+		v.Visible = false
+	end
+
+	Main:GetPropertyChangedSignal("Position"):Connect(function()
+		Main.Parent.ShadowHolder.Position = Main.Position
+	end)
+	Main:GetPropertyChangedSignal("Size"):Connect(function()
+		Main.Parent.ShadowHolder.Size = Main.Size
+	end)
+
+	LoadingFrame.Visible = true
+
+	-- pcall(function()
+	-- 	if not isfolder(ConfigurationFolder) then
+	-- 		makefolder(ConfigurationFolder)
+	-- 	end
+	-- 	if WindowSettings.ConfigSettings.RootFolder then
+	-- 		if not isfolder(ConfigurationFolder .. WindowSettings.ConfigSettings.RootFolder) then
+	-- 			makefolder(ConfigurationFolder .. WindowSettings.ConfigSettings.RootFolder)
+	-- 			if not isfolder(ConfigurationFolder .. WindowSettings.ConfigSettings.RootFolder .. WindowSettings.ConfigSettings.ConfigFolder) then
+	-- 				makefolder(ConfigurationFolder .. WindowSettings.ConfigSettings.RootFolder .. WindowSettings.ConfigSettings.ConfigFolder)
+	-- 			end
+	-- 		end
+	-- 	else
+	-- 		if not isfolder(ConfigurationFolder .. WindowSettings.ConfigSettings.ConfigFolder) then
+	-- 			makefolder(ConfigurationFolder .. WindowSettings.ConfigSettings.ConfigFolder)
+	-- 		end
+	-- 	end
+
+	-- 	LoadAutoLoad(WindowSettings.ConfigSettings.ConfigFolder, WindowSettings.ConfigSettings.RootFolder)
+	-- end)
+
+	LunaUI.Enabled = true
+
+	BlurModule(Main)
+
+	if WindowSettings.KeySystem then
+		local KeySettings = WindowSettings.KeySettings
+		
+		Draggable(Dragger, Main)
+		Draggable(LunaUI.MobileSupport, LunaUI.MobileSupport)
+		if dragBar then Draggable(dragInteract, Main, true, 255) end
+
+		if not WindowSettings.KeySettings then
+			Passthrough = true
+			return
+		end
+		
+		WindowSettings.KeySettings.FileName = "key"
+
+		if typeof(WindowSettings.KeySettings.Key) == "string" then WindowSettings.KeySettings.Key = {WindowSettings.KeySettings.Key} end
+
+		local direc = WindowSettings.KeySettings.SaveInRoot and "Luna/Configurations/" .. WindowSettings.ConfigSettings.RootFolder .. "/" .. WindowSettings.ConfigSettings.ConfigFolder .. "/Key System/" or "Luna/Configurations/" ..  WindowSettings.ConfigSettings.ConfigFolder .. "/Key System/"
+
+		if isfile and isfile(direc .. WindowSettings.KeySettings.FileName .. ".luna") then
+			for i, Key in ipairs(WindowSettings.KeySettings.Key) do
+				if string.find(readfile(direc .. WindowSettings.KeySettings.FileName .. ".luna"), Key) then
+					Passthrough = true
+					break
+				end
+			end
+		end
+
+		if not Passthrough then
+
+			local Btn = KeySystem.Action.Copy
+			local typesys = KeySettings.SecondAction.Type
+			
+			if typesys == "Discord" then
+				Btn = KeySystem.Action.Discord
+			end
+
+			local AttemptsRemaining = math.random(2, 5)
+
+			KeySystem.Visible = true
+			KeySystem.Title.Text = WindowSettings.KeySettings.Title
+			KeySystem.Subtitle.Text = WindowSettings.KeySettings.Subtitle
+			KeySystem.textshit.Text = WindowSettings.KeySettings.Note
+
+			if KeySettings.SecondAction.Enabled == true then
+				Btn.Visible = true
+			end
+			
+			Btn.Interact.MouseButton1Click:Connect(function()
+				if typesys == "Discord" then
+					setclipboard(tostring("https://discord.gg/"..KeySettings.SecondAction.Parameter)) -- Hunter if you see this I added copy also was too lazy to send u msg
+					if request then
+						request({
+							Url = 'http://127.0.0.1:6463/rpc?v=1',
+							Method = 'POST',
+							Headers = {
+								['Content-Type'] = 'application/json',
+								Origin = 'https://discord.com'
+							},
+							Body = HttpService:JSONEncode({
+								cmd = 'INVITE_BROWSER',
+								nonce = HttpService:GenerateGUID(false),
+								args = {code = KeySettings.SecondAction.Parameter}
+							})
+						})
+					end
+				else
+					setclipboard(tostring(KeySettings.SecondAction.Parameter))
+				end
+			end)
+
+			KeySystem.Action.Submit.Interact.MouseButton1Click:Connect(function()
+				if #KeySystem.Input.InputBox.Text == 0 then return end
+				local KeyFound = false
+				local FoundKey = ''
+				for _, Key in ipairs(WindowSettings.KeySettings.Key) do
+					if KeySystem.Input.InputBox.Text == Key then
+						KeyFound = true
+						FoundKey = Key
+						break
+					end
+				end
+				if KeyFound then 
+					for _, instance in pairs(KeySystem:GetDescendants()) do
+						if instance.ClassName ~= "UICorner" and instance.ClassName ~= "UIPadding" then
+							if instance.ClassName ~= "UIStroke" and instance.ClassName ~= "UIListLayout" then
+								tween(instance, {BackgroundTransparency = 1}, nil,TweenInfo.new(0.6, Enum.EasingStyle.Exponential))
+							end
+							if instance.ClassName == "ImageButton" then
+								tween(instance, {ImageTransparency = 1}, nil,TweenInfo.new(0.5, Enum.EasingStyle.Exponential))
+							end
+							if instance.ClassName == "TextLabel" then
+								tween(instance, {TextTransparency = 1}, nil,TweenInfo.new(0.4, Enum.EasingStyle.Exponential))
+							end
+							if instance.ClassName == "UIStroke" then
+								tween(instance, {Transparency = 1}, nil,TweenInfo.new(0.5, Enum.EasingStyle.Exponential))
+							end
+						end
+					end
+					tween(KeySystem, {BackgroundTransparency = 1}, nil,TweenInfo.new(0.6, Enum.EasingStyle.Exponential))
+					task.wait(0.51)
+					Passthrough = true
+					KeySystem.Visible = false
+					if WindowSettings.KeySettings.SaveKey then
+						if writefile then
+							writefile(direc .. WindowSettings.KeySettings.FileName .. ".luna", FoundKey)
+						end
+						Luna:Notification({Title = "Key System", Content = "The key for this script has been saved successfully.", Icon = "lock_open"})
+					end
+				else
+					if AttemptsRemaining == 0 then
+
+						game.Players.LocalPlayer:Kick("No Attempts Remaining")
+						game:Shutdown()
+					end
+					KeySystem.Input.InputBox.Text = "Incorrect Key"
+					AttemptsRemaining = AttemptsRemaining - 1
+					task.wait(0.4)
+					KeySystem.Input.InputBox.Text = ""
+				end
+			end)
+
+			KeySystem.Close.MouseButton1Click:Connect(function()
+				
+				Luna:Destroy()
+			end)
+		end
+	end
+
+	if WindowSettings.KeySystem then
+		repeat task.wait() until Passthrough
+	end
+
+	if WindowSettings.LoadingEnabled then
+		task.wait(0.3)
+		TweenService:Create(LoadingFrame.Frame.Frame.Title, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+		TweenService:Create(LoadingFrame.Frame.ImageLabel, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {ImageTransparency = 0}):Play()
+		task.wait(0.05)
+		TweenService:Create(LoadingFrame.Frame.Frame.Subtitle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+		TweenService:Create(LoadingFrame.Version, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+		task.wait(0.29)
+		TweenService:Create(LoadingFrame.Frame.ImageLabel, TweenInfo.new(1.7, Enum.EasingStyle.Back, Enum.EasingDirection.Out, 2, false, 0.2), {Rotation = 450}):Play()
+
+		task.wait(3.32)
+
+		TweenService:Create(LoadingFrame.Frame.Frame.Title, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
+		TweenService:Create(LoadingFrame.Frame.ImageLabel, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {ImageTransparency = 1}):Play()
+		task.wait(0.05)
+		TweenService:Create(LoadingFrame.Frame.Frame.Subtitle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
+		TweenService:Create(LoadingFrame.Version, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 1}):Play()
+		wait(0.3)
+		TweenService:Create(LoadingFrame, TweenInfo.new(0.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {BackgroundTransparency = 1}):Play()
+	end
+
+	TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {BackgroundTransparency = 0.2, Size = MainSize}):Play()
+	TweenService:Create(Main.Parent.ShadowHolder, TweenInfo.new(0.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {Size = MainSize}):Play()
+	TweenService:Create(Main.Title.Title, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
+	TweenService:Create(Main.Title.subtitle, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
+	TweenService:Create(Main.Logo, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {ImageTransparency = 0}):Play()
+	TweenService:Create(Navigation.Player.icon.ImageLabel, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {ImageTransparency = 0}):Play()
+	TweenService:Create(Navigation.Player.icon.UIStroke, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {Transparency = 0}):Play()
+	TweenService:Create(Main.Line, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {BackgroundTransparency = 0}):Play()
+	wait(0.4)
+	LoadingFrame.Visible = false
+
+	Draggable(Dragger, Main)
+	Draggable(LunaUI.MobileSupport, LunaUI.MobileSupport)
+	if dragBar then Draggable(dragInteract, Main, true, 255) end
+
+	Elements.Template.LayoutOrder = 1000000000
+	Elements.Template.Visible = false
+	Navigation.Tabs["InActive Template"].LayoutOrder = 1000000000
+	Navigation.Tabs["InActive Template"].Visible = false
+
+	local FirstTab = true
+
+	function Window:CreateHomeTab(HomeTabSettings)
+
+		HomeTabSettings = Kwargify({
+			Icon = 1,
+			SupportedExecutors = {"Vega X", "Delta", "Nihon", "Xeno"}, -- THESE DEFAULTS ARE PLACEHOLDERS!! I DO NOT ADVERTISE THESE, THEY ARE JUS THE FIRST THAT CAME TO MIND. I HAVE NO IDEA WHETHER THEYA RE RATS (they prob are) AND IM NOT RESPONSIBLE IF U GET VIRUSES FROM INSTALLING AFTER SEEING THIS LIST
+			DiscordInvite = "noinvitelink" -- The disvord invite link. Do not include the link so for example if my invite was discord.gg/nebula I would put nebula
+		}, HomeTabSettings or {})
+
+		local HomeTab = {}
+
+		local HomeTabButton = Navigation.Tabs.Home
+		HomeTabButton.Visible = true
+		if HomeTabSettings.Icon == 2 then
+			HomeTabButton.ImageLabel.Image = GetIcon("dashboard", "Material")
+		end
+
+		local HomeTabPage = Elements.Home
+		HomeTabPage.Visible = true
+
+		function HomeTab:Activate()
+			tween(HomeTabButton.ImageLabel, {ImageColor3 = Color3.fromRGB(255,255,255)})
+			tween(HomeTabButton, {BackgroundTransparency = 0})
+			tween(HomeTabButton.UIStroke, {Transparency = 0.41})
+
+			Elements.UIPageLayout:JumpTo(HomeTabPage)
+
+			task.wait(0.05)
+
+			for _, OtherTabButton in ipairs(Navigation.Tabs:GetChildren()) do
+				if OtherTabButton.Name ~= "InActive Template" and OtherTabButton.ClassName == "Frame" and OtherTabButton ~= HomeTabButton then
+					tween(OtherTabButton.ImageLabel, {ImageColor3 = Color3.fromRGB(221,221,221)})
+					tween(OtherTabButton, {BackgroundTransparency = 1})
+					tween(OtherTabButton.UIStroke, {Transparency = 1})
+				end
+
+			end
+
+			Window.CurrentTab = "Home"
+		end
+
+		HomeTab:Activate()
+		FirstTab = false
+		HomeTabButton.Interact.MouseButton1Click:Connect(function()
+			HomeTab:Activate()
+		end)
+
+
+		HomeTabPage.icon.ImageLabel.Image = Players:GetUserThumbnailAsync(Players.LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
+		HomeTabPage.player.Text.Text = "Hello, " .. Players.LocalPlayer.DisplayName
+		HomeTabPage.player.user.Text = Players.LocalPlayer.Name .. " - ".. WindowSettings.Name
+
+		HomeTabPage.detailsholder.dashboard.Client.Title.Text = (isStudio and "Debugging (Studio)" or identifyexecutor()) or "Your Executor Does Not Support identifyexecutor."
+		for i,v in pairs(HomeTabSettings.SupportedExecutors) do
+			if isStudio then HomeTabPage.detailsholder.dashboard.Client.Subtitle.Text = "Luna Interface Suite - Debugging Mode" break end
+			if v == identifyexecutor() then
+				HomeTabPage.detailsholder.dashboard.Client.Subtitle.Text = "Your Executor Supports This Script."
+				break
+			else
+				HomeTabPage.detailsholder.dashboard.Client.Subtitle.Text = "Your Executor Isn't Officialy Supported By This Script."
+				break
+			end
+		end
+
+		-- Stolen From Sirius Stuff Begins Here
+
+		HomeTabPage.detailsholder.dashboard.Discord.Interact.MouseButton1Click:Connect(function()
+			setclipboard(tostring("https://discord.gg/"..HomeTabSettings.DiscordInvite)) -- Hunter if you see this I added copy also was too lazy to send u msg
+			if request then
+				request({
+					Url = 'http://127.0.0.1:6463/rpc?v=1',
+					Method = 'POST',
+					Headers = {
+						['Content-Type'] = 'application/json',
+						Origin = 'https://discord.com'
+					},
+					Body = HttpService:JSONEncode({
+						cmd = 'INVITE_BROWSER',
+						nonce = HttpService:GenerateGUID(false),
+						args = {code = HomeTabSettings.DiscordInvite}
+					})
+				})
+			end
+		end)
+
+		local friendsCooldown = 0
+		local function getPing() return math.clamp(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue(), 10, 700) end
+
+		local function checkFriends()
+			if friendsCooldown == 0 then
+
+				friendsCooldown = 25
+
+				local playersFriends = {}
+				local friendsInTotal = 0
+				local onlineFriends = 0 
+				local friendsInGame = 0 
+
+				local list = Players:GetFriendsAsync(Player.UserId)
+				while true do -- loop through all the pages
+					for _, data in list:GetCurrentPage() do
+						friendsInTotal +=1
+						table.insert(playersFriends, Data)
+					end
+
+					if list.IsFinished then
+						-- stop the loop since this is the last page
+						break
+					else 
+						-- go to the next page
+						list:AdvanceToNextPageAsync()
+					end
+				end
+				for i, v in pairs(Player:GetFriendsOnline()) do
+					onlineFriends += 1
+				end
+
+				for i,v in pairs(playersFriends) do
+					if Players:FindFirstChild(v.Username) then
+						friendsInGame = friendsInGame + 1
+					end
+				end
+
+				HomeTabPage.detailsholder.dashboard.Friends.All.Value.Text = tostring(friendsInTotal).." friends"
+				HomeTabPage.detailsholder.dashboard.Friends.Offline.Value.Text = tostring(friendsInTotal - onlineFriends).." friends"
+				HomeTabPage.detailsholder.dashboard.Friends.Online.Value.Text = tostring(onlineFriends).." friends"
+				HomeTabPage.detailsholder.dashboard.Friends.InGame.Value.Text = tostring(friendsInGame).." friends"
+
+			else
+				friendsCooldown -= 1
+			end
+		end
+
+		local function format(Int)
+			return string.format("%02i", Int)
+		end
+
+		local function convertToHMS(Seconds)
+			local Minutes = (Seconds - Seconds%60)/60
+			Seconds = Seconds - Minutes*60
+			local Hours = (Minutes - Minutes%60)/60
+			Minutes = Minutes - Hours*60
+			return format(Hours)..":"..format(Minutes)..":"..format(Seconds)
+		end
+
+		coroutine.wrap(function()
+			while task.wait() do
+
+
+				-- Players
+				HomeTabPage.detailsholder.dashboard.Server.Players.Value.Text = #Players:GetPlayers().." playing"
+				HomeTabPage.detailsholder.dashboard.Server.MaxPlayers.Value.Text = Players.MaxPlayers.." players can join this server"
+
+				-- Ping
+				HomeTabPage.detailsholder.dashboard.Server.Latency.Value.Text = isStudio and tostring(math.round((Players.LocalPlayer:GetNetworkPing() * 2 ) / 0.01)) .."ms" or tostring(math.floor(getPing()) .."ms")
+
+				-- Time
+				HomeTabPage.detailsholder.dashboard.Server.Time.Value.Text = convertToHMS(time())
+
+				-- Region
+				HomeTabPage.detailsholder.dashboard.Server.Region.Value.Text = Localization:GetCountryRegionForPlayerAsync(Players.LocalPlayer)
+
+				checkFriends()
+			end
+		end)()
+
+		-- Stolen From Sirius Stuff ends here
+
+	end
+
+	function Window:CreateTab(TabSettings)
+
+		local Tab = {}
+
+		TabSettings = Kwargify({
+			Name = "Tab",
+			ShowTitle = true,
+			Icon = "view_in_ar",
+			ImageSource = "Material" 
+		}, TabSettings or {})
+
+		local TabButton = Navigation.Tabs["InActive Template"]:Clone()
+
+		TabButton.Name = TabSettings.Name
+		TabButton.TextLabel.Text = TabSettings.Name
+		TabButton.Parent = Navigation.Tabs
+		TabButton.ImageLabel.Image = GetIcon(TabSettings.Icon, TabSettings.ImageSource)
+
+		TabButton.Visible = true
+
+		local TabPage = Elements.Template:Clone()
+		TabPage.Name = TabSettings.Name
+		TabPage.Title.Visible = TabSettings.ShowTitle
+		TabPage.Title.Text = TabSettings.Name
+		TabPage.Visible = true
+
+		Tab.Page = TabPage
+
+		if TabSettings.ShowTitle == false then
+			TabPage.UIPadding.PaddingTop = UDim.new(0,10)
+		end
+
+		TabPage.LayoutOrder = #Elements:GetChildren() - 3
+
+		for _, TemplateElement in ipairs(TabPage:GetChildren()) do
+			if TemplateElement.ClassName == "Frame" or TemplateElement.ClassName == "TextLabel" and TemplateElement.Name ~= "Title" then
+				TemplateElement:Destroy()
+			end
+		end
+		TabPage.Parent = Elements
+
+		function Tab:Activate()
+			tween(TabButton.ImageLabel, {ImageColor3 = Color3.fromRGB(255,255,255)})
+			tween(TabButton, {BackgroundTransparency = 0})
+			tween(TabButton.UIStroke, {Transparency = 0.41})
+
+			Elements.UIPageLayout:JumpTo(TabPage)
+
+			task.wait(0.05)
+
+			for _, OtherTabButton in ipairs(Navigation.Tabs:GetChildren()) do
+				if OtherTabButton.Name ~= "InActive Template" and OtherTabButton.ClassName == "Frame" and OtherTabButton ~= TabButton then
+					tween(OtherTabButton.ImageLabel, {ImageColor3 = Color3.fromRGB(221,221,221)})
+					tween(OtherTabButton, {BackgroundTransparency = 1})
+					tween(OtherTabButton.UIStroke, {Transparency = 1})
+				end
+
+			end
+
+			Window.CurrentTab = TabSettings.Name
+		end
+
+		if FirstTab then
+			Tab:Activate()
+		end
+
+		task.wait(0.01)
+
+		TabButton.Interact.MouseButton1Click:Connect(function()
+			Tab:Activate()
+		end)
+
+		FirstTab = false
+
+		-- Section
+		function Tab:CreateSection(name : string)
+
+			local Section = {}
+
+			if name == nil then name = "Section" end
+
+			Section.Name = name
+
+			local Sectiont = Elements.Template.Section:Clone()
+			Sectiont.Text = name
+			Sectiont.Visible = true
+			Sectiont.Parent = TabPage
+			local TabPage = Sectiont.Frame
+
+			Sectiont.TextTransparency = 1
+			tween(Sectiont, {TextTransparency = 0})
+
+			function Section:Set(NewSection)
+				Sectiont.Text = NewSection
+			end
+
+			function Section:Destroy()
+				Sectiont:Destroy()
+			end
+
+			-- Divider
+			function Section:CreateDivider()
+				TabPage.Position = UDim2.new(0,0,0,28)
+				local b = Elements.Template.Divider:Clone()
+				b.Parent = TabPage
+				b.Size = UDim2.new(1,0,0,18)
+				b.Line.BackgroundTransparency = 1
+				tween(b.Line, {BackgroundTransparency = 0})
+			end
+
+			-- Button
+			function Section:CreateButton(ButtonSettings)
+				TabPage.Position = UDim2.new(0,0,0,28)
+
+				ButtonSettings = Kwargify({
+					Name = "Button",
+					Description = nil,
+					Callback = function()
+
+					end,
+				}, ButtonSettings or {})
+
+				local ButtonV = {
+					Hover = false,
+					Settings = ButtonSettings
+				}
+
+
+				local Button
+				if ButtonSettings.Description == nil and ButtonSettings.Description ~= "" then
+					Button = Elements.Template.Button:Clone()
+				else
+					Button = Elements.Template.ButtonDesc:Clone()
+				end
+				Button.Name = ButtonSettings.Name
+				Button.Title.Text = ButtonSettings.Name
+				if ButtonSettings.Description ~= nil and ButtonSettings.Description ~= "" then
+					Button.Desc.Text = ButtonSettings.Description
+				end
+				Button.Visible = true
+				Button.Parent = TabPage
+
+				Button.UIStroke.Transparency = 1
+				Button.Title.TextTransparency = 1
+				if ButtonSettings.Description ~= nil and ButtonSettings.Description ~= "" then
+					Button.Desc.TextTransparency = 1
+				end
+
+				TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+				TweenService:Create(Button.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+				TweenService:Create(Button.Title, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()	
+				if ButtonSettings.Description ~= nil and ButtonSettings.Description ~= "" then
+					TweenService:Create(Button.Desc, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()	
+				end
+
+				Button.Interact["MouseButton1Click"]:Connect(function()
+					local Success,Response = pcall(ButtonSettings.Callback)
+
+					if not Success then
+						TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+						TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+						TweenService:Create(Button.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+						Button.Title.Text = "Callback Error"
+						print("Luna Interface Suite | "..ButtonSettings.Name.." Callback Error " ..tostring(Response))
+						wait(0.5)
+						Button.Title.Text = ButtonSettings.Name
+						TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+						TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+						TweenService:Create(Button.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+					else
+						tween(Button.UIStroke, {Color = Color3.fromRGB(136, 131, 163)})
+						wait(0.2)
+						if ButtonV.Hover then
+							tween(Button.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+						else
+							tween(Button.UIStroke, {Color = Color3.fromRGB(64,61,76)})
+						end
+					end
+				end)
+
+				Button["MouseEnter"]:Connect(function()
+					ButtonV.Hover = true
+					tween(Button.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+				end)
+
+				Button["MouseLeave"]:Connect(function()
+					ButtonV.Hover = false
+					tween(Button.UIStroke, {Color = Color3.fromRGB(64,61,76)})
+				end)
+
+				function ButtonV:Set(ButtonSettings2)
+					ButtonSettings2 = Kwargify({
+						Name = ButtonSettings.Name,
+						Description = ButtonSettings.Description,
+						Callback = ButtonSettings.Callback
+					}, ButtonSettings2 or {})
+
+					ButtonSettings = ButtonSettings2
+					ButtonV.Settings = ButtonSettings2
+
+					Button.Name = ButtonSettings.Name
+					Button.Title.Text = ButtonSettings.Name
+					if ButtonSettings.Description ~= nil and ButtonSettings.Description ~= "" and Button.Desc ~= nil then
+						Button.Desc.Text = ButtonSettings.Description
+					end
+				end
+
+				function ButtonV:Destroy()
+					Button.Visible = false
+					Button:Destroy()
+				end
+
+				return ButtonV
+			end
+
+			-- Label
+			function Section:CreateLabel(LabelSettings)
+				TabPage.Position = UDim2.new(0,0,0,28)
+
+				local LabelV = {}
+
+				LabelSettings = Kwargify({
+					Text = "Label",
+					Style = 1
+				}, LabelSettings or {}) 
+
+				LabelV.Settings = LabelSettings
+
+				local Label
+				if LabelSettings.Style == 1 then
+					Label = Elements.Template.Label:Clone()
+				elseif LabelSettings.Style == 2 then
+					Label = Elements.Template.Info:Clone()
+				elseif LabelSettings.Style == 3 then
+					Label = Elements.Template.Warn:Clone()
+				end
+
+				Label.Text.Text = LabelSettings.Text
+				Label.Visible = true
+				Label.Parent = TabPage
+
+				Label.BackgroundTransparency = 1
+				Label.UIStroke.Transparency = 1
+				Label.Text.TextTransparency = 1
+
+				if LabelSettings.Style ~= 1 then
+					TweenService:Create(Label, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.8}):Play()
+				else
+					TweenService:Create(Label, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
+				end
+				TweenService:Create(Label.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+				TweenService:Create(Label.Text, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()	
+
+				function LabelV:Set(NewLabel)
+					LabelSettings.Text = NewLabel
+					LabelV.Settings = LabelSettings
+					Label.Text.Text = NewLabel
+				end
+
+				function LabelV:Destroy()
+					Label.Visible = false
+					Label:Destroy()
+				end
+
+				return LabelV
+			end
+
+			-- Paragraph
+			function Section:CreateParagraph(ParagraphSettings)
+				TabPage.Position = UDim2.new(0,0,0,28)
+
+				ParagraphSettings = Kwargify({
+					Title = "Paragraph",
+					Text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus venenatis lacus sed tempus eleifend. Mauris interdum bibendum felis, in tempor augue egestas vel. Praesent tristique consectetur ex, eu pretium sem placerat non. Vestibulum a nisi sit amet augue facilisis consectetur sit amet et nunc. Integer fermentum ornare cursus. Pellentesque sed ultricies metus, ut egestas metus. Vivamus auctor erat ac sapien vulputate, nec ultricies sem tempor. Quisque leo lorem, faucibus nec pulvinar nec, congue eu velit. Duis sodales massa efficitur imperdiet ultrices. Donec eros ipsum, ornare pharetra purus aliquam, tincidunt elementum nisi. Ut mi tortor, feugiat eget nunc vitae, facilisis interdum dui. Vivamus ullamcorper nunc dui, a dapibus nisi pretium ac. Integer eleifend placerat nibh, maximus malesuada tellus. Cras in justo in ligula scelerisque suscipit vel vitae quam."
+				}, ParagraphSettings or {})
+
+				local ParagraphV = {
+					Settings = ParagraphSettings
+				}
+
+				local Paragraph = Elements.Template.Paragraph:Clone()
+				Paragraph.Title.Text = ParagraphSettings.Title
+				Paragraph.Text.Text = ParagraphSettings.Text
+				Paragraph.Visible = true
+				Paragraph.Parent = TabPage
+
+				Paragraph.BackgroundTransparency = 1
+				Paragraph.UIStroke.Transparency = 1
+				Paragraph.Title.TextTransparency = 1
+				Paragraph.Text.TextTransparency = 1
+
+				TweenService:Create(Paragraph, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
+				TweenService:Create(Paragraph.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+				TweenService:Create(Paragraph.Title, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()	
+				TweenService:Create(Paragraph.Text, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()	
+
+				function ParagraphV:Update()
+					Paragraph.Text.Size = UDim2.new(Paragraph.Text.Size.X.Scale, Paragraph.Text.Size.X.Offset, 0, math.huge)
+					Paragraph.Text.Size = UDim2.new(Paragraph.Text.Size.X.Scale, Paragraph.Text.Size.X.Offset, 0, Paragraph.Text.TextBounds.Y)
+					tween(Paragraph, {Size = UDim2.new(Paragraph.Size.X.Scale, Paragraph.Size.X.Offset, 0, Paragraph.Text.TextBounds.Y + 40)})
+				end
+
+				function ParagraphV:Set(NewParagraphSettings)
+
+					NewParagraphSettings = Kwargify({
+						Title = ParagraphSettings.Title,
+						Text = ParagraphSettings.Text
+					}, NewParagraphSettings or {})
+
+					ParagraphV.Settings = NewParagraphSettings
+
+					Paragraph.Title.Text = NewParagraphSettings.Title
+					Paragraph.Text.Text = NewParagraphSettings.Text
+
+					ParagraphV:Update()
+
+				end
+
+				function ParagraphV:Destroy()
+					Paragraph.Visible = false
+					Paragraph:Destroy()
+				end
+
+				ParagraphV:Update()
+
+				return ParagraphV
+			end
+
+			-- Slider
+			function Section:CreateSlider(SliderSettings, Flag)
+				TabPage.Position = UDim2.new(0,0,0,28)
+				local SliderV = { IgnoreConfig = false, Class = "Slider", Settings = SliderSettings }
+
+				SliderSettings = Kwargify({
+					Name = "Slider",
+					Range = {0, 200},
+					Increment = 1,
+					CurrentValue = 100,
+					Callback = function(Value)
+
+					end,
+				}, SliderSettings or {})
+
+				local SLDragging = false
+				local Slider = Elements.Template.Slider:Clone()
+				Slider.Name = SliderSettings.Name .. " - Slider"
+				Slider.Title.Text = SliderSettings.Name
+				Slider.Visible = true
+				Slider.Parent = TabPage
+
+				Slider.BackgroundTransparency = 1
+				Slider.UIStroke.Transparency = 1
+				Slider.Title.TextTransparency = 1
+
+				TweenService:Create(Slider, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+				TweenService:Create(Slider.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+				TweenService:Create(Slider.Title, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()	
+
+				Slider.Main.Progress.Size =	UDim2.new(0, Slider.Main.AbsoluteSize.X * ((SliderSettings.CurrentValue + SliderSettings.Range[1]) / (SliderSettings.Range[2] - SliderSettings.Range[1])) > 5 and Slider.Main.AbsoluteSize.X * (SliderSettings.CurrentValue / (SliderSettings.Range[2] - SliderSettings.Range[1])) or 5, 1, 0)
+
+				Slider.Value.Text = tostring(SliderSettings.CurrentValue)
+				SliderV.CurrentValue = Slider.Value.Text
+
+				SliderSettings.Callback(SliderSettings.CurrentValue)
+
+				Slider["MouseEnter"]:Connect(function()
+					tween(Slider.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+				end)
+
+				Slider["MouseLeave"]:Connect(function()
+					tween(Slider.UIStroke, {Color = Color3.fromRGB(64,61,76)})
+				end)
+
+				Slider.Interact.InputBegan:Connect(function(Input)
+					if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then 
+						SLDragging = true 
+					end 
+				end)
+
+				Slider.Interact.InputEnded:Connect(function(Input) 
+					if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then 
+						SLDragging = false 
+					end 
+				end)
+
+				Slider.Interact.MouseButton1Down:Connect(function()
+					local Current = Slider.Main.Progress.AbsolutePosition.X + Slider.Main.Progress.AbsoluteSize.X
+					local Start = Current
+					local Location
+					local Loop; Loop = RunService.Stepped:Connect(function()
+						if SLDragging then
+							Location = UserInputService:GetMouseLocation().X
+							Current = Current + 0.025 * (Location - Start)
+
+							if Location < Slider.Main.AbsolutePosition.X then
+								Location = Slider.Main.AbsolutePosition.X
+							elseif Location > Slider.Main.AbsolutePosition.X + Slider.Main.AbsoluteSize.X then
+								Location = Slider.Main.AbsolutePosition.X + Slider.Main.AbsoluteSize.X
+							end
+
+							if Current < Slider.Main.AbsolutePosition.X + 5 then
+								Current = Slider.Main.AbsolutePosition.X + 5
+							elseif Current > Slider.Main.AbsolutePosition.X + Slider.Main.AbsoluteSize.X then
+								Current = Slider.Main.AbsolutePosition.X + Slider.Main.AbsoluteSize.X
+							end
+
+							if Current <= Location and (Location - Start) < 0 then
+								Start = Location
+							elseif Current >= Location and (Location - Start) > 0 then
+								Start = Location
+							end
+							Slider.Main.Progress.Size = UDim2.new(0, Location - Slider.Main.AbsolutePosition.X, 1, 0)
+							local NewValue = SliderSettings.Range[1] + (Location - Slider.Main.AbsolutePosition.X) / Slider.Main.AbsoluteSize.X * (SliderSettings.Range[2] - SliderSettings.Range[1])
+
+							NewValue = math.floor(NewValue / SliderSettings.Increment + 0.5) * (SliderSettings.Increment * 10000000) / 10000000
+
+							Slider.Value.Text = tostring(NewValue)
+
+							if SliderSettings.CurrentValue ~= NewValue then
+								local Success, Response = pcall(function()
+									SliderSettings.Callback(NewValue)
+								end)
+								if not Success then
+									TweenService:Create(Slider, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+									TweenService:Create(Slider, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+									TweenService:Create(Slider.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+									Slider.Title.Text = "Callback Error"
+									print("Luna Interface Suite | "..SliderSettings.Name.." Callback Error " ..tostring(Response))
+									wait(0.5)
+									Slider.Title.Text = SliderSettings.Name
+									TweenService:Create(Slider, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+									TweenService:Create(Slider, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+									TweenService:Create(Slider.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+								end
+
+								SliderSettings.CurrentValue = NewValue
+								SliderV.CurrentValue = SliderSettings.CurrentValue
+								-- Luna.Flags[SliderSettings.Flag] = SliderSettings
+							end
+						else
+							TweenService:Create(Slider.Main.Progress, TweenInfo.new(0.1, Enum.EasingStyle.Back, Enum.EasingDirection.In, 0, false), {Size = UDim2.new(0, Location - Slider.Main.AbsolutePosition.X > 5 and Location - Slider.Main.AbsolutePosition.X or 5, 1, 0)}):Play()
+							Loop:Disconnect()
+						end
+					end)
+				end)
+
+				local function Set(NewVal, bleh)
+
+					NewVal = NewVal or SliderSettings.CurrentValue
+
+					TweenService:Create(Slider.Main.Progress, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.InOut), {Size = UDim2.new(0, Slider.Main.AbsoluteSize.X * ((NewVal + SliderSettings.Range[1]) / (SliderSettings.Range[2] - SliderSettings.Range[1])) > 5 and Slider.Main.AbsoluteSize.X * (NewVal / (SliderSettings.Range[2] - SliderSettings.Range[1])) or 5, 1, 0)}):Play()
+					if not bleh then Slider.Value.Text = tostring(NewVal) end
+					local Success, Response = pcall(function()
+						SliderSettings.Callback(NewVal)
+					end)
+					if not Success then
+						TweenService:Create(Slider, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+						TweenService:Create(Slider, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+						TweenService:Create(Slider.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+						Slider.Title.Text = "Callback Error"
+						print("Luna Interface Suite | "..SliderSettings.Name.." Callback Error " ..tostring(Response))
+						wait(0.5)
+						Slider.Title.Text = SliderSettings.Name
+						TweenService:Create(Slider, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+						TweenService:Create(Slider, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(30, 33, 40)}):Play()
+						TweenService:Create(Slider.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+					end
+
+					SliderSettings.CurrentValue = NewVal
+					SliderV.CurrentValue = SliderSettings.CurrentValue
+					-- Luna.Flags[SliderSettings.Flag] = SliderSettings
+
+				end
+
+				function SliderV:UpdateValue(Value)
+					Set(tonumber(Value))
+				end 
+
+				Slider.Value:GetPropertyChangedSignal("Text"):Connect(function()
+					local text = Slider.Value.Text
+					if not tonumber(text) and text ~= "." then
+						Slider.Value.Text = text:match("[0-9.]*") or ""
+					end
+					if SliderSettings.Range[2] < (tonumber(Slider.Value.Text) or 0) then Slider.Value.Text = SliderSettings.Range[2] end
+					Slider.Value.Size = UDim2.fromOffset(Slider.Value.TextBounds.X, 23)
+					Set(tonumber(Slider.Value.Text), true)
+				end)
+
+				function SliderV:Set(NewSliderSettings)
+					NewSliderSettings = Kwargify({
+						Name = SliderSettings.Name,
+						Range = SliderSettings.Range,
+						Increment = SliderSettings.Increment,
+						CurrentValue = SliderSettings.CurrentValue,
+						Callback = SliderSettings.Callback
+					}, NewSliderSettings or {})
+
+					SliderSettings = NewSliderSettings
+					SliderV.Settings = NewSliderSettings
+
+					Slider.Name = SliderSettings.Name .. " - Slider"
+					Slider.Title.Text = SliderSettings.Name
+
+					Set()
+
+					-- Luna.Flags[SliderSettings.Flag] = SliderSettings
+				end
+
+				function SliderV:Destroy()
+					Slider.Visible = false
+					Slider:Destroy()
+				end
+
+				if Flag then
+					Luna.Options[Flag] = SliderV
+				end
+
+				LunaUI.ThemeRemote:GetPropertyChangedSignal("Value"):Connect(function()
+					Slider.Main.color.Color = Luna.ThemeGradient
+					Slider.Main.UIStroke.color.Color = Luna.ThemeGradient
+				end)
+
+				return SliderV
+
+			end
+
+			-- Toggle
+			function Section:CreateToggle(ToggleSettings, Flag)    
+				TabPage.Position = UDim2.new(0,0,0,28)
+				local ToggleV = { IgnoreConfig = false, Class = "Toggle" }
+
+				ToggleSettings = Kwargify({
+					Name = "Toggle",
+					Description = nil,
+					CurrentValue = false,
+					Callback = function(Value)
+					end,
+				}, ToggleSettings or {})
+
+
+				local Toggle
+
+				if ToggleSettings.Description ~= nil and ToggleSettings.Description ~= "" then
+					Toggle = Elements.Template.ToggleDesc:Clone()
+				else
+					Toggle = Elements.Template.Toggle:Clone()
+				end
+
+				Toggle.Visible = true
+				Toggle.Parent = TabPage
+
+				Toggle.Name = ToggleSettings.Name .. " - Toggle"
+				Toggle.Title.Text = ToggleSettings.Name
+				if ToggleSettings.Description ~= nil and ToggleSettings.Description ~= "" then
+					Toggle.Desc.Text = ToggleSettings.Description
+				end
+
+				Toggle.UIStroke.Transparency = 1
+				Toggle.Title.TextTransparency = 1
+				if ToggleSettings.Description ~= nil and ToggleSettings.Description ~= "" then
+					Toggle.Desc.TextTransparency = 1
+				end
+
+				TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+				if ToggleSettings.Description ~= nil and ToggleSettings.Description ~= "" then
+					TweenService:Create(Toggle.Desc, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+				end
+				TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+				TweenService:Create(Toggle.Title, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()	
+
+				local function Set(bool)
+					if bool then
+						Toggle.toggle.color.Enabled = true
+						tween(Toggle.toggle, {BackgroundTransparency = 0})
+
+						Toggle.toggle.UIStroke.color.Enabled = true
+						tween(Toggle.toggle.UIStroke, {Color = Color3.new(255,255,255)})
+
+						tween(Toggle.toggle.val, {BackgroundColor3 = Color3.fromRGB(255,255,255), Position = UDim2.new(1,-23,0.5,0), BackgroundTransparency = 0.45})
+					else
+						Toggle.toggle.color.Enabled = false
+						Toggle.toggle.UIStroke.color.Enabled = false
+
+						Toggle.toggle.UIStroke.Color = Color3.fromRGB(97,97,97)
+
+						tween(Toggle.toggle, {BackgroundTransparency = 1})
+
+						tween(Toggle.toggle.val, {BackgroundColor3 = Color3.fromRGB(97,97,97), Position = UDim2.new(0,5,0.5,0), BackgroundTransparency = 0})
+					end
+
+					ToggleV.CurrentValue = bool
+				end
+
+				Toggle.Interact.MouseButton1Click:Connect(function()
+					ToggleSettings.CurrentValue = not ToggleSettings.CurrentValue
+					Set(ToggleSettings.CurrentValue)
+
+					local Success, Response = pcall(function()
+						ToggleSettings.Callback(ToggleSettings.CurrentValue)
+					end)
+					if not Success then
+						TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+						TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+						TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+						Toggle.Title.Text = "Callback Error"
+						print("Luna Interface Suite | "..ToggleSettings.Name.." Callback Error " ..tostring(Response))
+						wait(0.5)
+						Toggle.Title.Text = ToggleSettings.Name
+						TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+						TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+						TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+					end
+				end)
+
+				Toggle["MouseEnter"]:Connect(function()
+					tween(Toggle.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+				end)
+
+				Toggle["MouseLeave"]:Connect(function()
+					tween(Toggle.UIStroke, {Color = Color3.fromRGB(64,61,76)})
+				end)
+
+				if ToggleSettings.CurrentValue then
+					Set(ToggleSettings.CurrentValue)
+					local Success, Response = pcall(function()
+						ToggleSettings.Callback(ToggleSettings.CurrentValue)
+					end)
+					if not Success then
+						TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+						TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+						TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+						Toggle.Title.Text = "Callback Error"
+						print("Luna Interface Suite | "..ToggleSettings.Name.." Callback Error " ..tostring(Response))
+						wait(0.5)
+						Toggle.Title.Text = ToggleSettings.Name
+						TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+						TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+						TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+					end
+				end
+
+				function ToggleV:UpdateState(State)
+					ToggleSettings.CurrentValue = State
+					Set(ToggleSettings.CurrentValue)
+				end
+
+				function ToggleV:Set(NewToggleSettings)
+
+					NewToggleSettings = Kwargify({
+						Name = ToggleSettings.Name,
+						Description = ToggleSettings.Description,
+						CurrentValue = ToggleSettings.CurrentValue,
+						Callback = ToggleSettings.Callback
+					}, NewToggleSettings or {})
+
+					ToggleV.Settings = NewToggleSettings
+					ToggleSettings = NewToggleSettings
+
+					Toggle.Name = ToggleSettings.Name .. " - Toggle"
+					Toggle.Title.Text = ToggleSettings.Name
+					if ToggleSettings.Description ~= nil and ToggleSettings.Description ~= "" and Toggle.Desc ~= nil then
+						Toggle.Desc.Text = ToggleSettings.Description
+					end
+
+					Set(ToggleSettings.CurrentValue)
+
+					ToggleV.CurrentValue = ToggleSettings.CurrentValue
+
+					local Success, Response = pcall(function()
+						ToggleSettings.Callback(ToggleSettings.CurrentValue)
+					end)
+					if not Success then
+						TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+						TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+						TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()
+						Toggle.Title.Text = "Callback Error"
+						print("Luna Interface Suite | "..ToggleSettings.Name.." Callback Error " ..tostring(Response))
+						wait(0.5)
+						Toggle.Title.Text = ToggleSettings.Name
+						TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+						TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+						TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+					end
+				end
+
+				function ToggleV:Destroy()
+					Toggle.Visible = false
+					Toggle:Destroy()
+				end
+
+				LunaUI.ThemeRemote:GetPropertyChangedSignal("Value"):Connect(function()
+					Toggle.toggle.color.Color = Luna.ThemeGradient
+					Toggle.toggle.UIStroke.color.Color = Luna.ThemeGradient
+				end)
+
+				if Flag then
+					Luna.Options[Flag] = ToggleV
+				end
+
+				return ToggleV
+
+			end
+
+			-- Bind
+			function Section:CreateBind(BindSettings, Flag)
+				TabPage.Position = UDim2.new(0,0,0,28)
+				local BindV = { Class = "Keybind", IgnoreConfig = false, Settings = BindSettings, Active = false }
+
+				BindSettings = Kwargify({
+					Name = "Bind",
+					Description = nil,
+					CurrentBind = "Q",
+					HoldToInteract = false, -- setting this makes the Bind in toggle mode
+					Callback = function(Bind)
+						-- The function that takes place when the Bind is pressed
+						-- The variable (Bind) is a boolean for whether the Bind is being held or not (HoldToInteract needs to be true) or whether the Bind is currently active
+					end,
+
+					OnChangedCallback = function(Bind)
+						-- The function that takes place when the binded key changes
+						-- The variable (Bind) is a Enum.KeyCode for the new Binded Key
+					end,
+				}, BindSettings or {})
+
+				local CheckingForKey = false
+
+				local Bind
+				if BindSettings.Description ~= nil and BindSettings.Description ~= "" then
+					Bind = Elements.Template.BindDesc:Clone()
+				else
+					Bind = Elements.Template.Bind:Clone()
+				end
+
+				Bind.Visible = true
+				Bind.Parent = TabPage
+
+				Bind.Name = BindSettings.Name
+				Bind.Title.Text = BindSettings.Name
+				if BindSettings.Description ~= nil and BindSettings.Description ~= "" then
+					Bind.Desc.Text = BindSettings.Description
+				end
+
+				Bind.Title.TextTransparency = 1
+				if BindSettings.Description ~= nil and BindSettings.Description ~= "" then
+					Bind.Desc.TextTransparency = 1
+				end
+				Bind.BindFrame.BackgroundTransparency = 1
+				Bind.BindFrame.UIStroke.Transparency = 1
+				Bind.BindFrame.BindBox.TextTransparency = 1
+
+				TweenService:Create(Bind, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+				TweenService:Create(Bind.Title, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+				if BindSettings.Description ~= nil and BindSettings.Description ~= "" then
+					TweenService:Create(Bind.Desc, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+				end
+				TweenService:Create(Bind.BindFrame, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.9}):Play()
+				TweenService:Create(Bind.BindFrame.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {Transparency = 0.3}):Play()
+				TweenService:Create(Bind.BindFrame.BindBox, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+
+
+				Bind.BindFrame.BindBox.Text = BindSettings.CurrentBind
+				Bind.BindFrame.BindBox.Size = UDim2.new(0, Bind.BindFrame.BindBox.TextBounds.X + 20, 0, 42)
+
+				Bind.BindFrame.BindBox.Focused:Connect(function()
+					CheckingForKey = true
+					Bind.BindFrame.BindBox.Text = ""
+				end)
+
+				Bind.BindFrame.BindBox.FocusLost:Connect(function()
+					CheckingForKey = false
+					if Bind.BindFrame.BindBox.Text == (nil or "") then
+						Bind.BindFrame.BindBox.Text = BindSettings.CurrentBind
+					end
+				end)
+
+				Bind["MouseEnter"]:Connect(function()
+					tween(Bind.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+				end)
+
+				Bind["MouseLeave"]:Connect(function()
+					tween(Bind.UIStroke, {Color = Color3.fromRGB(64,61,76)})
+				end)
+				UserInputService.InputBegan:Connect(function(input, processed)
+
+					if CheckingForKey then
+						if input.KeyCode ~= Enum.KeyCode.Unknown and input.KeyCode ~= Window.Bind then
+							local SplitMessage = string.split(tostring(input.KeyCode), ".")
+							local NewKeyNoEnum = SplitMessage[3]
+							Bind.BindFrame.BindBox.Text = tostring(NewKeyNoEnum)
+							BindSettings.CurrentBind = tostring(NewKeyNoEnum)
+							local Success, Response = pcall(function()
+								BindSettings.OnChangedCallback(BindSettings.CurrentBind)
+							end)
+							if not Success then
+								TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+								TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+								TweenService:Create(Bind.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+								Bind.Title.Text = "Callback Error"
+								print("Luna Interface Suite | "..BindSettings.Name.." Callback Error " ..tostring(Response))
+								wait(0.5)
+								Bind.Title.Text = BindSettings.Name
+								TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+								TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+								TweenService:Create(Bind.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+							end
+							Bind.BindFrame.BindBox:ReleaseFocus()
+						end
+					elseif BindSettings.CurrentBind ~= nil and (input.KeyCode == Enum.KeyCode[BindSettings.CurrentBind] and not processed) then -- Test
+						local Held = true
+						local Connection
+						Connection = input.Changed:Connect(function(prop)
+							if prop == "UserInputState" then
+								Connection:Disconnect()
+								Held = false
+							end
+						end)
+
+						if not BindSettings.HoldToInteract then
+							BindV.Active = not BindV.Active
+							local Success, Response = pcall(function()
+								BindSettings.Callback(BindV.Active)
+							end)
+							if not Success then
+								TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+								TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+								TweenService:Create(Bind.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+								Bind.Title.Text = "Callback Error"
+								print("Luna Interface Suite | "..BindSettings.Name.." Callback Error " ..tostring(Response))
+								wait(0.5)
+								Bind.Title.Text = BindSettings.Name
+								TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+								TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+								TweenService:Create(Bind.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+							end
+						else
+							wait(0.1)
+							if Held then
+								local Loop; Loop = RunService.Stepped:Connect(function()
+									if not Held then
+										local Success, Response = pcall(function()
+											BindSettings.Callback(false)
+										end)
+										if not Success then
+											TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+											TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+											TweenService:Create(Bind.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+											Bind.Title.Text = "Callback Error"
+											print("Luna Interface Suite | "..BindSettings.Name.." Callback Error " ..tostring(Response))
+											wait(0.5)
+											Bind.Title.Text = BindSettings.Name
+											TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+											TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+											TweenService:Create(Bind.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+										end 
+										Loop:Disconnect()
+									else
+										local Success, Response = pcall(function()
+											BindSettings.Callback(true)
+										end)
+										if not Success then
+											TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+											TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+											TweenService:Create(Bind.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+											Bind.Title.Text = "Callback Error"
+											print("Luna Interface Suite | "..BindSettings.Name.." Callback Error " ..tostring(Response))
+											wait(0.5)
+											Bind.Title.Text = BindSettings.Name
+											TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+											TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+											TweenService:Create(Bind.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+										end
+									end
+								end)	
+							end
+						end
+					end
+				end)
+
+				Bind.BindFrame.BindBox:GetPropertyChangedSignal("Text"):Connect(function()
+					TweenService:Create(Bind.BindFrame, TweenInfo.new(0.55, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {Size = UDim2.new(0, Bind.BindFrame.BindBox.TextBounds.X + 20, 0, 30)}):Play()
+				end)
+
+				function BindV:Set(NewBindSettings)
+
+					NewBindSettings = Kwargify({
+						Name = BindSettings.Name,
+						Description = BindSettings.Description,
+						CurrentBind =  BindSettings.CurrentBind,
+						HoldToInteract = BindSettings.HoldToInteract,
+						Callback = BindSettings.Callback
+					}, NewBindSettings or {})
+
+					BindV.Settings = NewBindSettings
+					BindSettings = NewBindSettings
+
+					Bind.Name = BindSettings.Name
+					Bind.Title.Text = BindSettings.Name
+					if BindSettings.Description ~= nil and BindSettings.Description ~= "" and Bind.Desc ~= nil then
+						Bind.Desc.Text = BindSettings.Description
+					end
+
+					Bind.BindFrame.BindBox.Text = BindSettings.CurrentBind
+					Bind.BindFrame.Size = UDim2.new(0, Bind.BindFrame.BindBox.TextBounds.X + 20, 0, 42)
+
+
+					BindV.CurrentBind = BindSettings.CurrentBind
+				end
+
+				function BindV:Destroy()
+					Bind.Visible = false
+					Bind:Destroy()
+				end
+
+				if Flag then
+					Luna.Options[Flag] = BindV
+				end
+
+				-- Luna.Flags[BindSettings.Flag] = BindSettings
+
+				return BindV
+
+			end
+
+			-- Dynamic Input
+			function Section:CreateInput(InputSettings, Flag)
+				TabPage.Position = UDim2.new(0,0,0,28)
+				local InputV = { IgnoreConfig = false, Class = "Input", Settings = InputSettings }
+
+				InputSettings = Kwargify({
+					Name = "Dynamic Input",
+					Description = nil,
+					CurrentValue = "",
+					PlaceholderText = "Input Placeholder",
+					RemoveTextAfterFocusLost = false,
+					Numeric = false,
+					Enter = false,
+					MaxCharacters = nil,
+					Callback = function(Text)
+
+					end, -- 52
+				}, InputSettings or {})
+
+				InputV.CurrentValue = InputSettings.CurrentValue
+
+				local descriptionbool
+				if InputSettings.Description ~= nil and InputSettings.Description ~= "" then
+					descriptionbool = true
+				end
+
+				local Input 
+				if descriptionbool then
+					Input = Elements.Template.InputDesc:Clone()
+				else
+					Input = Elements.Template.Input:Clone()
+				end
+
+				Input.Name = InputSettings.Name
+				Input.Title.Text = InputSettings.Name
+				if descriptionbool then Input.Desc.Text = InputSettings.Description end
+				Input.Visible = true
+				Input.Parent = TabPage
+
+				Input.BackgroundTransparency = 1
+				Input.UIStroke.Transparency = 1
+				Input.Title.TextTransparency = 1
+				if descriptionbool then Input.Desc.TextTransparency = 1 end
+				Input.InputFrame.BackgroundTransparency = 1
+				Input.InputFrame.UIStroke.Transparency = 1
+				Input.InputFrame.InputBox.TextTransparency = 1
+
+				TweenService:Create(Input, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+				TweenService:Create(Input.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+				TweenService:Create(Input.Title, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()	
+				if descriptionbool then TweenService:Create(Input.Desc, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play() end
+				TweenService:Create(Input.InputFrame, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.9}):Play()
+				TweenService:Create(Input.InputFrame.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {Transparency = 0.3}):Play()
+				TweenService:Create(Input.InputFrame.InputBox, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+
+				Input.InputFrame.InputBox.PlaceholderText = InputSettings.PlaceholderText
+				Input.InputFrame.Size = UDim2.new(0, Input.InputFrame.InputBox.TextBounds.X + 52, 0, 30)
+
+				Input.InputFrame.InputBox.FocusLost:Connect(function(bleh)
+
+					if InputSettings.Enter then
+						if bleh then
+							local Success, Response = pcall(function()
+								InputSettings.Callback(Input.InputFrame.InputBox.Text)
+								InputV.CurrentValue = Input.InputFrame.InputBox.Text
+							end)
+							if not Success then
+								TweenService:Create(Input, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+								TweenService:Create(Input, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+								TweenService:Create(Input.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+								Input.Title.Text = "Callback Error"
+								print("Luna Interface Suite | "..InputSettings.Name.." Callback Error " ..tostring(Response))
+								wait(0.5)
+								Input.Title.Text = InputSettings.Name
+								TweenService:Create(Input, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+								TweenService:Create(Input, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+								TweenService:Create(Input.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+							end
+						end
+					end
+
+					if InputSettings.RemoveTextAfterFocusLost then
+						Input.InputFrame.InputBox.Text = ""
+					end
+
+				end)
+
+				if InputSettings.Numeric then
+					Input.InputFrame.InputBox:GetPropertyChangedSignal("Text"):Connect(function()
+						local text = Input.InputFrame.InputBox.Text
+						if not tonumber(text) and text ~= "." then
+							Input.InputFrame.InputBox.Text = text:match("[0-9.]*") or ""
+						end
+					end)
+				end
+
+				Input.InputFrame.InputBox:GetPropertyChangedSignal("Text"):Connect(function()
+					if tonumber(InputSettings.MaxCharacters) then
+						if (#Input.InputFrame.InputBox.Text - 1) == InputSettings.MaxCharacters then
+							Input.InputFrame.InputBox.Text = Input.InputFrame.InputBox.Text:sub(1, InputSettings.MaxCharacters)
+						end
+					end
+					TweenService:Create(Input.InputFrame, TweenInfo.new(0.55, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {Size = UDim2.new(0, Input.InputFrame.InputBox.TextBounds.X + 52, 0, 30)}):Play()
+					if not InputSettings.Enter then
+						local Success, Response = pcall(function()
+							InputSettings.Callback(Input.InputFrame.InputBox.Text)
+						end)
+						if not Success then
+							TweenService:Create(Input, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+							TweenService:Create(Input, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+							TweenService:Create(Input.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+							Input.Title.Text = "Callback Error"
+							print("Luna Interface Suite | "..InputSettings.Name.." Callback Error " ..tostring(Response))
+							wait(0.5)
+							Input.Title.Text = InputSettings.Name
+							TweenService:Create(Input, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+							TweenService:Create(Input, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+							TweenService:Create(Input.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+						end
+					end
+					InputV.CurrentValue = Input.InputFrame.InputBox.Text				
+				end)
+
+				Input["MouseEnter"]:Connect(function()
+					tween(Input.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+				end)
+
+				Input["MouseLeave"]:Connect(function()
+					tween(Input.UIStroke, {Color = Color3.fromRGB(64,61,76)})
+				end)
+
+
+				function InputV:Set(NewInputSettings)
+
+					NewInputSettings = Kwargify(InputSettings, NewInputSettings or {})
+
+					InputV.Settings = NewInputSettings
+					InputSettings = NewInputSettings
+
+					Input.Name = InputSettings.Name
+					Input.Title.Text = InputSettings.Name
+					if InputSettings.Description ~= nil and InputSettings.Description ~= "" and Input.Desc ~= nil then
+						Input.Desc.Text = InputSettings.Description
+					end
+
+					Input.InputFrame.InputBox:CaptureFocus()
+					Input.InputFrame.InputBox.Text = tostring(InputSettings.CurrentValue)
+					Input.InputFrame.InputBox:ReleaseFocus()
+					Input.InputFrame.Size = UDim2.new(0, Input.InputFrame.InputBox.TextBounds.X + 52, 0, 42)
+
+					InputV.CurrentValue = InputSettings.CurrentValue
+				end
+
+				function InputV:Destroy()
+					Input.Visible = false
+					Input:Destroy()
+				end
+
+				if Flag then
+					Luna.Options[Flag] = InputV
+				end
+
+
+				return InputV
+
+			end
+
+			-- Dropdown
+			function Section:CreateDropdown(DropdownSettings, Flag)
+				TabPage.Position = UDim2.new(0,0,0,28)
+				local DropdownV = { IgnoreConfig = false, Class = "Dropdown", Settings = DropdownSettings}
+
+				DropdownSettings = Kwargify({
+					Name = "Dropdown",
+					Description = nil,
+					Options = {"Option 1", "Option 2"},
+					CurrentOption = {"Option 1"},
+					MultipleOptions = false,
+					SpecialType = nil, -- currently onl player, might add more soon
+					Callback = function(Options)
+						-- The function that takes place when the selected option is changed
+						-- The variable (Options) is a table of strings for the current selected options or a string if multioptions is false
+					end,
+				}, DropdownSettings or {})
+
+				DropdownV.CurrentOption = DropdownSettings.CurrentOption
+
+				local descriptionbool = false
+				if DropdownSettings.Description ~= nil and DropdownSettings.Description ~= "" then
+					descriptionbool = true
+				end
+				local closedsize
+				local openedsize
+				if descriptionbool then
+					closedsize = 48
+					openedsize = 170
+				elseif not descriptionbool then
+					closedsize = 38
+					openedsize = 160
+				end
+				local opened = false
+
+				local Dropdown
+				if descriptionbool then Dropdown = Elements.Template.DropdownDesc:Clone() else Dropdown = Elements.Template.Dropdown:Clone() end
+
+				Dropdown.Name = DropdownSettings.Name
+				Dropdown.Title.Text = DropdownSettings.Name
+				if descriptionbool then Dropdown.Desc.Text = DropdownSettings.Description end
+
+				Dropdown.Parent = TabPage
+				Dropdown.Visible = true
+
+				local function Toggle()
+					opened = not opened
+					if opened then
+						tween(Dropdown.icon, {Rotation = 180})
+						tween(Dropdown, {Size = UDim2.new(1, -25, 0, openedsize)})
+					else
+						tween(Dropdown.icon, {Rotation = 0})
+						tween(Dropdown, {Size = UDim2.new(1, -25, 0, closedsize)})
+					end
+				end
+
+				local function SafeCallback(param, c2)
+					local Success, Response = pcall(function()
+						DropdownSettings.Callback(param)
+					end)
+					if not Success then
+						TweenService:Create(Dropdown, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+						TweenService:Create(Dropdown, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+						TweenService:Create(Dropdown.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+						Dropdown.Title.Text = "Callback Error"
+						print("Luna Interface Suite | "..DropdownSettings.Name.." Callback Error " ..tostring(Response))
+						wait(0.5)
+						Dropdown.Title.Text = DropdownSettings.Name
+						TweenService:Create(Dropdown, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+						TweenService:Create(Dropdown, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+						TweenService:Create(Dropdown.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+					end
+					if Success and c2 then
+						c2()
+					end
+				end
+
+				-- fixed by justhey
+				Dropdown.Selected:GetPropertyChangedSignal("Text"):Connect(function()
+					local text = Dropdown.Selected.Text:lower()
+					for _, Item in ipairs(Dropdown.List:GetChildren()) do
+						if Item:IsA("TextLabel") and Item.Name ~= "Template" then
+							Item.Visible = text == "" or string.find(Item.Name:lower(), text, 1, true) ~= nil
+						end
+					end
+				end)
+
+
+				local function Clear()
+					for _, option in ipairs(Dropdown.List:GetChildren()) do
+						if option.ClassName == "TextLabel" and option.Name ~= "Template" then
+							option:Destroy()
+						end
+					end
+				end
+
+				local function ActivateColorSingle(name)
+					for _, Option in pairs(Dropdown.List:GetChildren()) do
+						if Option.ClassName == "TextLabel" and Option.Name ~= "Template" then
+							tween(Option, {BackgroundTransparency = 0.98})
+						end
+					end
+
+					Toggle()
+					tween(Dropdown.List[name], {BackgroundTransparency = 0.95, TextColor3 = Color3.fromRGB(240,240,240)})
+				end
+
+				local function Refresh()
+					Clear()
+					for i,v in pairs(DropdownSettings.Options) do
+						local Option = Dropdown.List.Template:Clone()
+						local optionhover = false
+						Option.Text = v
+						if v == "Template" then v = "Template (Name)" end
+						Option.Name = v
+						Option.Interact.MouseButton1Click:Connect(function()
+							local bleh
+							if DropdownSettings.MultipleOptions then
+								if table.find(DropdownSettings.CurrentOption, v) then
+									RemoveTable(DropdownSettings.CurrentOption, v)
+									DropdownV.CurrentOption = DropdownSettings.CurrentOption
+									if not optionhover then
+										tween(Option, {TextColor3 = Color3.fromRGB(200,200,200)})
+									end
+									tween(Option, {BackgroundTransparency = 0.98})
+								else
+									table.insert(DropdownSettings.CurrentOption, v)
+									DropdownV.CurrentOption = DropdownSettings.CurrentOption
+									tween(Option, {TextColor3 = Color3.fromRGB(240,240,240), BackgroundTransparency = 0.95})
+								end
+								bleh = DropdownSettings.CurrentOption
+							else
+								DropdownSettings.CurrentOption = {v}
+								bleh = v
+								DropdownV.CurrentOption = bleh
+								ActivateColorSingle(v)
+							end
+
+							SafeCallback(bleh, function()
+								if DropdownSettings.MultipleOptions then
+									if DropdownSettings.CurrentOption and type(DropdownSettings.CurrentOption) == "table" then
+										if #DropdownSettings.CurrentOption == 1 then
+											Dropdown.Selected.PlaceholderText = DropdownSettings.CurrentOption[1]
+										elseif #DropdownSettings.CurrentOption == 0 then
+											Dropdown.Selected.PlaceholderText = "None"
+										else
+											Dropdown.Selected.PlaceholderText = unpackt(DropdownSettings.CurrentOption)
+										end
+									else
+										DropdownSettings.CurrentOption = {}
+										Dropdown.Selected.PlaceholderText = "None"
+									end
+								end
+								if not DropdownSettings.MultipleOptions then
+									Dropdown.Selected.PlaceholderText = DropdownSettings.CurrentOption[1] or "None"
+								end
+								Dropdown.Selected.Text = ""
+							end)
+						end)
+						Option.Visible = true
+						Option.Parent = Dropdown.List
+						Option.MouseEnter:Connect(function()
+							optionhover = true
+							if Option.BackgroundTransparency == 0.95 then
+								return
+							else
+								tween(Option, {TextColor3 = Color3.fromRGB(240,240,240)})
+							end
+						end)
+						Option.MouseLeave:Connect(function()
+							optionhover = false
+							if Option.BackgroundTransparency == 0.95 then
+								return
+							else
+								tween(Option, {TextColor3 = Color3.fromRGB(200,200,200)})
+							end
+						end)	
+					end
+				end
+
+				local function PlayerTableRefresh()
+					for i,v in pairs(DropdownSettings.Options) do
+						table.remove(DropdownSettings.Options, i)
+					end
+
+					for i,v in pairs(Players:GetChildren()) do
+						table.insert(DropdownSettings.Options, v.Name)
+					end
+				end
+
+				Dropdown.Interact.MouseButton1Click:Connect(function()
+					Toggle()
+				end)
+
+				Dropdown["MouseEnter"]:Connect(function()
+					tween(Dropdown.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+				end)
+
+				Dropdown["MouseLeave"]:Connect(function()
+					tween(Dropdown.UIStroke, {Color = Color3.fromRGB(64,61,76)})
+				end)
+
+				if DropdownSettings.SpecialType == "Player" then
+
+					for i,v in pairs(DropdownSettings.Options) do
+						table.remove(DropdownSettings.Options, i)
+					end
+					PlayerTableRefresh()
+					DropdownSettings.CurrentOption = DropdownSettings.Options[1]
+
+					Players.PlayerAdded:Connect(function() PlayerTableRefresh() end)
+					Players.PlayerRemoving:Connect(function() PlayerTableRefresh() end)
+
+				end
+
+				Refresh()
+
+				if DropdownSettings.CurrentOption then
+					if type(DropdownSettings.CurrentOption) == "string" then
+						DropdownSettings.CurrentOption = {DropdownSettings.CurrentOption}
+					end
+					if not DropdownSettings.MultipleOptions and type(DropdownSettings.CurrentOption) == "table" then
+						DropdownSettings.CurrentOption = {DropdownSettings.CurrentOption[1]}
+					end
+				else
+					DropdownSettings.CurrentOption = {}
+				end
+
+				local bleh, ind = nil,0
+				for i,v in pairs(DropdownSettings.CurrentOption) do
+					ind = ind + 1
+				end
+				if ind == 1 then bleh = DropdownSettings.CurrentOption[1] else bleh = DropdownSettings.CurrentOption end
+				SafeCallback(bleh)
+				if type(bleh) == "string" then 
+					tween(Dropdown.List[bleh], {TextColor3 = Color3.fromRGB(240,240,240), BackgroundTransparency = 0.95})
+				else
+					for i,v in pairs(bleh) do
+						tween(Dropdown.List[v], {TextColor3 = Color3.fromRGB(240,240,240), BackgroundTransparency = 0.95})
+					end
+				end
+
+				if DropdownSettings.MultipleOptions then
+					if DropdownSettings.CurrentOption and type(DropdownSettings.CurrentOption) == "table" then
+						if #DropdownSettings.CurrentOption == 1 then
+							Dropdown.Selected.PlaceholderText = DropdownSettings.CurrentOption[1]
+						elseif #DropdownSettings.CurrentOption == 0 then
+							Dropdown.Selected.PlaceholderText = "None"
+						else
+							Dropdown.Selected.PlaceholderText = unpackt(DropdownSettings.CurrentOption)
+						end
+					else
+						DropdownSettings.CurrentOption = {}
+						Dropdown.Selected.PlaceholderText = "None"
+					end
+					for _, name in pairs(DropdownSettings.CurrentOption) do
+						tween(Dropdown.List[name], {TextColor3 = Color3.fromRGB(227,227,227), BackgroundTransparency = 0.95})
+					end
+				else
+					Dropdown.Selected.PlaceholderText = DropdownSettings.CurrentOption[1] or "None"
+				end
+				Dropdown.Selected.Text = ""
+
+				function DropdownV:Set(NewDropdownSettings)
+					NewDropdownSettings = Kwargify(DropdownSettings, NewDropdownSettings or {})
+
+					DropdownV.Settings = NewDropdownSettings
+					DropdownSettings = NewDropdownSettings
+
+					Dropdown.Name = DropdownSettings.Name
+					Dropdown.Title.Text = DropdownSettings.Name
+					if DropdownSettings.Description ~= nil and DropdownSettings.Description ~= "" and Dropdown.Desc ~= nil then
+						Dropdown.Desc.Text = DropdownSettings.Description
+					end
+
+					if DropdownSettings.SpecialType == "Player" then
+
+						for i,v in pairs(DropdownSettings.Options) do
+							table.remove(DropdownSettings.Options, i)
+						end
+						PlayerTableRefresh()
+						DropdownSettings.CurrentOption = DropdownSettings.Options[1]                    
+						Players.PlayerAdded:Connect(function() PlayerTableRefresh() end)
+						Players.PlayerRemoving:Connect(function() PlayerTableRefresh() end)
+
+					end
+
+					Refresh()
+
+					if DropdownSettings.CurrentOption then
+						if type(DropdownSettings.CurrentOption) == "string" then
+							DropdownSettings.CurrentOption = {DropdownSettings.CurrentOption}
+						end
+						if not DropdownSettings.MultipleOptions and type(DropdownSettings.CurrentOption) == "table" then
+							DropdownSettings.CurrentOption = {DropdownSettings.CurrentOption[1]}
+						end
+					else
+						DropdownSettings.CurrentOption = {}
+					end
+
+					local bleh, ind = nil,0
+					for i,v in pairs(DropdownSettings.CurrentOption) do
+						ind = ind + 1
+					end
+					if ind == 1 then bleh = DropdownSettings.CurrentOption[1] else bleh = DropdownSettings.CurrentOption end
+					SafeCallback(bleh)
+					for _, Option in pairs(Dropdown.List:GetChildren()) do
+						if Option.ClassName == "TextLabel" then
+							tween(Option, {TextColor3 = Color3.fromRGB(200,200,200), BackgroundTransparency = 0.98})
+						end
+					end
+					tween(Dropdown.List[bleh], {TextColor3 = Color3.fromRGB(240,240,240), BackgroundTransparency = 0.95})
+
+					if DropdownSettings.MultipleOptions then
+						if DropdownSettings.CurrentOption and type(DropdownSettings.CurrentOption) == "table" then
+							if #DropdownSettings.CurrentOption == 1 then
+								Dropdown.Selected.PlaceholderText = DropdownSettings.CurrentOption[1]
+							elseif #DropdownSettings.CurrentOption == 0 then
+								Dropdown.Selected.PlaceholderText = "None"
+							else
+								Dropdown.Selected.PlaceholderText = unpackt(DropdownSettings.CurrentOption)
+							end
+						else
+							DropdownSettings.CurrentOption = {}
+							Dropdown.Selected.PlaceholderText = "None"
+						end
+						for _, name in pairs(DropdownSettings.CurrentOption) do
+							tween(Dropdown.List[name], {TextColor3 = Color3.fromRGB(227,227,227), BackgroundTransparency = 0.95})
+						end
+					else
+						Dropdown.Selected.PlaceholderText = DropdownSettings.CurrentOption[1] or "None"
+					end
+					Dropdown.Selected.Text = ""
+
+					-- Luna.Flags[DropdownSettings.Flag] = DropdownSettings
+
+				end
+
+				function DropdownV:Destroy()
+					Dropdown.Visible = false
+					Dropdown:Destroy()
+				end
+
+				if Flag then
+					Luna.Options[Flag] = DropdownV
+				end
+
+				-- Luna.Flags[DropdownSettings.Flag] = DropdownSettings
+
+				return DropdownV
+
+			end
+
+			-- Color Picker
+			function Section:CreateColorPicker(ColorPickerSettings, Flag) -- by Rayfield/Throit
+				TabPage.Position = UDim2.new(0,0,0,28)
+				local ColorPickerV = {IgnoreClass = false, Class = "Colorpicker", Settings = ColorPickerSettings}
+
+				ColorPickerSettings = Kwargify({
+					Name = "Color Picker",
+					Color = Color3.fromRGB(255,255,255),
+					Callback = function(Value)
+						-- The function that takes place every time the color picker is moved/changed
+						-- The variable (Value) is a Color3fromRGB value based on which color is selected
+					end
+				}, ColorPickerSettings or {})
+
+				local function Color3ToHex(color)
+					return string.format("#%02X%02X%02X", math.floor(color.R * 255), math.floor(color.G * 255), math.floor(color.B * 255))
+				end
+
+				ColorPickerV.Color = Color3ToHex(ColorPickerSettings.Color)
+
+				local closedsize = UDim2.new(0, 75, 0, 22)
+				local openedsize = UDim2.new(0, 219, 0, 129)
+
+				local ColorPicker = Elements.Template.ColorPicker:Clone()
+				local Background = ColorPicker.CPBackground
+				local Display = Background.Display
+				local Main = Background.MainCP
+				local Slider = ColorPicker.ColorSlider
+
+				ColorPicker.Name = ColorPickerSettings.Name
+				ColorPicker.Title.Text = ColorPickerSettings.Name
+				ColorPicker.Visible = true
+				ColorPicker.Parent = TabPage
+				ColorPicker.Size = UDim2.new(1.042, -25,0, 38)
+				Background.Size = closedsize
+				Display.BackgroundTransparency = 0
+
+				ColorPicker["MouseEnter"]:Connect(function()
+					tween(ColorPicker.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+				end)
+				ColorPicker["MouseLeave"]:Connect(function()
+					tween(ColorPicker.UIStroke, {Color = Color3.fromRGB(64,61,76)})
+				end)
+
+				local function SafeCallback(param, c2)
+					local Success, Response = pcall(function()
+						ColorPickerSettings.Callback(param)
+					end)
+					if not Success then
+						TweenService:Create(ColorPicker, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+						TweenService:Create(ColorPicker, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+						TweenService:Create(ColorPicker.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+						ColorPicker.Title.Text = "Callback Error"
+						print("Luna Interface Suite | "..ColorPickerSettings.Name.." Callback Error " ..tostring(Response))
+						wait(0.5)
+						ColorPicker.Title.Text = ColorPickerSettings.Name
+						TweenService:Create(ColorPicker, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+						TweenService:Create(ColorPicker, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+						TweenService:Create(ColorPicker.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+					end
+					if Success and c2 then
+						c2()
+					end
+				end
+
+				local opened = false
+
+				local mouse = game.Players.LocalPlayer:GetMouse()
+				Main.Image = "http://www.roblox.com/asset/?id=11415645739"
+				local mainDragging = false 
+				local sliderDragging = false 
+				ColorPicker.Interact.MouseButton1Down:Connect(function()
+					if not opened then
+						opened = true 
+						tween(ColorPicker, {Size = UDim2.new( 1.042, -25,0, 165)}, nil, TweenInfo.new(0.6, Enum.EasingStyle.Exponential))
+						tween(Background, {Size = openedsize})
+						tween(Display, {BackgroundTransparency = 1})
+					else
+						opened = false
+						tween(ColorPicker, {Size = UDim2.new(1.042, -25,0, 38)}, nil, TweenInfo.new(0.6, Enum.EasingStyle.Exponential))
+						tween(Background, {Size = closedsize})
+						tween(Display, {BackgroundTransparency = 0})
+					end
+				end)
+				UserInputService.InputEnded:Connect(function(input, gameProcessed) if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then 
+						mainDragging = false
+						sliderDragging = false
+					end end)
+				Main.MouseButton1Down:Connect(function()
+					if opened then
+						mainDragging = true 
+					end
+				end)
+				Main.MainPoint.MouseButton1Down:Connect(function()
+					if opened then
+						mainDragging = true 
+					end
+				end)
+				Slider.MouseButton1Down:Connect(function()
+					sliderDragging = true 
+				end)
+				Slider.SliderPoint.MouseButton1Down:Connect(function()
+					sliderDragging = true 
+				end)
+				local h,s,v = ColorPickerSettings.Color:ToHSV()
+				local color = Color3.fromHSV(h,s,v) 
+				local r,g,b = math.floor((h*255)+0.5),math.floor((s*255)+0.5),math.floor((v*255)+0.5)
+				local hex = string.format("#%02X%02X%02X",color.R*0xFF,color.G*0xFF,color.B*0xFF)
+				ColorPicker.HexInput.InputBox.Text = hex
+				local function setDisplay(hp,sp,vp)
+					--Main
+					Main.MainPoint.Position = UDim2.new(s,-Main.MainPoint.AbsoluteSize.X/2,1-v,-Main.MainPoint.AbsoluteSize.Y/2)
+					Main.MainPoint.ImageColor3 = Color3.fromHSV(hp,sp,vp)
+					Background.BackgroundColor3 = Color3.fromHSV(hp,1,1)
+					Display.BackgroundColor3 = Color3.fromHSV(hp,sp,vp)
+					--Slider 
+					local x = hp * Slider.AbsoluteSize.X
+					Slider.SliderPoint.Position = UDim2.new(0,x-Slider.SliderPoint.AbsoluteSize.X/2,0.5,0)
+					Slider.SliderPoint.ImageColor3 = Color3.fromHSV(hp,1,1)
+					local color = Color3.fromHSV(hp,sp,vp) 
+					local r,g,b = math.floor((color.R*255)+0.5),math.floor((color.G*255)+0.5),math.floor((color.B*255)+0.5)
+					ColorPicker.RInput.InputBox.Text = tostring(r)
+					ColorPicker.GInput.InputBox.Text = tostring(g)
+					ColorPicker.BInput.InputBox.Text = tostring(b)
+					hex = string.format("#%02X%02X%02X",color.R*0xFF,color.G*0xFF,color.B*0xFF)
+					ColorPicker.HexInput.InputBox.Text = hex
+				end
+				setDisplay(h,s,v)
+				ColorPicker.HexInput.InputBox.FocusLost:Connect(function()
+					if not pcall(function()
+							local r, g, b = string.match(ColorPicker.HexInput.InputBox.Text, "^#?(%w%w)(%w%w)(%w%w)$")
+							local rgbColor = Color3.fromRGB(tonumber(r, 16),tonumber(g, 16), tonumber(b, 16))
+							h,s,v = rgbColor:ToHSV()
+							hex = ColorPicker.HexInput.InputBox.Text
+							setDisplay()
+							ColorPickerSettings.Color = rgbColor
+						end) 
+					then 
+						ColorPicker.HexInput.InputBox.Text = hex 
+					end
+					local r,g,b = math.floor((h*255)+0.5),math.floor((s*255)+0.5),math.floor((v*255)+0.5)
+					ColorPickerSettings.Color = Color3.fromRGB(r,g,b)
+					SafeCallback( Color3.fromRGB(r,g,b))
+				end)
+				--RGB
+				local function rgbBoxes(box,toChange)
+					local value = tonumber(box.Text) 
+					local color = Color3.fromHSV(h,s,v) 
+					local oldR,oldG,oldB = math.floor((color.R*255)+0.5),math.floor((color.G*255)+0.5),math.floor((color.B*255)+0.5)
+					local save 
+					if toChange == "R" then save = oldR;oldR = value elseif toChange == "G" then save = oldG;oldG = value else save = oldB;oldB = value end
+					if value then 
+						value = math.clamp(value,0,255)
+						h,s,v = Color3.fromRGB(oldR,oldG,oldB):ToHSV()
+						setDisplay()
+					else 
+						box.Text = tostring(save)
+					end
+					local r,g,b = math.floor((color.R*255)+0.5),math.floor((color.G*255)+0.5),math.floor((color.B*255)+0.5)
+					ColorPickerSettings.Color = Color3.fromRGB(r,g,b)
+				end
+				ColorPicker.RInput.InputBox.FocusLost:connect(function()
+					rgbBoxes(ColorPicker.RInput.InputBox,"R")
+					SafeCallback(Color3.fromRGB(r,g,b))
+				end)
+				ColorPicker.GInput.InputBox.FocusLost:connect(function()
+					rgbBoxes(ColorPicker.GInput.InputBox,"G")
+					SafeCallback(Color3.fromRGB(r,g,b))
+				end)
+				ColorPicker.BInput.InputBox.FocusLost:connect(function()
+					rgbBoxes(ColorPicker.BInput.InputBox,"B")
+					SafeCallback(Color3.fromRGB(r,g,b))
+				end)
+				RunService.RenderStepped:connect(function()
+					if mainDragging then 
+						local localX = math.clamp(mouse.X-Main.AbsolutePosition.X,0,Main.AbsoluteSize.X)
+						local localY = math.clamp(mouse.Y-Main.AbsolutePosition.Y,0,Main.AbsoluteSize.Y)
+						Main.MainPoint.Position = UDim2.new(0,localX-Main.MainPoint.AbsoluteSize.X/2,0,localY-Main.MainPoint.AbsoluteSize.Y/2)
+						s = localX / Main.AbsoluteSize.X
+						v = 1 - (localY / Main.AbsoluteSize.Y)
+						Display.BackgroundColor3 = Color3.fromHSV(h,s,v)
+						Main.MainPoint.ImageColor3 = Color3.fromHSV(h,s,v)
+						Background.BackgroundColor3 = Color3.fromHSV(h,1,1)
+						local color = Color3.fromHSV(h,s,v) 
+						local r,g,b = math.floor((color.R*255)+0.5),math.floor((color.G*255)+0.5),math.floor((color.B*255)+0.5)
+						ColorPicker.RInput.InputBox.Text = tostring(r)
+						ColorPicker.GInput.InputBox.Text = tostring(g)
+						ColorPicker.BInput.InputBox.Text = tostring(b)
+						ColorPicker.HexInput.InputBox.Text = string.format("#%02X%02X%02X",color.R*0xFF,color.G*0xFF,color.B*0xFF)
+						SafeCallback(Color3.fromRGB(r,g,b))
+						ColorPickerSettings.Color = Color3.fromRGB(r,g,b)
+						ColorPickerV.Color = ColorPickerSettings.Color
+					end
+					if sliderDragging then 
+						local localX = math.clamp(mouse.X-Slider.AbsolutePosition.X,0,Slider.AbsoluteSize.X)
+						h = localX / Slider.AbsoluteSize.X
+						Display.BackgroundColor3 = Color3.fromHSV(h,s,v)
+						Slider.SliderPoint.Position = UDim2.new(0,localX-Slider.SliderPoint.AbsoluteSize.X/2,0.5,0)
+						Slider.SliderPoint.ImageColor3 = Color3.fromHSV(h,1,1)
+						Background.BackgroundColor3 = Color3.fromHSV(h,1,1)
+						Main.MainPoint.ImageColor3 = Color3.fromHSV(h,s,v)
+						local color = Color3.fromHSV(h,s,v) 
+						local r,g,b = math.floor((color.R*255)+0.5),math.floor((color.G*255)+0.5),math.floor((color.B*255)+0.5)
+						ColorPicker.RInput.InputBox.Text = tostring(r)
+						ColorPicker.GInput.InputBox.Text = tostring(g)
+						ColorPicker.BInput.InputBox.Text = tostring(b)
+						ColorPicker.HexInput.InputBox.Text = string.format("#%02X%02X%02X",color.R*0xFF,color.G*0xFF,color.B*0xFF)
+						SafeCallback(Color3.fromRGB(r,g,b))
+						ColorPickerSettings.Color = Color3.fromRGB(r,g,b)
+						ColorPickerV.Color = ColorPickerSettings.Color
+					end
+				end)
+
+				function ColorPickerV:Set(NewColorPickerSettings)
+
+					NewColorPickerSettings = Kwargify(ColorPickerSettings, NewColorPickerSettings or {})
+
+					ColorPickerV.Settings = NewColorPickerSettings
+					ColorPickerSettings = NewColorPickerSettings
+
+					ColorPicker.Name = ColorPickerSettings.Name
+					ColorPicker.Title.Text = ColorPickerSettings.Name
+					ColorPicker.Visible = true
+
+					local h,s,v = ColorPickerSettings.Color:ToHSV()
+					local color = Color3.fromHSV(h,s,v) 
+					local r,g,b = math.floor((color.R*255)+0.5),math.floor((color.G*255)+0.5),math.floor((color.B*255)+0.5)
+					local hex = string.format("#%02X%02X%02X",color.R*0xFF,color.G*0xFF,color.B*0xFF)
+					ColorPicker.HexInput.InputBox.Text = hex
+					setDisplay(h,s,v)
+					SafeCallback(Color3.fromRGB(r,g,b))
+
+					ColorPickerV.Color = ColorPickerSettings.Color
+				end
+
+				function ColorPickerV:Destroy()
+					ColorPicker:Destroy()
+				end
+
+				if Flag then
+					Luna.Options[Flag] = ColorPickerV
+				end
+
+				SafeCallback(ColorPickerSettings.Color)
+
+				return ColorPickerV
+			end
+
+			return Section
+
+		end
+
+		-- Divider
+		function Tab:CreateDivider()
+			local b = Elements.Template.Divider:Clone()
+			b.Parent = TabPage
+			b.Line.BackgroundTransparency = 1
+			tween(b.Line, {BackgroundTransparency = 0})
+		end
+
+		-- Button
+		function Tab:CreateButton(ButtonSettings)
+
+			ButtonSettings = Kwargify({
+				Name = "Button",
+				Description = nil,
+				Callback = function()
+
+				end,
+			}, ButtonSettings or {})
+
+			local ButtonV = {
+				Hover = false,
+				Settings = ButtonSettings
+			}
+
+
+			local Button
+			if ButtonSettings.Description == nil and ButtonSettings.Description ~= "" then
+				Button = Elements.Template.Button:Clone()
+			else
+				Button = Elements.Template.ButtonDesc:Clone()
+			end
+			Button.Name = ButtonSettings.Name
+			Button.Title.Text = ButtonSettings.Name
+			if ButtonSettings.Description ~= nil and ButtonSettings.Description ~= "" then
+				Button.Desc.Text = ButtonSettings.Description
+			end
+			Button.Visible = true
+			Button.Parent = TabPage
+
+			Button.UIStroke.Transparency = 1
+			Button.Title.TextTransparency = 1
+			if ButtonSettings.Description ~= nil and ButtonSettings.Description ~= "" then
+				Button.Desc.TextTransparency = 1
+			end
+
+			TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+			TweenService:Create(Button.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+			TweenService:Create(Button.Title, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()	
+			if ButtonSettings.Description ~= nil and ButtonSettings.Description ~= "" then
+				TweenService:Create(Button.Desc, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()	
+			end
+
+			Button.Interact["MouseButton1Click"]:Connect(function()
+				local Success,Response = pcall(ButtonSettings.Callback)
+
+				if not Success then
+					TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+					TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+					TweenService:Create(Button.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+					Button.Title.Text = "Callback Error"
+					print("Luna Interface Suite | "..ButtonSettings.Name.." Callback Error " ..tostring(Response))
+					wait(0.5)
+					Button.Title.Text = ButtonSettings.Name
+					TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+					TweenService:Create(Button, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+					TweenService:Create(Button.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+				else
+					tween(Button.UIStroke, {Color = Color3.fromRGB(136, 131, 163)})
+					wait(0.2)
+					if ButtonV.Hover then
+						tween(Button.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+					else
+						tween(Button.UIStroke, {Color = Color3.fromRGB(64,61,76)})
+					end
+				end
+			end)
+
+			Button["MouseEnter"]:Connect(function()
+				ButtonV.Hover = true
+				tween(Button.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+			end)
+
+			Button["MouseLeave"]:Connect(function()
+				ButtonV.Hover = false
+				tween(Button.UIStroke, {Color = Color3.fromRGB(64,61,76)})
+			end)
+
+			function ButtonV:Set(ButtonSettings2)
+				ButtonSettings2 = Kwargify({
+					Name = ButtonSettings.Name,
+					Description = ButtonSettings.Description,
+					Callback = ButtonSettings.Callback
+				}, ButtonSettings2 or {})
+
+				ButtonSettings = ButtonSettings2
+				ButtonV.Settings = ButtonSettings2
+
+				Button.Name = ButtonSettings.Name
+				Button.Title.Text = ButtonSettings.Name
+				if ButtonSettings.Description ~= nil and ButtonSettings.Description ~= "" and Button.Desc ~= nil then
+					Button.Desc.Text = ButtonSettings.Description
+				end
+			end
+
+			function ButtonV:Destroy()
+				Button.Visible = false
+				Button:Destroy()
+			end
+
+			return ButtonV
+		end
+
+		-- Label
+		function Tab:CreateLabel(LabelSettings)
+
+			local LabelV = {}
+
+			LabelSettings = Kwargify({
+				Text = "Label",
+				Style = 1
+			}, LabelSettings or {}) 
+
+			LabelV.Settings = LabelSettings
+
+			local Label
+			if LabelSettings.Style == 1 then
+				Label = Elements.Template.Label:Clone()
+			elseif LabelSettings.Style == 2 then
+				Label = Elements.Template.Info:Clone()
+			elseif LabelSettings.Style == 3 then
+				Label = Elements.Template.Warn:Clone()
+			end
+
+			Label.Text.Text = LabelSettings.Text
+			Label.Visible = true
+			Label.Parent = TabPage
+
+			Label.BackgroundTransparency = 1
+			Label.UIStroke.Transparency = 1
+			Label.Text.TextTransparency = 1
+
+			if LabelSettings.Style ~= 1 then
+				TweenService:Create(Label, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.8}):Play()
+			else
+				TweenService:Create(Label, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
+			end
+			TweenService:Create(Label.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+			TweenService:Create(Label.Text, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()	
+
+			function LabelV:Set(NewLabel)
+				LabelSettings.Text = NewLabel
+				LabelV.Settings = LabelSettings
+				Label.Text.Text = NewLabel
+			end
+
+			function LabelV:Destroy()
+				Label.Visible = false
+				Label:Destroy()
+			end
+
+			return LabelV
+		end
+
+		-- Paragraph
+		function Tab:CreateParagraph(ParagraphSettings)
+
+			ParagraphSettings = Kwargify({
+				Title = "Paragraph",
+				Text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus venenatis lacus sed tempus eleifend. Mauris interdum bibendum felis, in tempor augue egestas vel. Praesent tristique consectetur ex, eu pretium sem placerat non. Vestibulum a nisi sit amet augue facilisis consectetur sit amet et nunc. Integer fermentum ornare cursus. Pellentesque sed ultricies metus, ut egestas metus. Vivamus auctor erat ac sapien vulputate, nec ultricies sem tempor. Quisque leo lorem, faucibus nec pulvinar nec, congue eu velit. Duis sodales massa efficitur imperdiet ultrices. Donec eros ipsum, ornare pharetra purus aliquam, tincidunt elementum nisi. Ut mi tortor, feugiat eget nunc vitae, facilisis interdum dui. Vivamus ullamcorper nunc dui, a dapibus nisi pretium ac. Integer eleifend placerat nibh, maximus malesuada tellus. Cras in justo in ligula scelerisque suscipit vel vitae quam."
+			}, ParagraphSettings or {})
+
+			local ParagraphV = {
+				Settings = ParagraphSettings
+			}
+
+			local Paragraph = Elements.Template.Paragraph:Clone()
+			Paragraph.Title.Text = ParagraphSettings.Title
+			Paragraph.Text.Text = ParagraphSettings.Text
+			Paragraph.Visible = true
+			Paragraph.Parent = TabPage
+
+			Paragraph.BackgroundTransparency = 1
+			Paragraph.UIStroke.Transparency = 1
+			Paragraph.Title.TextTransparency = 1
+			Paragraph.Text.TextTransparency = 1
+
+			TweenService:Create(Paragraph, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 1}):Play()
+			TweenService:Create(Paragraph.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+			TweenService:Create(Paragraph.Title, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()	
+			TweenService:Create(Paragraph.Text, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()	
+
+			function ParagraphV:Update()
+				Paragraph.Text.Size = UDim2.new(Paragraph.Text.Size.X.Scale, Paragraph.Text.Size.X.Offset, 0, math.huge)
+				Paragraph.Text.Size = UDim2.new(Paragraph.Text.Size.X.Scale, Paragraph.Text.Size.X.Offset, 0, Paragraph.Text.TextBounds.Y)
+				tween(Paragraph, {Size = UDim2.new(Paragraph.Size.X.Scale, Paragraph.Size.X.Offset, 0, Paragraph.Text.TextBounds.Y + 40)})
+			end
+
+			function ParagraphV:Set(NewParagraphSettings)
+
+				NewParagraphSettings = Kwargify({
+					Title = ParagraphSettings.Title,
+					Text = ParagraphSettings.Text
+				}, NewParagraphSettings or {})
+
+				ParagraphV.Settings = NewParagraphSettings
+
+				Paragraph.Title.Text = NewParagraphSettings.Title
+				Paragraph.Text.Text = NewParagraphSettings.Text
+
+				ParagraphV:Update()
+
+			end
+
+			function ParagraphV:Destroy()
+				Paragraph.Visible = false
+				Paragraph:Destroy()
+			end
+
+			ParagraphV:Update()
+
+			return ParagraphV
+		end
+
+		-- Slider
+		function Tab:CreateSlider(SliderSettings, Flag)
+			local SliderV = { IgnoreConfig = false, Class = "Slider", Settings = SliderSettings }
+
+			SliderSettings = Kwargify({
+				Name = "Slider",
+				Range = {0, 200},
+				Increment = 1,
+				CurrentValue = 100,
+				Callback = function(Value)
+
+				end,
+			}, SliderSettings or {})
+
+			local SLDragging = false
+			local Slider = Elements.Template.Slider:Clone()
+			Slider.Name = SliderSettings.Name .. " - Slider"
+			Slider.Title.Text = SliderSettings.Name
+			Slider.Visible = true
+			Slider.Parent = TabPage
+
+			Slider.BackgroundTransparency = 1
+			Slider.UIStroke.Transparency = 1
+			Slider.Title.TextTransparency = 1
+
+			TweenService:Create(Slider, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+			TweenService:Create(Slider.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+			TweenService:Create(Slider.Title, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()	
+
+			Slider.Main.Progress.Size =	UDim2.new(0, Slider.Main.AbsoluteSize.X * ((SliderSettings.CurrentValue + SliderSettings.Range[1]) / (SliderSettings.Range[2] - SliderSettings.Range[1])) > 5 and Slider.Main.AbsoluteSize.X * (SliderSettings.CurrentValue / (SliderSettings.Range[2] - SliderSettings.Range[1])) or 5, 1, 0)
+
+			Slider.Value.Text = tostring(SliderSettings.CurrentValue)
+			SliderV.CurrentValue = Slider.Value.Text
+
+			SliderSettings.Callback(SliderSettings.CurrentValue)
+
+			Slider["MouseEnter"]:Connect(function()
+				tween(Slider.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+			end)
+
+			Slider["MouseLeave"]:Connect(function()
+				tween(Slider.UIStroke, {Color = Color3.fromRGB(64,61,76)})
+			end)
+
+			Slider.Interact.InputBegan:Connect(function(Input)
+				if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then 
+					SLDragging = true 
+				end 
+			end)
+
+			Slider.Interact.InputEnded:Connect(function(Input) 
+				if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then 
+					SLDragging = false 
+				end 
+			end)
+
+			Slider.Interact.MouseButton1Down:Connect(function()
+				local Current = Slider.Main.Progress.AbsolutePosition.X + Slider.Main.Progress.AbsoluteSize.X
+				local Start = Current
+				local Location
+				local Loop; Loop = RunService.Stepped:Connect(function()
+					if SLDragging then
+						Location = UserInputService:GetMouseLocation().X
+						Current = Current + 0.025 * (Location - Start)
+
+						if Location < Slider.Main.AbsolutePosition.X then
+							Location = Slider.Main.AbsolutePosition.X
+						elseif Location > Slider.Main.AbsolutePosition.X + Slider.Main.AbsoluteSize.X then
+							Location = Slider.Main.AbsolutePosition.X + Slider.Main.AbsoluteSize.X
+						end
+
+						if Current < Slider.Main.AbsolutePosition.X + 5 then
+							Current = Slider.Main.AbsolutePosition.X + 5
+						elseif Current > Slider.Main.AbsolutePosition.X + Slider.Main.AbsoluteSize.X then
+							Current = Slider.Main.AbsolutePosition.X + Slider.Main.AbsoluteSize.X
+						end
+
+						if Current <= Location and (Location - Start) < 0 then
+							Start = Location
+						elseif Current >= Location and (Location - Start) > 0 then
+							Start = Location
+						end
+						Slider.Main.Progress.Size = UDim2.new(0, Location - Slider.Main.AbsolutePosition.X, 1, 0)
+						local NewValue = SliderSettings.Range[1] + (Location - Slider.Main.AbsolutePosition.X) / Slider.Main.AbsoluteSize.X * (SliderSettings.Range[2] - SliderSettings.Range[1])
+
+						NewValue = math.floor(NewValue / SliderSettings.Increment + 0.5) * (SliderSettings.Increment * 10000000) / 10000000
+
+						Slider.Value.Text = tostring(NewValue)
+
+						if SliderSettings.CurrentValue ~= NewValue then
+							local Success, Response = pcall(function()
+								SliderSettings.Callback(NewValue)
+							end)
+							if not Success then
+								TweenService:Create(Slider, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+								TweenService:Create(Slider, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+								TweenService:Create(Slider.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+								Slider.Title.Text = "Callback Error"
+								print("Luna Interface Suite | "..SliderSettings.Name.." Callback Error " ..tostring(Response))
+								wait(0.5)
+								Slider.Title.Text = SliderSettings.Name
+								TweenService:Create(Slider, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+								TweenService:Create(Slider, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+								TweenService:Create(Slider.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+							end
+
+							SliderSettings.CurrentValue = NewValue
+							SliderV.CurrentValue = SliderSettings.CurrentValue
+							-- Luna.Flags[SliderSettings.Flag] = SliderSettings
+						end
+					else
+						TweenService:Create(Slider.Main.Progress, TweenInfo.new(0.1, Enum.EasingStyle.Back, Enum.EasingDirection.In, 0, false), {Size = UDim2.new(0, Location - Slider.Main.AbsolutePosition.X > 5 and Location - Slider.Main.AbsolutePosition.X or 5, 1, 0)}):Play()
+						Loop:Disconnect()
+					end
+				end)
+			end)
+
+			local function Set(NewVal, bleh)
+
+				NewVal = NewVal or SliderSettings.CurrentValue
+
+				TweenService:Create(Slider.Main.Progress, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.InOut), {Size = UDim2.new(0, Slider.Main.AbsoluteSize.X * ((NewVal + SliderSettings.Range[1]) / (SliderSettings.Range[2] - SliderSettings.Range[1])) > 5 and Slider.Main.AbsoluteSize.X * (NewVal / (SliderSettings.Range[2] - SliderSettings.Range[1])) or 5, 1, 0)}):Play()
+				if not bleh then Slider.Value.Text = tostring(NewVal) end
+				local Success, Response = pcall(function()
+					SliderSettings.Callback(NewVal)
+				end)
+				if not Success then
+					TweenService:Create(Slider, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+					TweenService:Create(Slider, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+					TweenService:Create(Slider.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+					Slider.Title.Text = "Callback Error"
+					print("Luna Interface Suite | "..SliderSettings.Name.." Callback Error " ..tostring(Response))
+					wait(0.5)
+					Slider.Title.Text = SliderSettings.Name
+					TweenService:Create(Slider, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+					TweenService:Create(Slider, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(30, 33, 40)}):Play()
+					TweenService:Create(Slider.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+				end
+
+				SliderSettings.CurrentValue = NewVal
+				SliderV.CurrentValue = SliderSettings.CurrentValue
+				-- Luna.Flags[SliderSettings.Flag] = SliderSettings
+
+			end
+
+			function SliderV:UpdateValue(Value)
+				Set(tonumber(Value))
+			end 
+
+			Slider.Value:GetPropertyChangedSignal("Text"):Connect(function()
+				local text = Slider.Value.Text
+				if not tonumber(text) and text ~= "." then
+					Slider.Value.Text = text:match("[0-9.]*") or ""
+				end
+				if SliderSettings.Range[2] < (tonumber(Slider.Value.Text) or 0) then Slider.Value.Text = SliderSettings.Range[2] end
+				Slider.Value.Size = UDim2.fromOffset(Slider.Value.TextBounds.X, 23)
+				Set(tonumber(Slider.Value.Text), true)
+			end)
+
+			function SliderV:Set(NewSliderSettings)
+				NewSliderSettings = Kwargify({
+					Name = SliderSettings.Name,
+					Range = SliderSettings.Range,
+					Increment = SliderSettings.Increment,
+					CurrentValue = SliderSettings.CurrentValue,
+					Callback = SliderSettings.Callback
+				}, NewSliderSettings or {})
+
+				SliderSettings = NewSliderSettings
+				SliderV.Settings = NewSliderSettings
+
+				Slider.Name = SliderSettings.Name .. " - Slider"
+				Slider.Title.Text = SliderSettings.Name
+
+				Set()
+
+				-- Luna.Flags[SliderSettings.Flag] = SliderSettings
+			end
+
+			function SliderV:Destroy()
+				Slider.Visible = false
+				Slider:Destroy()
+			end
+
+			if Flag then
+				Luna.Options[Flag] = SliderV
+			end
+
+			LunaUI.ThemeRemote:GetPropertyChangedSignal("Value"):Connect(function()
+				Slider.Main.color.Color = Luna.ThemeGradient
+				Slider.Main.UIStroke.color.Color = Luna.ThemeGradient
+			end)
+
+			return SliderV
+
+		end
+
+		-- Toggle
+		function Tab:CreateToggle(ToggleSettings, Flag)    
+			local ToggleV = { IgnoreConfig = false, Class = "Toggle" }
+
+			ToggleSettings = Kwargify({
+				Name = "Toggle",
+				Description = nil,
+				CurrentValue = false,
+				Callback = function(Value)
+				end,
+			}, ToggleSettings or {})
+
+
+			local Toggle
+
+			if ToggleSettings.Description ~= nil and ToggleSettings.Description ~= "" then
+				Toggle = Elements.Template.ToggleDesc:Clone()
+			else
+				Toggle = Elements.Template.Toggle:Clone()
+			end
+
+			Toggle.Visible = true
+			Toggle.Parent = TabPage
+
+			Toggle.Name = ToggleSettings.Name .. " - Toggle"
+			Toggle.Title.Text = ToggleSettings.Name
+			if ToggleSettings.Description ~= nil and ToggleSettings.Description ~= "" then
+				Toggle.Desc.Text = ToggleSettings.Description
+			end
+
+			Toggle.UIStroke.Transparency = 1
+			Toggle.Title.TextTransparency = 1
+			if ToggleSettings.Description ~= nil and ToggleSettings.Description ~= "" then
+				Toggle.Desc.TextTransparency = 1
+			end
+
+			TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+			if ToggleSettings.Description ~= nil and ToggleSettings.Description ~= "" then
+				TweenService:Create(Toggle.Desc, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+			end
+			TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+			TweenService:Create(Toggle.Title, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()	
+
+			local function Set(bool)
+				if bool then
+					Toggle.toggle.color.Enabled = true
+					tween(Toggle.toggle, {BackgroundTransparency = 0})
+
+					Toggle.toggle.UIStroke.color.Enabled = true
+					tween(Toggle.toggle.UIStroke, {Color = Color3.new(255,255,255)})
+
+					tween(Toggle.toggle.val, {BackgroundColor3 = Color3.fromRGB(255,255,255), Position = UDim2.new(1,-23,0.5,0), BackgroundTransparency = 0.45})
+				else
+					Toggle.toggle.color.Enabled = false
+					Toggle.toggle.UIStroke.color.Enabled = false
+
+					Toggle.toggle.UIStroke.Color = Color3.fromRGB(97,97,97)
+
+					tween(Toggle.toggle, {BackgroundTransparency = 1})
+
+					tween(Toggle.toggle.val, {BackgroundColor3 = Color3.fromRGB(97,97,97), Position = UDim2.new(0,5,0.5,0), BackgroundTransparency = 0})
+				end
+
+				ToggleV.CurrentValue = bool
+			end
+
+			Toggle.Interact.MouseButton1Click:Connect(function()
+				ToggleSettings.CurrentValue = not ToggleSettings.CurrentValue
+				Set(ToggleSettings.CurrentValue)
+
+				local Success, Response = pcall(function()
+					ToggleSettings.Callback(ToggleSettings.CurrentValue)
+				end)
+				if not Success then
+					TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+					TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+					Toggle.Title.Text = "Callback Error"
+					print("Luna Interface Suite | "..ToggleSettings.Name.." Callback Error " ..tostring(Response))
+					wait(0.5)
+					Toggle.Title.Text = ToggleSettings.Name
+					TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+					TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+				end
+			end)
+
+			Toggle["MouseEnter"]:Connect(function()
+				tween(Toggle.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+			end)
+
+			Toggle["MouseLeave"]:Connect(function()
+				tween(Toggle.UIStroke, {Color = Color3.fromRGB(64,61,76)})
+			end)
+
+			if ToggleSettings.CurrentValue then
+				Set(ToggleSettings.CurrentValue)
+				local Success, Response = pcall(function()
+					ToggleSettings.Callback(ToggleSettings.CurrentValue)
+				end)
+				if not Success then
+					TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+					TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+					Toggle.Title.Text = "Callback Error"
+					print("Luna Interface Suite | "..ToggleSettings.Name.." Callback Error " ..tostring(Response))
+					wait(0.5)
+					Toggle.Title.Text = ToggleSettings.Name
+					TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+					TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+				end
+			end
+
+			function ToggleV:UpdateState(State)
+				ToggleSettings.CurrentValue = State
+				Set(ToggleSettings.CurrentValue)
+			end
+
+			function ToggleV:Set(NewToggleSettings)
+
+				NewToggleSettings = Kwargify({
+					Name = ToggleSettings.Name,
+					Description = ToggleSettings.Description,
+					CurrentValue = ToggleSettings.CurrentValue,
+					Callback = ToggleSettings.Callback
+				}, NewToggleSettings or {})
+
+				ToggleV.Settings = NewToggleSettings
+				ToggleSettings = NewToggleSettings
+
+				Toggle.Name = ToggleSettings.Name .. " - Toggle"
+				Toggle.Title.Text = ToggleSettings.Name
+				if ToggleSettings.Description ~= nil and ToggleSettings.Description ~= "" and Toggle.Desc ~= nil then
+					Toggle.Desc.Text = ToggleSettings.Description
+				end
+
+				Set(ToggleSettings.CurrentValue)
+
+				ToggleV.CurrentValue = ToggleSettings.CurrentValue
+
+				local Success, Response = pcall(function()
+					ToggleSettings.Callback(ToggleSettings.CurrentValue)
+				end)
+				if not Success then
+					TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+					TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0}):Play()
+					Toggle.Title.Text = "Callback Error"
+					print("Luna Interface Suite | "..ToggleSettings.Name.." Callback Error " ..tostring(Response))
+					wait(0.5)
+					Toggle.Title.Text = ToggleSettings.Name
+					TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+					TweenService:Create(Toggle, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+					TweenService:Create(Toggle.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+				end
+			end
+
+			function ToggleV:Destroy()
+				Toggle.Visible = false
+				Toggle:Destroy()
+			end
+
+			LunaUI.ThemeRemote:GetPropertyChangedSignal("Value"):Connect(function()
+				Toggle.toggle.color.Color = Luna.ThemeGradient
+				Toggle.toggle.UIStroke.color.Color = Luna.ThemeGradient
+			end)
+
+			if Flag then
+				Luna.Options[Flag] = ToggleV
+			end
+
+			return ToggleV
+
+		end
+
+		-- Bind
+		function Tab:CreateBind(BindSettings, Flag)
+			local BindV = { Class = "Keybind", IgnoreConfig = false, Settings = BindSettings, Active = false }
+
+			BindSettings = Kwargify({
+				Name = "Bind",
+				Description = nil,
+				CurrentBind = "Q",
+				HoldToInteract = false, -- setting this makes the Bind in toggle mode
+				Callback = function(Bind)
+					-- The function that takes place when the Bind is pressed
+					-- The variable (Bind) is a boolean for whether the Bind is being held or not (HoldToInteract needs to be true) or whether the Bind is currently active
+				end,
+
+				OnChangedCallback = function(Bind)
+					-- The function that takes place when the binded key changes
+					-- The variable (Bind) is a Enum.KeyCode for the new Binded Key
+				end,
+			}, BindSettings or {})
+
+			local CheckingForKey = false
+
+			local Bind
+			if BindSettings.Description ~= nil and BindSettings.Description ~= "" then
+				Bind = Elements.Template.BindDesc:Clone()
+			else
+				Bind = Elements.Template.Bind:Clone()
+			end
+
+			Bind.Visible = true
+			Bind.Parent = TabPage
+
+			Bind.Name = BindSettings.Name
+			Bind.Title.Text = BindSettings.Name
+			if BindSettings.Description ~= nil and BindSettings.Description ~= "" then
+				Bind.Desc.Text = BindSettings.Description
+			end
+
+			Bind.Title.TextTransparency = 1
+			if BindSettings.Description ~= nil and BindSettings.Description ~= "" then
+				Bind.Desc.TextTransparency = 1
+			end
+			Bind.BindFrame.BackgroundTransparency = 1
+			Bind.BindFrame.UIStroke.Transparency = 1
+			Bind.BindFrame.BindBox.TextTransparency = 1
+
+			TweenService:Create(Bind, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+			TweenService:Create(Bind.Title, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+			if BindSettings.Description ~= nil and BindSettings.Description ~= "" then
+				TweenService:Create(Bind.Desc, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+			end
+			TweenService:Create(Bind.BindFrame, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.9}):Play()
+			TweenService:Create(Bind.BindFrame.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {Transparency = 0.3}):Play()
+			TweenService:Create(Bind.BindFrame.BindBox, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+
+
+			Bind.BindFrame.BindBox.Text = BindSettings.CurrentBind
+			Bind.BindFrame.BindBox.Size = UDim2.new(0, Bind.BindFrame.BindBox.TextBounds.X + 20, 0, 42)
+
+			Bind.BindFrame.BindBox.Focused:Connect(function()
+				CheckingForKey = true
+				Bind.BindFrame.BindBox.Text = ""
+			end)
+
+			Bind.BindFrame.BindBox.FocusLost:Connect(function()
+				CheckingForKey = false
+				if Bind.BindFrame.BindBox.Text == (nil or "") then
+					Bind.BindFrame.BindBox.Text = BindSettings.CurrentBind
+				end
+			end)
+
+			Bind["MouseEnter"]:Connect(function()
+				tween(Bind.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+			end)
+
+			Bind["MouseLeave"]:Connect(function()
+				tween(Bind.UIStroke, {Color = Color3.fromRGB(64,61,76)})
+			end)
+			UserInputService.InputBegan:Connect(function(input, processed)
+
+				if CheckingForKey then
+					if input.KeyCode ~= Enum.KeyCode.Unknown and input.KeyCode ~= Window.Bind then
+						local SplitMessage = string.split(tostring(input.KeyCode), ".")
+						local NewKeyNoEnum = SplitMessage[3]
+						Bind.BindFrame.BindBox.Text = tostring(NewKeyNoEnum)
+						BindSettings.CurrentBind = tostring(NewKeyNoEnum)
+						local Success, Response = pcall(function()
+							BindSettings.OnChangedCallback(BindSettings.CurrentBind)
+						end)
+						if not Success then
+							TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+							TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+							TweenService:Create(Bind.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+							Bind.Title.Text = "Callback Error"
+							print("Luna Interface Suite | "..BindSettings.Name.." Callback Error " ..tostring(Response))
+							wait(0.5)
+							Bind.Title.Text = BindSettings.Name
+							TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+							TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+							TweenService:Create(Bind.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+						end
+						Bind.BindFrame.BindBox:ReleaseFocus()
+					end
+				elseif BindSettings.CurrentBind ~= nil and (input.KeyCode == Enum.KeyCode[BindSettings.CurrentBind] and not processed) then -- Test
+					local Held = true
+					local Connection
+					Connection = input.Changed:Connect(function(prop)
+						if prop == "UserInputState" then
+							Connection:Disconnect()
+							Held = false
+						end
+					end)
+
+					if not BindSettings.HoldToInteract then
+						BindV.Active = not BindV.Active
+						local Success, Response = pcall(function()
+							BindSettings.Callback(BindV.Active)
+						end)
+						if not Success then
+							TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+							TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+							TweenService:Create(Bind.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+							Bind.Title.Text = "Callback Error"
+							print("Luna Interface Suite | "..BindSettings.Name.." Callback Error " ..tostring(Response))
+							wait(0.5)
+							Bind.Title.Text = BindSettings.Name
+							TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+							TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+							TweenService:Create(Bind.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+						end
+					else
+						wait(0.1)
+						if Held then
+							local Loop; Loop = RunService.Stepped:Connect(function()
+								if not Held then
+									local Success, Response = pcall(function()
+										BindSettings.Callback(false)
+									end)
+									if not Success then
+										TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+										TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+										TweenService:Create(Bind.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+										Bind.Title.Text = "Callback Error"
+										print("Luna Interface Suite | "..BindSettings.Name.." Callback Error " ..tostring(Response))
+										wait(0.5)
+										Bind.Title.Text = BindSettings.Name
+										TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+										TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+										TweenService:Create(Bind.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+									end 
+									Loop:Disconnect()
+								else
+									local Success, Response = pcall(function()
+										BindSettings.Callback(true)
+									end)
+									if not Success then
+										TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+										TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+										TweenService:Create(Bind.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+										Bind.Title.Text = "Callback Error"
+										print("Luna Interface Suite | "..BindSettings.Name.." Callback Error " ..tostring(Response))
+										wait(0.5)
+										Bind.Title.Text = BindSettings.Name
+										TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+										TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+										TweenService:Create(Bind.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+									end
+								end
+							end)	
+						end
+					end
+				end
+			end)
+
+			Bind.BindFrame.BindBox:GetPropertyChangedSignal("Text"):Connect(function()
+				TweenService:Create(Bind.BindFrame, TweenInfo.new(0.55, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {Size = UDim2.new(0, Bind.BindFrame.BindBox.TextBounds.X + 20, 0, 30)}):Play()
+			end)
+
+			function BindV:Set(NewBindSettings)
+
+				NewBindSettings = Kwargify({
+					Name = BindSettings.Name,
+					Description = BindSettings.Description,
+					CurrentBind =  BindSettings.CurrentBind,
+					HoldToInteract = BindSettings.HoldToInteract,
+					Callback = BindSettings.Callback
+				}, NewBindSettings or {})
+
+				BindV.Settings = NewBindSettings
+				BindSettings = NewBindSettings
+
+				Bind.Name = BindSettings.Name
+				Bind.Title.Text = BindSettings.Name
+				if BindSettings.Description ~= nil and BindSettings.Description ~= "" and Bind.Desc ~= nil then
+					Bind.Desc.Text = BindSettings.Description
+				end
+
+				Bind.BindFrame.BindBox.Text = BindSettings.CurrentBind
+				Bind.BindFrame.Size = UDim2.new(0, Bind.BindFrame.BindBox.TextBounds.X + 20, 0, 42)
+
+
+				BindV.CurrentBind = BindSettings.CurrentBind
+			end
+
+			function BindV:Destroy()
+				Bind.Visible = false
+				Bind:Destroy()
+			end
+
+			if Flag then
+				Luna.Options[Flag] = BindV
+			end
+
+			-- Luna.Flags[BindSettings.Flag] = BindSettings
+
+			return BindV
+
+		end
+
+		function Tab:CreateKeybind(BindSettings)
+
+			BindSettings = Kwargify({
+				Name = "Bind",
+				Description = nil,
+				CurrentBind = "Q",
+				HoldToInteract = false, -- setting this makes the Bind in toggle mode
+				Callback = function(Bind)
+					-- The function that takes place when the Bind is pressed
+					-- The variable (Bind) is a boolean for whether the Bind is being held or not (HoldToInteract needs to be true) or whether the Bind is currently active
+				end
+			}, BindSettings or {})
+
+			local BindV = { Settings = BindSettings, Active = false }
+			local CheckingForKey = false
+
+			local Bind
+			if BindSettings.Description ~= nil and BindSettings.Description ~= "" then
+				Bind = Elements.Template.BindDesc:Clone()
+			else
+				Bind = Elements.Template.Bind:Clone()
+			end
+
+			Bind.Visible = true
+			Bind.Parent = TabPage
+
+			Bind.Name = BindSettings.Name
+			Bind.Title.Text = BindSettings.Name
+			if BindSettings.Description ~= nil and BindSettings.Description ~= "" then
+				Bind.Desc.Text = BindSettings.Description
+			end
+
+			Bind.Title.TextTransparency = 1
+			if BindSettings.Description ~= nil and BindSettings.Description ~= "" then
+				Bind.Desc.TextTransparency = 1
+			end
+			Bind.BindFrame.BackgroundTransparency = 1
+			Bind.BindFrame.UIStroke.Transparency = 1
+			Bind.BindFrame.BindBox.TextTransparency = 1
+
+			TweenService:Create(Bind, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+			TweenService:Create(Bind.Title, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+			if BindSettings.Description ~= nil and BindSettings.Description ~= "" then
+				TweenService:Create(Bind.Desc, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+			end
+			TweenService:Create(Bind.BindFrame, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.9}):Play()
+			TweenService:Create(Bind.BindFrame.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {Transparency = 0.3}):Play()
+			TweenService:Create(Bind.BindFrame.BindBox, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+
+
+			Bind.BindFrame.BindBox.Text = BindSettings.CurrentBind
+			Bind.BindFrame.BindBox.Size = UDim2.new(0, Bind.BindFrame.BindBox.TextBounds.X + 16, 0, 42)
+
+			Bind.BindFrame.BindBox.Focused:Connect(function()
+				CheckingForKey = true
+				Bind.BindFrame.BindBox.Text = ""
+			end)
+
+			Bind.BindFrame.BindBox.FocusLost:Connect(function()
+				CheckingForKey = false
+				if Bind.BindFrame.BindBox.Text == (nil or "") then
+					Bind.BindFrame.BindBox.Text = BindSettings.CurrentBind
+				end
+			end)
+
+			Bind["MouseEnter"]:Connect(function()
+				tween(Bind.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+			end)
+
+			Bind["MouseLeave"]:Connect(function()
+				tween(Bind.UIStroke, {Color = Color3.fromRGB(64,61,76)})
+			end)
+			UserInputService.InputBegan:Connect(function(input, processed)
+
+				if CheckingForKey then
+					if input.KeyCode ~= Enum.KeyCode.Unknown and input.KeyCode ~= Enum.KeyCode.K then
+						local SplitMessage = string.split(tostring(input.KeyCode), ".")
+						local NewKeyNoEnum = SplitMessage[3]
+						Bind.BindFrame.BindBox.Text = tostring(NewKeyNoEnum)
+						BindSettings.CurrentBind = tostring(NewKeyNoEnum)
+						Bind.BindFrame.BindBox:ReleaseFocus()
+					end
+				elseif BindSettings.CurrentBind ~= nil and (input.KeyCode == Enum.KeyCode[BindSettings.CurrentBind] and not processed) then -- Test
+					local Held = true
+					local Connection
+					Connection = input.Changed:Connect(function(prop)
+						if prop == "UserInputState" then
+							Connection:Disconnect()
+							Held = false
+						end
+					end)
+
+					if not BindSettings.HoldToInteract then
+						BindV.Active = not BindV.Active
+						local Success, Response = pcall(function()
+							BindSettings.Callback(BindV.Active)
+						end)
+						if not Success then
+							TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+							TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+							TweenService:Create(Bind.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+							Bind.Title.Text = "Callback Error"
+							print("Luna Interface Suite | "..BindSettings.Name.." Callback Error " ..tostring(Response))
+							wait(0.5)
+							Bind.Title.Text = BindSettings.Name
+							TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+							TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+							TweenService:Create(Bind.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+						end
+					else
+						wait(0.1)
+						if Held then
+							local Loop; Loop = RunService.Stepped:Connect(function()
+								if not Held then
+									local Success, Response = pcall(function()
+										BindSettings.Callback(false)
+									end)
+									if not Success then
+										TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+										TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+										TweenService:Create(Bind.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+										Bind.Title.Text = "Callback Error"
+										print("Luna Interface Suite | "..BindSettings.Name.." Callback Error " ..tostring(Response))
+										wait(0.5)
+										Bind.Title.Text = BindSettings.Name
+										TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+										TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+										TweenService:Create(Bind.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+									end 
+									Loop:Disconnect()
+								else
+									local Success, Response = pcall(function()
+										BindSettings.Callback(true)
+									end)
+									if not Success then
+										TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+										TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+										TweenService:Create(Bind.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+										Bind.Title.Text = "Callback Error"
+										print("Luna Interface Suite | "..BindSettings.Name.." Callback Error " ..tostring(Response))
+										wait(0.5)
+										Bind.Title.Text = BindSettings.Name
+										TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+										TweenService:Create(Bind, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+										TweenService:Create(Bind.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+									end
+								end
+							end)	
+						end
+					end
+				end
+			end)
+
+			Bind.BindFrame.BindBox:GetPropertyChangedSignal("Text"):Connect(function()
+				TweenService:Create(Bind.BindFrame, TweenInfo.new(0.55, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {Size = UDim2.new(0, Bind.BindFrame.BindBox.TextBounds.X + 16, 0, 30)}):Play()
+			end)
+
+			function BindV:Set(NewBindSettings)
+
+				NewBindSettings = Kwargify({
+					Name = BindSettings.Name,
+					Description = BindSettings.Description,
+					CurrentBind =  BindSettings.CurrentBind,
+					HoldToInteract = BindSettings.HoldToInteract,
+					Callback = BindSettings.Callback
+				}, NewBindSettings or {})
+
+				BindV.Settings = NewBindSettings
+				BindSettings = NewBindSettings
+
+				Bind.Name = BindSettings.Name
+				Bind.Title.Text = BindSettings.Name
+				if BindSettings.Description ~= nil and BindSettings.Description ~= "" and Bind.Desc ~= nil then
+					Bind.Desc.Text = BindSettings.Description
+				end
+
+				Bind.BindFrame.BindBox.Text = BindSettings.CurrentBind
+				Bind.BindFrame.BindBox.Size = UDim2.new(0, Bind.BindFrame.BindBox.TextBounds.X + 16, 0, 42)
+
+				-- Luna.Flags[BindSettings.Flag] = BindSettings
+
+			end
+
+			function BindV:Destroy()
+				Bind.Visible = false
+				Bind:Destroy()
+			end
+
+			-- Luna.Flags[BindSettings.Flag] = BindSettings
+
+			return BindV
+
+		end
+
+		-- Dynamic Input
+		function Tab:CreateInput(InputSettings, Flag)
+			local InputV = { IgnoreConfig = false, Class = "Input", Settings = InputSettings }
+
+			InputSettings = Kwargify({
+				Name = "Dynamic Input",
+				Description = nil,
+				CurrentValue = "",
+				PlaceholderText = "Input Placeholder",
+				RemoveTextAfterFocusLost = false,
+				Numeric = false,
+				Enter = false,
+				MaxCharacters = nil,
+				Callback = function(Text)
+
+				end, -- 52
+			}, InputSettings or {})
+
+			InputV.CurrentValue = InputSettings.CurrentValue
+
+			local descriptionbool
+			if InputSettings.Description ~= nil and InputSettings.Description ~= "" then
+				descriptionbool = true
+			end
+
+			local Input 
+			if descriptionbool then
+				Input = Elements.Template.InputDesc:Clone()
+			else
+				Input = Elements.Template.Input:Clone()
+			end
+
+			Input.Name = InputSettings.Name
+			Input.Title.Text = InputSettings.Name
+			if descriptionbool then Input.Desc.Text = InputSettings.Description end
+			Input.Visible = true
+			Input.Parent = TabPage
+
+			Input.BackgroundTransparency = 1
+			Input.UIStroke.Transparency = 1
+			Input.Title.TextTransparency = 1
+			if descriptionbool then Input.Desc.TextTransparency = 1 end
+			Input.InputFrame.BackgroundTransparency = 1
+			Input.InputFrame.UIStroke.Transparency = 1
+			Input.InputFrame.InputBox.TextTransparency = 1
+
+			TweenService:Create(Input, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+			TweenService:Create(Input.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+			TweenService:Create(Input.Title, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()	
+			if descriptionbool then TweenService:Create(Input.Desc, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play() end
+			TweenService:Create(Input.InputFrame, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.9}):Play()
+			TweenService:Create(Input.InputFrame.UIStroke, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {Transparency = 0.3}):Play()
+			TweenService:Create(Input.InputFrame.InputBox, TweenInfo.new(0.3, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+
+			Input.InputFrame.InputBox.PlaceholderText = InputSettings.PlaceholderText
+			Input.InputFrame.Size = UDim2.new(0, Input.InputFrame.InputBox.TextBounds.X + 52, 0, 30)
+
+			Input.InputFrame.InputBox.FocusLost:Connect(function(bleh)
+
+				if InputSettings.Enter then
+					if bleh then
+						local Success, Response = pcall(function()
+							InputSettings.Callback(Input.InputFrame.InputBox.Text)
+							InputV.CurrentValue = Input.InputFrame.InputBox.Text
+						end)
+						if not Success then
+							TweenService:Create(Input, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+							TweenService:Create(Input, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+							TweenService:Create(Input.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+							Input.Title.Text = "Callback Error"
+							print("Luna Interface Suite | "..InputSettings.Name.." Callback Error " ..tostring(Response))
+							wait(0.5)
+							Input.Title.Text = InputSettings.Name
+							TweenService:Create(Input, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+							TweenService:Create(Input, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+							TweenService:Create(Input.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+						end
+					end
+				end
+
+				if InputSettings.RemoveTextAfterFocusLost then
+					Input.InputFrame.InputBox.Text = ""
+				end
+
+			end)
+
+			if InputSettings.Numeric then
+				Input.InputFrame.InputBox:GetPropertyChangedSignal("Text"):Connect(function()
+					local text = Input.InputFrame.InputBox.Text
+					if not tonumber(text) and text ~= "." then
+						Input.InputFrame.InputBox.Text = text:match("[0-9.]*") or ""
+					end
+				end)
+			end
+
+			Input.InputFrame.InputBox:GetPropertyChangedSignal("Text"):Connect(function()
+				if tonumber(InputSettings.MaxCharacters) then
+					if (#Input.InputFrame.InputBox.Text - 1) == InputSettings.MaxCharacters then
+						Input.InputFrame.InputBox.Text = Input.InputFrame.InputBox.Text:sub(1, InputSettings.MaxCharacters)
+					end
+				end
+				TweenService:Create(Input.InputFrame, TweenInfo.new(0.55, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {Size = UDim2.new(0, Input.InputFrame.InputBox.TextBounds.X + 52, 0, 30)}):Play()
+				if not InputSettings.Enter then
+					local Success, Response = pcall(function()
+						InputSettings.Callback(Input.InputFrame.InputBox.Text)
+					end)
+					if not Success then
+						TweenService:Create(Input, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+						TweenService:Create(Input, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+						TweenService:Create(Input.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+						Input.Title.Text = "Callback Error"
+						print("Luna Interface Suite | "..InputSettings.Name.." Callback Error " ..tostring(Response))
+						wait(0.5)
+						Input.Title.Text = InputSettings.Name
+						TweenService:Create(Input, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+						TweenService:Create(Input, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+						TweenService:Create(Input.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+					end
+				end
+				InputV.CurrentValue = Input.InputFrame.InputBox.Text				
+			end)
+
+			Input["MouseEnter"]:Connect(function()
+				tween(Input.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+			end)
+
+			Input["MouseLeave"]:Connect(function()
+				tween(Input.UIStroke, {Color = Color3.fromRGB(64,61,76)})
+			end)
+
+
+			function InputV:Set(NewInputSettings)
+
+				NewInputSettings = Kwargify(InputSettings, NewInputSettings or {})
+
+				InputV.Settings = NewInputSettings
+				InputSettings = NewInputSettings
+
+				Input.Name = InputSettings.Name
+				Input.Title.Text = InputSettings.Name
+				if InputSettings.Description ~= nil and InputSettings.Description ~= "" and Input.Desc ~= nil then
+					Input.Desc.Text = InputSettings.Description
+				end
+
+				Input.InputFrame.InputBox:CaptureFocus()
+				Input.InputFrame.InputBox.Text = tostring(InputSettings.CurrentValue)
+				Input.InputFrame.InputBox:ReleaseFocus()
+				Input.InputFrame.Size = UDim2.new(0, Input.InputFrame.InputBox.TextBounds.X + 52, 0, 42)
+
+				InputV.CurrentValue = InputSettings.CurrentValue
+			end
+
+			function InputV:Destroy()
+				Input.Visible = false
+				Input:Destroy()
+			end
+
+			if Flag then
+				Luna.Options[Flag] = InputV
+			end
+
+
+			return InputV
+
+		end
+
+		-- Dropdown
+		function Tab:CreateDropdown(DropdownSettings, Flag)
+			local DropdownV = { IgnoreConfig = false, Class = "Dropdown", Settings = DropdownSettings}
+
+			DropdownSettings = Kwargify({
+				Name = "Dropdown",
+				Description = nil,
+				Options = {"Option 1", "Option 2"},
+				CurrentOption = {"Option 1"},
+				MultipleOptions = false,
+				SpecialType = nil, -- currently onl player, might add more soon
+				Callback = function(Options)
+					-- The function that takes place when the selected option is changed
+					-- The variable (Options) is a table of strings for the current selected options or a string if multioptions is false
+				end,
+			}, DropdownSettings or {})
+
+			DropdownV.CurrentOption = DropdownSettings.CurrentOption
+
+			local descriptionbool = false
+			if DropdownSettings.Description ~= nil and DropdownSettings.Description ~= "" then
+				descriptionbool = true
+			end
+			local closedsize
+			local openedsize
+			if descriptionbool then
+				closedsize = 48
+				openedsize = 170
+			elseif not descriptionbool then
+				closedsize = 38
+				openedsize = 160
+			end
+			local opened = false
+
+			local Dropdown
+			if descriptionbool then Dropdown = Elements.Template.DropdownDesc:Clone() else Dropdown = Elements.Template.Dropdown:Clone() end
+
+			Dropdown.Name = DropdownSettings.Name
+			Dropdown.Title.Text = DropdownSettings.Name
+			if descriptionbool then Dropdown.Desc.Text = DropdownSettings.Description end
+
+			Dropdown.Parent = TabPage
+			Dropdown.Visible = true
+
+			local function Toggle()
+				opened = not opened
+				if opened then
+					tween(Dropdown.icon, {Rotation = 180})
+					tween(Dropdown, {Size = UDim2.new(1, -25, 0, openedsize)})
+				else
+					tween(Dropdown.icon, {Rotation = 0})
+					tween(Dropdown, {Size = UDim2.new(1, -25, 0, closedsize)})
+				end
+			end
+
+			local function SafeCallback(param, c2)
+				local Success, Response = pcall(function()
+					DropdownSettings.Callback(param)
+				end)
+				if not Success then
+					TweenService:Create(Dropdown, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+					TweenService:Create(Dropdown, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+					TweenService:Create(Dropdown.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+					Dropdown.Title.Text = "Callback Error"
+					print("Luna Interface Suite | "..DropdownSettings.Name.." Callback Error " ..tostring(Response))
+					wait(0.5)
+					Dropdown.Title.Text = DropdownSettings.Name
+					TweenService:Create(Dropdown, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+					TweenService:Create(Dropdown, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+					TweenService:Create(Dropdown.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+				end
+				if Success and c2 then
+					c2()
+				end
+			end
+
+			-- fixed by justhey
+			Dropdown.Selected:GetPropertyChangedSignal("Text"):Connect(function()
+				local text = Dropdown.Selected.Text:lower()
+				for _, Item in ipairs(Dropdown.List:GetChildren()) do
+					if Item:IsA("TextLabel") and Item.Name ~= "Template" then
+						Item.Visible = text == "" or string.find(Item.Name:lower(), text, 1, true) ~= nil
+					end
+				end
+			end)
+
+
+			local function Clear()
+				for _, option in ipairs(Dropdown.List:GetChildren()) do
+					if option.ClassName == "TextLabel" and option.Name ~= "Template" then
+						option:Destroy()
+					end
+				end
+			end
+
+			local function ActivateColorSingle(name)
+				for _, Option in pairs(Dropdown.List:GetChildren()) do
+					if Option.ClassName == "TextLabel" and Option.Name ~= "Template" then
+						tween(Option, {BackgroundTransparency = 0.98})
+					end
+				end
+
+				Toggle()
+				tween(Dropdown.List[name], {BackgroundTransparency = 0.95, TextColor3 = Color3.fromRGB(240,240,240)})
+			end
+
+			local function Refresh()
+				Clear()
+				for i,v in pairs(DropdownSettings.Options) do
+					local Option = Dropdown.List.Template:Clone()
+					local optionhover = false
+					Option.Text = v
+					if v == "Template" then v = "Template (Name)" end
+					Option.Name = v
+					Option.Interact.MouseButton1Click:Connect(function()
+						local bleh
+						if DropdownSettings.MultipleOptions then
+							if table.find(DropdownSettings.CurrentOption, v) then
+								RemoveTable(DropdownSettings.CurrentOption, v)
+								DropdownV.CurrentOption = DropdownSettings.CurrentOption
+								if not optionhover then
+									tween(Option, {TextColor3 = Color3.fromRGB(200,200,200)})
+								end
+								tween(Option, {BackgroundTransparency = 0.98})
+							else
+								table.insert(DropdownSettings.CurrentOption, v)
+								DropdownV.CurrentOption = DropdownSettings.CurrentOption
+								tween(Option, {TextColor3 = Color3.fromRGB(240,240,240), BackgroundTransparency = 0.95})
+							end
+							bleh = DropdownSettings.CurrentOption
+						else
+							DropdownSettings.CurrentOption = {v}
+							bleh = v
+							DropdownV.CurrentOption = bleh
+							ActivateColorSingle(v)
+						end
+
+						SafeCallback(bleh, function()
+							if DropdownSettings.MultipleOptions then
+								if DropdownSettings.CurrentOption and type(DropdownSettings.CurrentOption) == "table" then
+									if #DropdownSettings.CurrentOption == 1 then
+										Dropdown.Selected.PlaceholderText = DropdownSettings.CurrentOption[1]
+									elseif #DropdownSettings.CurrentOption == 0 then
+										Dropdown.Selected.PlaceholderText = "None"
+									else
+										Dropdown.Selected.PlaceholderText = unpackt(DropdownSettings.CurrentOption)
+									end
+								else
+									DropdownSettings.CurrentOption = {}
+									Dropdown.Selected.PlaceholderText = "None"
+								end
+							end
+							if not DropdownSettings.MultipleOptions then
+								Dropdown.Selected.PlaceholderText = DropdownSettings.CurrentOption[1] or "None"
+							end
+							Dropdown.Selected.Text = ""
+						end)
+					end)
+					Option.Visible = true
+					Option.Parent = Dropdown.List
+					Option.MouseEnter:Connect(function()
+						optionhover = true
+						if Option.BackgroundTransparency == 0.95 then
+							return
+						else
+							tween(Option, {TextColor3 = Color3.fromRGB(240,240,240)})
+						end
+					end)
+					Option.MouseLeave:Connect(function()
+						optionhover = false
+						if Option.BackgroundTransparency == 0.95 then
+							return
+						else
+							tween(Option, {TextColor3 = Color3.fromRGB(200,200,200)})
+						end
+					end)	
+				end
+			end
+
+			local function PlayerTableRefresh()
+				for i,v in pairs(DropdownSettings.Options) do
+					table.remove(DropdownSettings.Options, i)
+				end
+
+				for i,v in pairs(Players:GetChildren()) do
+					table.insert(DropdownSettings.Options, v.Name)
+				end
+			end
+
+			Dropdown.Interact.MouseButton1Click:Connect(function()
+				Toggle()
+			end)
+
+			Dropdown["MouseEnter"]:Connect(function()
+				tween(Dropdown.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+			end)
+
+			Dropdown["MouseLeave"]:Connect(function()
+				tween(Dropdown.UIStroke, {Color = Color3.fromRGB(64,61,76)})
+			end)
+
+			if DropdownSettings.SpecialType == "Player" then
+
+				for i,v in pairs(DropdownSettings.Options) do
+					table.remove(DropdownSettings.Options, i)
+				end
+				PlayerTableRefresh()
+				DropdownSettings.CurrentOption = DropdownSettings.Options[1]
+
+				Players.PlayerAdded:Connect(function() PlayerTableRefresh() end)
+				Players.PlayerRemoving:Connect(function() PlayerTableRefresh() end)
+
+			end
+
+			Refresh()
+
+			if DropdownSettings.CurrentOption then
+				if type(DropdownSettings.CurrentOption) == "string" then
+					DropdownSettings.CurrentOption = {DropdownSettings.CurrentOption}
+				end
+				if not DropdownSettings.MultipleOptions and type(DropdownSettings.CurrentOption) == "table" then
+					DropdownSettings.CurrentOption = {DropdownSettings.CurrentOption[1]}
+				end
+			else
+				DropdownSettings.CurrentOption = {}
+			end
+
+			local bleh, ind = nil,0
+			for i,v in pairs(DropdownSettings.CurrentOption) do
+				ind = ind + 1
+			end
+			if ind == 1 then bleh = DropdownSettings.CurrentOption[1] else bleh = DropdownSettings.CurrentOption end
+			SafeCallback(bleh)
+			if type(bleh) == "string" then 
+				tween(Dropdown.List[bleh], {TextColor3 = Color3.fromRGB(240,240,240), BackgroundTransparency = 0.95})
+			else
+				for i,v in pairs(bleh) do
+					tween(Dropdown.List[v], {TextColor3 = Color3.fromRGB(240,240,240), BackgroundTransparency = 0.95})
+				end
+			end
+
+			if DropdownSettings.MultipleOptions then
+				if DropdownSettings.CurrentOption and type(DropdownSettings.CurrentOption) == "table" then
+					if #DropdownSettings.CurrentOption == 1 then
+						Dropdown.Selected.PlaceholderText = DropdownSettings.CurrentOption[1]
+					elseif #DropdownSettings.CurrentOption == 0 then
+						Dropdown.Selected.PlaceholderText = "None"
+					else
+						Dropdown.Selected.PlaceholderText = unpackt(DropdownSettings.CurrentOption)
+					end
+				else
+					DropdownSettings.CurrentOption = {}
+					Dropdown.Selected.PlaceholderText = "None"
+				end
+				for _, name in pairs(DropdownSettings.CurrentOption) do
+					tween(Dropdown.List[name], {TextColor3 = Color3.fromRGB(227,227,227), BackgroundTransparency = 0.95})
+				end
+			else
+				Dropdown.Selected.PlaceholderText = DropdownSettings.CurrentOption[1] or "None"
+			end
+			Dropdown.Selected.Text = ""
+
+			function DropdownV:Set(NewDropdownSettings)
+				NewDropdownSettings = Kwargify(DropdownSettings, NewDropdownSettings or {})
+
+				DropdownV.Settings = NewDropdownSettings
+				DropdownSettings = NewDropdownSettings
+
+				Dropdown.Name = DropdownSettings.Name
+				Dropdown.Title.Text = DropdownSettings.Name
+				if DropdownSettings.Description ~= nil and DropdownSettings.Description ~= "" and Dropdown.Desc ~= nil then
+					Dropdown.Desc.Text = DropdownSettings.Description
+				end
+
+				if DropdownSettings.SpecialType == "Player" then
+
+					for i,v in pairs(DropdownSettings.Options) do
+						table.remove(DropdownSettings.Options, i)
+					end
+					PlayerTableRefresh()
+					DropdownSettings.CurrentOption = DropdownSettings.Options[1]                    
+					Players.PlayerAdded:Connect(function() PlayerTableRefresh() end)
+					Players.PlayerRemoving:Connect(function() PlayerTableRefresh() end)
+
+				end
+
+				Refresh()
+
+				if DropdownSettings.CurrentOption then
+					if type(DropdownSettings.CurrentOption) == "string" then
+						DropdownSettings.CurrentOption = {DropdownSettings.CurrentOption}
+					end
+					if not DropdownSettings.MultipleOptions and type(DropdownSettings.CurrentOption) == "table" then
+						DropdownSettings.CurrentOption = {DropdownSettings.CurrentOption[1]}
+					end
+				else
+					DropdownSettings.CurrentOption = {}
+				end
+
+				local bleh, ind = nil,0
+				for i,v in pairs(DropdownSettings.CurrentOption) do
+					ind = ind + 1
+				end
+				if ind == 1 then bleh = DropdownSettings.CurrentOption[1] else bleh = DropdownSettings.CurrentOption end
+				SafeCallback(bleh)
+				for _, Option in pairs(Dropdown.List:GetChildren()) do
+					if Option.ClassName == "TextLabel" then
+						tween(Option, {TextColor3 = Color3.fromRGB(200,200,200), BackgroundTransparency = 0.98})
+					end
+				end
+				tween(Dropdown.List[bleh], {TextColor3 = Color3.fromRGB(240,240,240), BackgroundTransparency = 0.95})
+
+				if DropdownSettings.MultipleOptions then
+					if DropdownSettings.CurrentOption and type(DropdownSettings.CurrentOption) == "table" then
+						if #DropdownSettings.CurrentOption == 1 then
+							Dropdown.Selected.PlaceholderText = DropdownSettings.CurrentOption[1]
+						elseif #DropdownSettings.CurrentOption == 0 then
+							Dropdown.Selected.PlaceholderText = "None"
+						else
+							Dropdown.Selected.PlaceholderText = unpackt(DropdownSettings.CurrentOption)
+						end
+					else
+						DropdownSettings.CurrentOption = {}
+						Dropdown.Selected.PlaceholderText = "None"
+					end
+					for _, name in pairs(DropdownSettings.CurrentOption) do
+						tween(Dropdown.List[name], {TextColor3 = Color3.fromRGB(227,227,227), BackgroundTransparency = 0.95})
+					end
+				else
+					Dropdown.Selected.PlaceholderText = DropdownSettings.CurrentOption[1] or "None"
+				end
+				Dropdown.Selected.Text = ""
+
+				-- Luna.Flags[DropdownSettings.Flag] = DropdownSettings
+
+			end
+
+			function DropdownV:Destroy()
+				Dropdown.Visible = false
+				Dropdown:Destroy()
+			end
+
+			if Flag then
+				Luna.Options[Flag] = DropdownV
+			end
+
+			-- Luna.Flags[DropdownSettings.Flag] = DropdownSettings
+
+			return DropdownV
+
+		end
+
+		-- Color Picker
+		function Tab:CreateColorPicker(ColorPickerSettings, Flag) -- by Rayfield/Throit
+			local ColorPickerV = {IgnoreClass = false, Class = "Colorpicker", Settings = ColorPickerSettings}
+
+			ColorPickerSettings = Kwargify({
+				Name = "Color Picker",
+				Color = Color3.fromRGB(255,255,255),
+				Callback = function(Value)
+					-- The function that takes place every time the color picker is moved/changed
+					-- The variable (Value) is a Color3fromRGB value based on which color is selected
+				end
+			}, ColorPickerSettings or {})
+
+			local function Color3ToHex(color)
+				return string.format("#%02X%02X%02X", math.floor(color.R * 255), math.floor(color.G * 255), math.floor(color.B * 255))
+			end
+
+			ColorPickerV.Color = Color3ToHex(ColorPickerSettings.Color)
+
+			local closedsize = UDim2.new(0, 75, 0, 22)
+			local openedsize = UDim2.new(0, 219, 0, 129)
+
+			local ColorPicker = Elements.Template.ColorPicker:Clone()
+			local Background = ColorPicker.CPBackground
+			local Display = Background.Display
+			local Main = Background.MainCP
+			local Slider = ColorPicker.ColorSlider
+
+			ColorPicker.Name = ColorPickerSettings.Name
+			ColorPicker.Title.Text = ColorPickerSettings.Name
+			ColorPicker.Visible = true
+			ColorPicker.Parent = TabPage
+			ColorPicker.Size = UDim2.new(1.042, -25,0, 38)
+			Background.Size = closedsize
+			Display.BackgroundTransparency = 0
+
+			ColorPicker["MouseEnter"]:Connect(function()
+				tween(ColorPicker.UIStroke, {Color = Color3.fromRGB(87, 84, 104)})
+			end)
+			ColorPicker["MouseLeave"]:Connect(function()
+				tween(ColorPicker.UIStroke, {Color = Color3.fromRGB(64,61,76)})
+			end)
+
+			local function SafeCallback(param, c2)
+				local Success, Response = pcall(function()
+					ColorPickerSettings.Callback(param)
+				end)
+				if not Success then
+					TweenService:Create(ColorPicker, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0}):Play()
+					TweenService:Create(ColorPicker, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(85, 0, 0)}):Play()
+					TweenService:Create(ColorPicker.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 1}):Play()
+					ColorPicker.Title.Text = "Callback Error"
+					print("Luna Interface Suite | "..ColorPickerSettings.Name.." Callback Error " ..tostring(Response))
+					wait(0.5)
+					ColorPicker.Title.Text = ColorPickerSettings.Name
+					TweenService:Create(ColorPicker, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundTransparency = 0.5}):Play()
+					TweenService:Create(ColorPicker, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {BackgroundColor3 = Color3.fromRGB(32, 30, 38)}):Play()
+					TweenService:Create(ColorPicker.UIStroke, TweenInfo.new(0.7, Enum.EasingStyle.Exponential), {Transparency = 0.5}):Play()
+				end
+				if Success and c2 then
+					c2()
+				end
+			end
+
+			local opened = false
+
+			local mouse = game.Players.LocalPlayer:GetMouse()
+			Main.Image = "http://www.roblox.com/asset/?id=11415645739"
+			local mainDragging = false 
+			local sliderDragging = false 
+			ColorPicker.Interact.MouseButton1Down:Connect(function()
+				if not opened then
+					opened = true 
+					tween(ColorPicker, {Size = UDim2.new( 1.042, -25,0, 165)}, nil, TweenInfo.new(0.6, Enum.EasingStyle.Exponential))
+					tween(Background, {Size = openedsize})
+					tween(Display, {BackgroundTransparency = 1})
+				else
+					opened = false
+					tween(ColorPicker, {Size = UDim2.new(1.042, -25,0, 38)}, nil, TweenInfo.new(0.6, Enum.EasingStyle.Exponential))
+					tween(Background, {Size = closedsize})
+					tween(Display, {BackgroundTransparency = 0})
+				end
+			end)
+			UserInputService.InputEnded:Connect(function(input, gameProcessed) if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then 
+					mainDragging = false
+					sliderDragging = false
+				end end)
+			Main.MouseButton1Down:Connect(function()
+				if opened then
+					mainDragging = true 
+				end
+			end)
+			Main.MainPoint.MouseButton1Down:Connect(function()
+				if opened then
+					mainDragging = true 
+				end
+			end)
+			Slider.MouseButton1Down:Connect(function()
+				sliderDragging = true 
+			end)
+			Slider.SliderPoint.MouseButton1Down:Connect(function()
+				sliderDragging = true 
+			end)
+			local h,s,v = ColorPickerSettings.Color:ToHSV()
+			local color = Color3.fromHSV(h,s,v) 
+			local r,g,b = math.floor((h*255)+0.5),math.floor((s*255)+0.5),math.floor((v*255)+0.5)
+			local hex = string.format("#%02X%02X%02X",color.R*0xFF,color.G*0xFF,color.B*0xFF)
+			ColorPicker.HexInput.InputBox.Text = hex
+			local function setDisplay(hp,sp,vp)
+				--Main
+				Main.MainPoint.Position = UDim2.new(s,-Main.MainPoint.AbsoluteSize.X/2,1-v,-Main.MainPoint.AbsoluteSize.Y/2)
+				Main.MainPoint.ImageColor3 = Color3.fromHSV(hp,sp,vp)
+				Background.BackgroundColor3 = Color3.fromHSV(hp,1,1)
+				Display.BackgroundColor3 = Color3.fromHSV(hp,sp,vp)
+				--Slider 
+				local x = hp * Slider.AbsoluteSize.X
+				Slider.SliderPoint.Position = UDim2.new(0,x-Slider.SliderPoint.AbsoluteSize.X/2,0.5,0)
+				Slider.SliderPoint.ImageColor3 = Color3.fromHSV(hp,1,1)
+				local color = Color3.fromHSV(hp,sp,vp) 
+				local r,g,b = math.floor((color.R*255)+0.5),math.floor((color.G*255)+0.5),math.floor((color.B*255)+0.5)
+				ColorPicker.RInput.InputBox.Text = tostring(r)
+				ColorPicker.GInput.InputBox.Text = tostring(g)
+				ColorPicker.BInput.InputBox.Text = tostring(b)
+				hex = string.format("#%02X%02X%02X",color.R*0xFF,color.G*0xFF,color.B*0xFF)
+				ColorPicker.HexInput.InputBox.Text = hex
+			end
+			setDisplay(h,s,v)
+			ColorPicker.HexInput.InputBox.FocusLost:Connect(function()
+				if not pcall(function()
+						local r, g, b = string.match(ColorPicker.HexInput.InputBox.Text, "^#?(%w%w)(%w%w)(%w%w)$")
+						local rgbColor = Color3.fromRGB(tonumber(r, 16),tonumber(g, 16), tonumber(b, 16))
+						h,s,v = rgbColor:ToHSV()
+						hex = ColorPicker.HexInput.InputBox.Text
+						setDisplay()
+						ColorPickerSettings.Color = rgbColor
+					end) 
+				then 
+					ColorPicker.HexInput.InputBox.Text = hex 
+				end
+				local r,g,b = math.floor((h*255)+0.5),math.floor((s*255)+0.5),math.floor((v*255)+0.5)
+				ColorPickerSettings.Color = Color3.fromRGB(r,g,b)
+				SafeCallback( Color3.fromRGB(r,g,b))
+			end)
+			--RGB
+			local function rgbBoxes(box,toChange)
+				local value = tonumber(box.Text) 
+				local color = Color3.fromHSV(h,s,v) 
+				local oldR,oldG,oldB = math.floor((color.R*255)+0.5),math.floor((color.G*255)+0.5),math.floor((color.B*255)+0.5)
+				local save 
+				if toChange == "R" then save = oldR;oldR = value elseif toChange == "G" then save = oldG;oldG = value else save = oldB;oldB = value end
+				if value then 
+					value = math.clamp(value,0,255)
+					h,s,v = Color3.fromRGB(oldR,oldG,oldB):ToHSV()
+					setDisplay()
+				else 
+					box.Text = tostring(save)
+				end
+				local r,g,b = math.floor((color.R*255)+0.5),math.floor((color.G*255)+0.5),math.floor((color.B*255)+0.5)
+				ColorPickerSettings.Color = Color3.fromRGB(r,g,b)
+			end
+			ColorPicker.RInput.InputBox.FocusLost:connect(function()
+				rgbBoxes(ColorPicker.RInput.InputBox,"R")
+				SafeCallback(Color3.fromRGB(r,g,b))
+			end)
+			ColorPicker.GInput.InputBox.FocusLost:connect(function()
+				rgbBoxes(ColorPicker.GInput.InputBox,"G")
+				SafeCallback(Color3.fromRGB(r,g,b))
+			end)
+			ColorPicker.BInput.InputBox.FocusLost:connect(function()
+				rgbBoxes(ColorPicker.BInput.InputBox,"B")
+				SafeCallback(Color3.fromRGB(r,g,b))
+			end)
+			RunService.RenderStepped:connect(function()
+				if mainDragging then 
+					local localX = math.clamp(mouse.X-Main.AbsolutePosition.X,0,Main.AbsoluteSize.X)
+					local localY = math.clamp(mouse.Y-Main.AbsolutePosition.Y,0,Main.AbsoluteSize.Y)
+					Main.MainPoint.Position = UDim2.new(0,localX-Main.MainPoint.AbsoluteSize.X/2,0,localY-Main.MainPoint.AbsoluteSize.Y/2)
+					s = localX / Main.AbsoluteSize.X
+					v = 1 - (localY / Main.AbsoluteSize.Y)
+					Display.BackgroundColor3 = Color3.fromHSV(h,s,v)
+					Main.MainPoint.ImageColor3 = Color3.fromHSV(h,s,v)
+					Background.BackgroundColor3 = Color3.fromHSV(h,1,1)
+					local color = Color3.fromHSV(h,s,v) 
+					local r,g,b = math.floor((color.R*255)+0.5),math.floor((color.G*255)+0.5),math.floor((color.B*255)+0.5)
+					ColorPicker.RInput.InputBox.Text = tostring(r)
+					ColorPicker.GInput.InputBox.Text = tostring(g)
+					ColorPicker.BInput.InputBox.Text = tostring(b)
+					ColorPicker.HexInput.InputBox.Text = string.format("#%02X%02X%02X",color.R*0xFF,color.G*0xFF,color.B*0xFF)
+					SafeCallback(Color3.fromRGB(r,g,b))
+					ColorPickerSettings.Color = Color3.fromRGB(r,g,b)
+					ColorPickerV.Color = ColorPickerSettings.Color
+				end
+				if sliderDragging then 
+					local localX = math.clamp(mouse.X-Slider.AbsolutePosition.X,0,Slider.AbsoluteSize.X)
+					h = localX / Slider.AbsoluteSize.X
+					Display.BackgroundColor3 = Color3.fromHSV(h,s,v)
+					Slider.SliderPoint.Position = UDim2.new(0,localX-Slider.SliderPoint.AbsoluteSize.X/2,0.5,0)
+					Slider.SliderPoint.ImageColor3 = Color3.fromHSV(h,1,1)
+					Background.BackgroundColor3 = Color3.fromHSV(h,1,1)
+					Main.MainPoint.ImageColor3 = Color3.fromHSV(h,s,v)
+					local color = Color3.fromHSV(h,s,v) 
+					local r,g,b = math.floor((color.R*255)+0.5),math.floor((color.G*255)+0.5),math.floor((color.B*255)+0.5)
+					ColorPicker.RInput.InputBox.Text = tostring(r)
+					ColorPicker.GInput.InputBox.Text = tostring(g)
+					ColorPicker.BInput.InputBox.Text = tostring(b)
+					ColorPicker.HexInput.InputBox.Text = string.format("#%02X%02X%02X",color.R*0xFF,color.G*0xFF,color.B*0xFF)
+					SafeCallback(Color3.fromRGB(r,g,b))
+					ColorPickerSettings.Color = Color3.fromRGB(r,g,b)
+					ColorPickerV.Color = ColorPickerSettings.Color
+				end
+			end)
+
+			function ColorPickerV:Set(NewColorPickerSettings)
+
+				NewColorPickerSettings = Kwargify(ColorPickerSettings, NewColorPickerSettings or {})
+
+				ColorPickerV.Settings = NewColorPickerSettings
+				ColorPickerSettings = NewColorPickerSettings
+
+				ColorPicker.Name = ColorPickerSettings.Name
+				ColorPicker.Title.Text = ColorPickerSettings.Name
+				ColorPicker.Visible = true
+
+				local h,s,v = ColorPickerSettings.Color:ToHSV()
+				local color = Color3.fromHSV(h,s,v) 
+				local r,g,b = math.floor((color.R*255)+0.5),math.floor((color.G*255)+0.5),math.floor((color.B*255)+0.5)
+				local hex = string.format("#%02X%02X%02X",color.R*0xFF,color.G*0xFF,color.B*0xFF)
+				ColorPicker.HexInput.InputBox.Text = hex
+				setDisplay(h,s,v)
+				SafeCallback(Color3.fromRGB(r,g,b))
+
+				ColorPickerV.Color = ColorPickerSettings.Color
+			end
+
+			function ColorPickerV:Destroy()
+				ColorPicker:Destroy()
+			end
+
+			if Flag then
+				Luna.Options[Flag] = ColorPickerV
+			end
+
+			SafeCallback(ColorPickerSettings.Color)
+
+			return ColorPickerV
+		end
+
+
+		function Tab:BuildConfigSection()
+			if isStudio then
+				Tab:CreateLabel({Text = "Config system unavailable. (Environment isStudio)", Style = 3})
+				return "Config system unavailable." 
+			end
+
+			local inputPath = nil
+			local selectedConfig = nil
+
+			local Title = Elements.Template.Title:Clone()
+			Title.Text = "Configurations"
+			Title.Visible = true
+			Title.Parent = TabPage
+			Title.TextTransparency = 1
+			TweenService:Create(Title, TweenInfo.new(0.4, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
+
+			Tab:CreateSection("Config Creator")
+
+			Tab:CreateInput({
+				Name = "Config Name",
+				Description = "Insert a name for your to be created config.",
+				PlaceholderText = "Name",
+				CurrentValue = "",
+				Numeric = false,
+				MaxCharacters = nil,
+				Enter = false,
+				Callback = function(input)
+					inputPath = input
+				end,
+			})
+
+			local configSelection
+
+			Tab:CreateButton({
+				Name = "Create Config",
+				Description = "Create a config with all of your current settings.",
+				Callback = function()
+					if not inputPath or string.gsub(inputPath, " ", "") == "" then
+						Luna:Notification({
+							Title = "Interface",
+							Icon = "warning",
+							ImageSource = "Material",
+							Content = "Config name cannot be empty."
+						})
+						return
+					end
+
+					local success, returned = Luna:SaveConfig(inputPath)
+					if not success then
+						Luna:Notification({
+							Title = "Interface",
+							Icon = "error",
+							ImageSource = "Material",
+							Content = "Unable to save config, return error: " .. returned
+						})
+					end
+
+					Luna:Notification({
+						Title = "Interface",
+						Icon = "info",
+						ImageSource = "Material",
+						Content = string.format("Created config %q", inputPath),
+					})
+
+					configSelection:Set({ Options = Luna:RefreshConfigList() })
+				end
+			})
+
+			Tab:CreateSection("Config Load/Settings")
+
+
+			configSelection = Tab:CreateDropdown({
+				Name = "Select Config",
+				Description = "Select a config to load your settings on.",
+				Options = Luna:RefreshConfigList(),
+				CurrentOption = {},
+				MultipleOptions = false,
+				SpecialType = nil,
+				Callback = function(Value)
+					selectedConfig = Value
+				end,
+			})
+
+			Tab:CreateButton({
+				Name = "Load Config",
+				Description = "Load your saved config settings.",
+				Callback = function()
+					local success, returned = Luna:LoadConfig(selectedConfig)
+					if not success then
+						Luna:Notification({
+							Title = "Interface",
+							Icon = "error",
+							ImageSource = "Material",
+							Content = "Unable to load config, return error: " .. returned
+						})
+						return
+					end
+
+					Luna:Notification({
+						Title = "Interface",
+						Icon = "info",
+						ImageSource = "Material",
+						Content = string.format("Loaded config %q", selectedConfig),
+					})
+				end
+			})
+
+			Tab:CreateButton({
+				Name = "Overwrite Config",
+				Description = "Overwrite your current config settings.",
+				Callback = function()
+					local success, returned = Luna:SaveConfig(selectedConfig)
+					if not success then
+						Luna:Notification({
+							Title = "Interface",
+							Icon = "error",
+							ImageSource = "Material",
+							Content = "Unable to overwrite config, return error: " .. returned
+						})
+						return
+					end
+
+					Luna:Notification({
+						Title = "Interface",
+						Icon = "info",
+						ImageSource = "Material",
+						Content = string.format("Overwrote config %q", selectedConfig),
+					})
+				end
+			})
+
+			Tab:CreateButton({
+				Name = "Refresh Config List",
+				Description = "Refresh the current config list.",
+				Callback = function()
+					configSelection:Set({ Options = Luna:RefreshConfigList() })
+				end,
+			})
+
+			local loadlabel
+			Tab:CreateButton({
+				Name = "Set as autoload",
+				Description = "Set a config to auto load setting in your next session.",
+				Callback = function()
+					local name = selectedConfig
+					writefile(Luna.Folder .. "/settings/autoload.txt", name)
+					loadlabel:Set({ Text = "Current autoload config: " .. name })
+
+					Luna:Notification({
+						Title = "Interface",
+						Icon = "info",
+						ImageSource = "Material",
+						Content = string.format("Set %q to auto load", name),
+					})
+				end,
+			})
+
+			loadlabel = Tab:CreateParagraph({
+				Title = "Current Auto Load",
+				Text = "None"
+			})
+
+			Tab:CreateButton({
+				Name = "Delete Autoload",
+				Description = "Delete The Autoload File",
+				Callback = function()
+					local name = selectedConfig
+					delfile(Luna.Folder .. "/settings/autoload.txt")
+					loadlabel:Set({ Text = "None" })
+
+					Luna:Notification({
+						Title = "Interface",
+						Icon = "info",
+						ImageSource = "Material",
+						Content = "Deleted Autoload",
+					})
+				end,
+			})
+
+			if isfile(Luna.Folder .. "/settings/autoload.txt") then
+				local name = readfile(Luna.Folder .. "/settings/autoload.txt")
+				loadlabel:Set( { Text = "Current autoload config: " .. name })
+			end     
+		end
+
+		local ClassParser = {
+			["Toggle"] = {
+				Save = function(Flag, data)
+					return {
+						type = "Toggle", 
+						flag = Flag, 
+						state = data.CurrentValue or false
+					}
+				end,
+				Load = function(Flag, data)
+					if Luna.Options[Flag] then
+						Luna.Options[Flag]:Set({ CurrentValue = data.state })
+					end
+				end
+			},
+			["Slider"] = {
+				Save = function(Flag, data)
+					return {
+						type = "Slider", 
+						flag = Flag, 
+						value = (data.CurrentValue and tostring(data.CurrentValue)),
+					}
+				end,
+				Load = function(Flag, data)
+					if Luna.Options[Flag] and data.value then
+						Luna.Options[Flag]:Set({ CurrentValue = data.value })
+					end
+				end
+			},
+			["Input"] = {
+				Save = function(Flag, data)
+					return {
+						type = "Input", 
+						flag = Flag, 
+						text = data.CurrentValue
+					}
+				end,
+				Load = function(Flag, data)
+					if Luna.Options[Flag] and data.text and type(data.text) == "string" then
+						Luna.Options[Flag]:Set({ CurrentValue = data.text })
+					end
+				end
+			},
+			["Dropdown"] = {
+				Save = function(Flag, data)
+					return {
+						type = "Dropdown", 
+						flag = Flag, 
+						value = data.CurrentOption
+					}
+				end,
+				Load = function(Flag, data)
+					if Luna.Options[Flag] and data.value then
+						Luna.Options[Flag]:Set({ CurrentOption = data.value })
+					end
+				end
+			},
+			-- buggy as hell stil
+			["Colorpicker"] = {
+				Save = function(Flag, data)
+					local function Color3ToHex(color)
+						return string.format("#%02X%02X%02X", math.floor(color.R * 255), math.floor(color.G * 255), math.floor(color.B * 255))
+					end
+
+					return {
+						type = "Colorpicker", 
+						flag = Flag, 
+						color = Color3ToHex(data.Color) or nil,
+						alpha = data.Alpha
+					}
+				end,
+				Load = function(Flag, data)
+					local function HexToColor3(hex)
+						local r = tonumber(hex:sub(2, 3), 16) / 255
+						local g = tonumber(hex:sub(4, 5), 16) / 255
+						local b = tonumber(hex:sub(6, 7), 16) / 255
+						return Color3.new(r, g, b)
+					end
+
+					if Luna.Options[Flag] and data.color then
+						Luna.Options[Flag]:Set({Color = HexToColor3(data.color)})
+					end
+				end
+			}
+		}
+
+
+		function Tab:BuildThemeSection()
+
+			local Title = Elements.Template.Title:Clone()
+			Title.Text = "Theming"
+			Title.Visible = true
+			Title.Parent = TabPage
+			Title.TextTransparency = 1
+			TweenService:Create(Title, TweenInfo.new(0.4, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
+
+			Tab:CreateSection("Custom Editor")
+
+			local c1cp = Tab:CreateColorPicker({
+				Name = "Color 1",
+				Color = Color3.fromRGB(117, 164, 206),
+			}, "LunaInterfaceSuitePrebuiltCPC1") -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+
+			local c2cp = Tab:CreateColorPicker({
+				Name = "Color 2",
+				Color = Color3.fromRGB(123, 201, 201),
+			}, "LunaInterfaceSuitePrebuiltCPC2")
+
+			local c3cp = Tab:CreateColorPicker({
+				Name = "Color 3",
+				Color = Color3.fromRGB(224, 138, 184),
+			}, "LunaInterfaceSuitePrebuiltCPC3") 
+
+			task.wait(1)
+
+			c1cp:Set({
+				Callback = function(Value)
+					if c2cp and c3cp then
+						Luna.ThemeGradient = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Value or Color3.fromRGB(255,255,255)), ColorSequenceKeypoint.new(0.50, c2cp.Color or Color3.fromRGB(255,255,255)), ColorSequenceKeypoint.new(1.00, c3cp.Color or Color3.fromRGB(255,255,255))}
+						LunaUI.ThemeRemote.Value = not LunaUI.ThemeRemote.Value
+					end
+				end
+			})
+
+			c2cp:Set({
+				Callback = function(Value)
+					if c1cp and c3cp then
+						Luna.ThemeGradient = ColorSequence.new{ColorSequenceKeypoint.new(0.00, c1cp.Color or Color3.fromRGB(255,255,255)), ColorSequenceKeypoint.new(0.50, Value or Color3.fromRGB(255,255,255)), ColorSequenceKeypoint.new(1.00, c3cp.Color or Color3.fromRGB(255,255,255))}
+						LunaUI.ThemeRemote.Value = not LunaUI.ThemeRemote.Value
+					end
+				end
+			})
+
+			c3cp:Set({
+				Callback = function(Valuex)
+					if c2cp and c1cp then
+						Luna.ThemeGradient = ColorSequence.new{ColorSequenceKeypoint.new(0.00, c1cp.Color or Color3.fromRGB(255,255,255)), ColorSequenceKeypoint.new(0.50, c2cp.Color or Color3.fromRGB(255,255,255)), ColorSequenceKeypoint.new(1.00, Valuex or Color3.fromRGB(255,255,255))}
+						LunaUI.ThemeRemote.Value = not LunaUI.ThemeRemote.Value
+					end
+				end
+			})
+
+			Tab:CreateSection("Preset Gradients")
+
+			for i,v in pairs(PresetGradients) do
+				Tab:CreateButton({
+					Name = tostring(i),
+					Callback = function()
+						c1cp:Set({ Color = v[1] })
+						c2cp:Set({ Color = v[2] })
+						c3cp:Set({ Color = v[3] })
+					end,
+				})
+			end
+
+		end
+
+
+		local function BuildFolderTree()
+			if isStudio then return "Config system unavailable." end
+			local paths = {
+				Luna.Folder,
+				Luna.Folder .. "/settings"
+			}
+
+			for i = 1, #paths do
+				local str = paths[i]
+				if not isfolder(str) then
+					makefolder(str)
+				end
+			end
+		end
+
+		local function SetFolder()
+
+			if isStudio then return "Config system unavailable." end
+
+			if WindowSettings.ConfigSettings.RootFolder ~= nil and WindowSettings.ConfigSettings.RootFolder ~= "" then
+				Luna.Folder = WindowSettings.ConfigSettings.RootFolder .. "/" .. WindowSettings.ConfigSettings.ConfigFolder
+			else
+				Luna.Folder = WindowSettings.ConfigSettings.ConfigFolder
+			end
+
+			BuildFolderTree()
+		end
+
+		SetFolder()
+
+		function Luna:SaveConfig(Path)
+			if isStudio then return "Config system unavailable." end
+
+			if (not Path) then
+				return false, "Please select a config file."
+			end
+
+			local fullPath = Luna.Folder .. "/settings/" .. Path .. ".luna"
+
+			local data = {
+				objects = {}
+			}
+
+			for flag, option in next, Luna.Options do
+				if not ClassParser[option.Class] then continue end
+				if option.IgnoreConfig then continue end
+
+				table.insert(data.objects, ClassParser[option.Class].Save(flag, option))
+			end	
+
+			local success, encoded = pcall(HttpService.JSONEncode, HttpService, data)
+			if not success then
+				return false, "Unable to encode into JSON data"
+			end
+
+			writefile(fullPath, encoded)
+			return true
+		end
+
+		function Luna:LoadConfig(Path)
+			if isStudio then return "Config system unavailable." end
+
+			if (not Path) then
+				return false, "Please select a config file."
+			end
+
+			local file = Luna.Folder .. "/settings/" .. Path .. ".luna"
+			if not isfile(file) then return false, "Invalid file" end
+
+			local success, decoded = pcall(HttpService.JSONDecode, HttpService, readfile(file))
+			if not success then return false, "Unable to decode JSON data." end
+
+			for _, option in next, decoded.objects do
+				if ClassParser[option.type] then
+					task.spawn(function() 
+						ClassParser[option.type].Load(option.flag, option) 
+					end)
+				end
+			end
+
+			return true
+		end
+
+		function Luna:LoadAutoloadConfig()
+			if isfile(Luna.Folder .. "/settings/autoload.txt") then
+
+				if isStudio then return "Config system unavailable." end
+
+				local name = readfile(Luna.Folder .. "/settings/autoload.txt")
+
+				local success, err = Luna:LoadConfig(name)
+				if not success then
+					return Luna:Notification({
+						Title = "Interface",
+						Icon = "sparkle",
+						ImageSource = "Material",
+						Content = "Failed to load autoload config: " .. err,
+					})
+				end
+
+				Luna:Notification({
+					Title = "Interface",
+					Icon = "sparkle",
+					ImageSource = "Material",
+					Content = string.format("Auto loaded config %q", name),
+				})
+
+			end 
+		end
+
+		function Luna:RefreshConfigList()
+			if isStudio then return "Config system unavailable." end
+
+			local list = listfiles(Luna.Folder .. "/settings")
+
+			local out = {}
+			for i = 1, #list do
+				local file = list[i]
+				if file:sub(-5) == ".luna" then
+					local pos = file:find(".luna", 1, true)
+					local start = pos
+
+					local char = file:sub(pos, pos)
+					while char ~= "/" and char ~= "\\" and char ~= "" do
+						pos = pos - 1
+						char = file:sub(pos, pos)
+					end
+
+					if char == "/" or char == "\\" then
+						local name = file:sub(pos + 1, start - 1)
+						if name ~= "options" then
+							table.insert(out, name)
+						end
+					end
+				end
+			end
+
+			return out
+		end
+		return Tab
+	end
+
+
+	Elements.Parent.Visible = true
+	tween(Elements.Parent, {BackgroundTransparency = 0.1})
+	Navigation.Visible = true
+	tween(Navigation.Line, {BackgroundTransparency = 0})
+
+	for _, TopbarButton in ipairs(Main.Controls:GetChildren()) do
+		if TopbarButton.ClassName == "Frame" and TopbarButton.Name ~= "Theme" then
+			TopbarButton.Visible = true
+			tween(TopbarButton, {BackgroundTransparency = 0.25})
+			tween(TopbarButton.UIStroke, {Transparency = 0.5})
+			tween(TopbarButton.ImageLabel, {ImageTransparency = 0.25})
+		end
+	end
+
+	Main.Controls.Close.ImageLabel.MouseButton1Click:Connect(function()
+		Hide(Main, Window.Bind, true)
+		dragBar.Visible = false
+		Window.State = false
+		if UserInputService.KeyboardEnabled == false then
+			LunaUI.MobileSupport.Visible = true
+		end
+	end)
+	Main.Controls.Close["MouseEnter"]:Connect(function()
+		tween(Main.Controls.Close.ImageLabel, {ImageColor3 = Color3.new(1,1,1)})
+	end)
+	Main.Controls.Close["MouseLeave"]:Connect(function()
+		tween(Main.Controls.Close.ImageLabel, {ImageColor3 = Color3.fromRGB(195,195,195)})
+	end)
+
+	UserInputService.InputBegan:Connect(function(input, gpe)
+		if gpe then return end
+		if Window.State then return end
+		if input.KeyCode == Window.Bind then
+			Unhide(Main, Window.CurrentTab)
+			LunaUI.MobileSupport.Visible = false
+			dragBar.Visible = true
+			Window.State = true
+		end
+	end)
+
+	Main.Logo.MouseButton1Click:Connect(function()
+		if Navigation.Size.X.Offset == 205 then
+			tween(Elements.Parent, {Size = UDim2.new(1, -55, Elements.Parent.Size.Y.Scale, Elements.Parent.Size.Y.Offset)})
+			tween(Navigation, {Size = UDim2.new(Navigation.Size.X.Scale, 55, Navigation.Size.Y.Scale, Navigation.Size.Y.Offset)})
+		else
+			tween(Elements.Parent, {Size = UDim2.new(1, -205, Elements.Parent.Size.Y.Scale, Elements.Parent.Size.Y.Offset)})
+			tween(Navigation, {Size = UDim2.new(Navigation.Size.X.Scale, 205, Navigation.Size.Y.Scale, Navigation.Size.Y.Offset)})
+		end
+	end)
+
+	Main.Controls.ToggleSize.ImageLabel.MouseButton1Click:Connect(function()
+		Window.Size = not Window.Size
+		if Window.Size then
+			Minimize(Main)
+			dragBar.Visible = false
+		else
+			Maximise(Main)
+			dragBar.Visible = true
+		end
+	end)
+	Main.Controls.ToggleSize["MouseEnter"]:Connect(function()
+		tween(Main.Controls.ToggleSize.ImageLabel, {ImageColor3 = Color3.new(1,1,1)})
+	end)
+	Main.Controls.ToggleSize["MouseLeave"]:Connect(function()
+		tween(Main.Controls.ToggleSize.ImageLabel, {ImageColor3 = Color3.fromRGB(195,195,195)})
+	end)
+
+	Main.Controls.Theme.ImageLabel.MouseButton1Click:Connect(function()
+		if Window.Settings then
+			Window.Settings:Activate()
+			Elements.Settings.CanvasPosition = Vector2.new(0,698)
+		end
+	end)
+	Main.Controls.Theme["MouseEnter"]:Connect(function()
+		tween(Main.Controls.Theme.ImageLabel, {ImageColor3 = Color3.new(1,1,1)})
+	end)
+	Main.Controls.Theme["MouseLeave"]:Connect(function()
+		tween(Main.Controls.Theme.ImageLabel, {ImageColor3 = Color3.fromRGB(195,195,195)})
+	end)	
+
+
+	LunaUI.MobileSupport.Interact.MouseButton1Click:Connect(function()
+		Unhide(Main, Window.CurrentTab)
+		dragBar.Visible = true
+		Window.State = true
+		LunaUI.MobileSupport.Visible = false
+	end)
+
+	return Window
+end
+
+function Luna:Destroy()
+	Main.Visible = false
+	for _, Notification in ipairs(Notifications:GetChildren()) do
+		if Notification.ClassName == "Frame" then
+			Notification.Visible = false
+			Notification:Destroy()
+		end
+	end
+	LunaUI:Destroy()
+end
+
+if (getgenv and not getgenv().ConfirmLuna) or (not getgenv) then
+	Luna:Notification({ 
+    	Title = "Luna Is Deprecated",
+    	Icon = "warning",
+    	ImageSource = "Material",
+    	Content = "If you are not the script developer, ignore this message. \n\n The Luna Interface Library Is Deprecated And Not Recommended to Use. A New Library Is Available at nebulasoftworks.xyz/starlight. If you insist on using Luna, set the getgenv().ConfirmLuna variable to true. "
+	})
+end
+
+if isStudio then
+	local Window = Luna:CreateWindow({
+		Name = "Nebula Client - Luna Hub | Blade Ball",
+		Subtitle = "by Nebula Softworks",
+		LogoID = "123795201100198",
+		LoadingEnabled = true,
+		LoadingTitle = "Nebula Client (Luna Hub)",
+		LoadingSubtitle = "Loading script for Blade Ball",
+		KeySystem = true,
+		KeySettings = {
+			Title = "Nebula Client | Key System",
+			Subtitle = "Blade Ball",
+			Note = "Please Enter Your Key To Use Nebula Client",
+			FileName = "Key", -- the name of the key file. this will be saved in ur RootFolder. However, if you don't have one, it'll save in ur config folder instead
+			SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+			Key = {"Example Key"}, -- List of keys that will be accepted by the system, please use a system like Pelican or Luarmor that provide key strings based on your HWID since putting a simple string is very easy to bypass
+			SecondAction = {
+				Enabled = true,
+				Type = "Link", -- Link/Discord
+				Parameter = "" -- for discord, add the invite link like home tab. for link, type the link of ur key sys
+			}
+		}
+	})
+	
+	--[[local Window = Luna:CreateWindow({
+		Name = "Luna Example Window",
+		Subtitle = "Test",
+		LogoID = "6031097225",
+		LoadingEnabled = true,
+		LoadingTitle = "Luna Interface Suite",
+		LoadingSubtitle = "by Nebula Softworks",
+		KeySystem = true,
+		KeySettings = {
+			Title = "Luna Example Key",
+			Subtitle = "Key System",
+			Note = "Please Enter Your Key To Use Example Hub",
+			FileName = "Key", -- the name of the key file. this will be saved in ur RootFolder. However, if you don't have one, it'll save in ur config folder instead
+			SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+			Key = {"Example Key"} -- List of keys that will be accepted by the system, please use a system like Pelican or Luarmor that provide key strings based on your HWID since putting a simple string is very easy to bypass
+		}
+	})
+
+	Luna:Notification({ 
+		Title = "Welcome to Luna",
+		Icon = "sparkle",
+		ImageSource = "Material",
+		Content = "Welcome to the Luna Interface Suite. This Is an Amazing Quality Freemium UI Library For Roblox Exploiting Made By Nebula Softworks. Luna was Created in hopes of improving the standard of UI Library designs by being the golden standard for it. Luna Has Amazing Features like a key system, notification and perfection in aesthetics and design. So, What Are You Waiting For? Start Using Luna Today at " .. website
+	})
+
+	local Tabs = {
+		Main = Window:CreateTab({
+			Name = "Tab Example 1",
+			Icon = "view_in_ar",
+			ImageSource = "Material",
+			ShowTitle = true
+		}),
+		Main2 = Window:CreateTab({
+			Name = "Tab Example 2",
+			Icon = "location_searching",
+			ImageSource = "Material",
+			ShowTitle = false
+		}),
+		Premium = Window:CreateTab({
+			Name = "Premium Tab",
+			Icon = "sparkle",
+			ImageSource = "Material",
+			ShowTitle = true
+		}),
+		Debug = Window:CreateTab({
+			Name = "Debug",
+			Icon = "settings"
+		})
+	}
+
+
+	Window:CreateHomeTab()
+	local bleh =Tabs.Debug:CreateColorPicker()
+	Tabs.Debug:CreateButton({
+		Callback = function()
+			bleh:Set({
+				Color = Color3.fromRGB(0,0,0)
+			})
+		end,
+	})
+
+	Tabs.Main:CreateSection("Section Example")
+	Tabs.Main:CreateButton({
+		Name = "Button Example!",
+		Description = "Every Element Except For Sliders Can Have a description like this"
+	})
+	Tabs.Main:CreateLabel({
+		Text = "Label Example",
+		Style = 1
+	})
+	Tabs.Main:CreateLabel({
+		Text = "Information Example",
+		Style = 2
+	})
+	Tabs.Main:CreateLabel({
+		Text = "Warning Example",
+		Style = 3
+	})
+	Tabs.Main:CreateParagraph({
+		Title = "Paragraph Example ",
+		Text = "This Is A Paragraph. You Can Type Very Long Strings Here And They'll Automatically Fit! This Counts As A Description Right? Right? Right? Right? Right? Right? Right? Right? Right? Right? Right? Right? Right? Right? Right? Also Did I Mention This Has Rich Text? Also Did I Mention This Has Rich Text? Also Did I Mention This Has Rich Text? Also Did I Mention This Has Rich Text? Also Did I Mention This Has Rich Text? Also Did I Mention This Has Rich Text?"
+	})
+	Tabs.Main:CreateSlider({
+		Name = "Slider Example",
+		Range = {0, 200},
+		Increment = 0.1,
+		CurrentValue = 100,
+		Flag = "Slider",
+	})
+	Tabs.Main:CreateToggle({
+		Name = "Toggle Example",
+		Description = "This Is A Toggle. See I Was Right? Sliders Don't Have Descriptions!",
+		CurrentValue = false,
+	})
+
+	Tabs.Main:CreateBind({
+		Name = "Bind Example",
+		Description = "Btw Using CreateKeybind is deprecated, use CreateBind For Future Binds :)",
+		CurrentKeybind = "Q",
+		HoldToInteract = false,
+	})
+	Tabs.Main:CreateInput({
+		Name = "Dynamic Input Example",
+		Description = "Every Element has :Set(). Sadly this one is broken;the text wont update :(",
+		PlaceholderText = "Input Placeholder",
+		CurrentValue = "",
+		Numeric = false,
+		MaxCharacters = nil,
+		Enter = false
+	})
+	Tabs.Main:CreateDropdown({
+		Name = "Dropdown Example",
+		Description = "U can access a element's values using .Settings!",
+		Options = {"Option 1","Option 2","Option 3","Option 4","Option 5","Option 6"},
+		CurrentOption = "Option 1",
+		MultipleOptions = false,
+		SpecialType = nil
+	})
+
+	Tabs.Main:CreateColorPicker({
+		Name = "Color Picker Example",
+		Color = Color3.fromRGB(86, 171, 128),
+		Flag = "ColorPicker1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+		Callback = function(Value)
+			-- The function that takes place every time the color picker is moved/changed
+			-- The variable (Value) is a Color3fromRGB value based on which color is selected
+		end
+	})
+
+	Tabs.Main2:CreateSection("The Elements Here Are To Show Unique Features")
+	Tabs.Main2:CreateToggle({
+		Name = "Toggle - Default On",
+		Description = "Toggles Can be Onned By Default!",
+		CurrentValue = true
+	})
+	Tabs.Main2:CreateBind({
+		Name = "Hold To Interact - Walkspeed Example",
+		Description = "Binds Can Be Made to only Callback when held",
+		HoldToInteract = true,
+		CurrentBind = "E",
+		Callback = function(v)
+			if v then 
+				Players.LocalPlayer.Character.Humanoid.WalkSpeed = 100
+			else
+				Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
+			end
+		end,
+	})
+	Tabs.Main2:CreateInput({
+		Name = "Numeric And 12 Max Characters",
+		Description = "You Can Limit The Max Characters or Allow Only Numbers",
+		Numeric = true,
+		MaxCharacters = 12
+	})
+	Tabs.Main2:CreateInput({
+		Name = "Require Enter",
+		Description = "You Can Only make the callback happen after user hits enter",
+		Enter = true
+	})
+	Tabs.Main2:CreateLabel({
+		Text = "Every Element Can be Destroyed as well!"
+	})
+	Tabs.Main2:CreateDropdown({
+		Name = "Dropdown - Multi Options",
+		Description = "Multiple Special Features can be used on the same element!",
+		Options = {"Option 1","Option 2","Option 3","Option 4","Option 5","Option 6"},
+		CurrentOption = {"Option 1","Option 3","Option 6"},
+		MultipleOptions = true
+	})
+	Tabs.Main2:CreateDropdown({
+		Name = "Dropdown - Players",
+		Description = "Luna's Dropdowns Has a built in Player Dropdown!",
+		Options = {"u can put anything here, it wont be shown anyway"},
+		CurrentOption = {"same here, itll be the first option"},
+		MultipleOptions = false,
+		SpecialType = "Player"
+	})
+
+	local s = Tabs.Premium:CreateSection("You can add elements inside section too")
+	s:CreateButton()
+	s:CreateLabel()
+	s:CreateDivider()
+	s:CreateDropdown()
+
+	Tabs.Premium:BuildConfigSection()
+	Tabs.Premium:BuildThemeSection()]]
+end
+
+-- THIS IS THE DEBUG DEMO, ONLY USED WHEN TESTING NEW ELEMENTS AND CODE
+--[[if isStudio then
+    window = Luna:CreateWindow({LoadingEnabled = false})
+    t1 = window:CreateTab()
+    t2 = window:CreateTab({ Name = "Tab 2", Icon = "location_searching"})
+    Luna:Notification({ 
+        Title = "Welcome to Luna",
+        Icon = "sparkle",
+        ImageSource = "Material",
+        Content = "Welcome to the Luna Interface Suite. This Is an Amazing Quality Freemium UI Library For Roblox Exploiting Made By Nebula Softworks. Luna was Created in hopes of improving the standard of UI Library designs by being the golden standard for it. Luna Has Amazing Features like a key system, notification and perfection in aesthetics and design. So, What Are You Waiting For? Start Using Luna Today at " .. website
+    })
+    t1:CreateSection()
+    local btn = t1:CreateButton({Callback = "", Description = "This Is A Description"})
+    local l = t1:CreateLabel({ Style = 2})
+    local l2 = t1:CreateLabel({ Text = "Another Label" })
+    t2:CreateButton({ Callback = function() 
+        l:Destroy()
+        l2:Set("New Text")
+    end})
+    t2:CreateLabel({Style = 3})
+    t1:CreateParagraph({Text = "Single String"})
+    t1:CreateParagraph({Text = "Welcome to the Luna Interface Suite. This Is an Amazing Quality Freemium UI Library For Roblox Exploiting Made By Nebula Softworks. Luna was Created in hopes of improving the standard of UI Library designs by being the golden standard for it. Luna Has Amazing Features like a key system, notification and perfection in aesthetics and design. So, What Are You Waiting For? Start Using Luna Today at " .. website})
+    s = t2:CreateSlider({ Callback = function(v) print(v) end })	
+    t1:CreateButton({ Callback = function()
+        s:Set({Name = "new name", Callback = ""})
+        wait(5)
+        s:Destroy()
+    end})
+    t1:CreateColorPicker()
+    local toggle = t1:CreateToggle({Name = "test", Description = "test", CurrentValue = true, Callback = ""}, "toggle2")
+    t1:CreateToggle({Callback = function(Value) toggle:Destroy() print(Value) end})
+    local bind = t2:CreateBind({Name = "test", Description = "test", CurrentBind = "E", HoldToInteract = false, Callback = ""})
+    t2:CreateKeybind({HoldToInteract = true, Callback = function(v)
+        if v then
+            Players.LocalPlayer.Character.Humanoid.WalkSpeed = 100
+        else
+            Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
+        end
+    end,})
+    local input = t2:CreateInput({Name = "test",ClearTextAfterFocusLost = false, Description = "Numbers only, 8 max characters and enter required.",MaxCharacters = 8 ,Numeric = true, Enter = true, Callback = ""})
+    t2:CreateInput({Callback = function(text) print(text) end})
+    local d = t1:CreateDropdown({Name = "test", Options = {"Apples", "Bananas", "Strawberries", "Elixir"}, Description = "MultiOptions", MultipleOptions = true, Callback = function(t) print(t) end, CurrentOption = {"Apples", "Elixir"}})
+    t1:CreateDropdown({Callback = function(t) print(unpack(t)) end})
+    t1:CreateDropdown({Description = "Special Type - Player", Callback = "", SpecialType = "Player"})
+end]]--
+return Luna
